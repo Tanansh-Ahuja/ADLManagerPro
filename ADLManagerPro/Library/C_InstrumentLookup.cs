@@ -35,8 +35,8 @@ namespace ADLManagerPro
                 if (!Form1.instruments.Contains(instrument))
                 {
                     Form1.instruments.Add(instrument);
-                    if(!Form1.instrumentNameWithInstrument.ContainsKey(instrument.Name))
-                        Form1.instrumentNameWithInstrument.Add(instrument.Name,instrument);
+                    if(!Form1.instrumentNameWithInstrument.ContainsKey(instrument.InstrumentDetails.Alias))
+                        Form1.instrumentNameWithInstrument.Add(instrument.InstrumentDetails.Alias,instrument);
                     
                     Console.WriteLine("Found: {0}", instrument);
                     Form1.ShowMainGrid();

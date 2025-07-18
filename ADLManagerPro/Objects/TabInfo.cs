@@ -10,26 +10,15 @@ namespace ADLManagerPro
     public class TabInfo
     {
 
-        private DataGridView _dataGridView = null;
-        private string _adlName = null;
-        private string _feedName = null;
+        public DataGridView _dataGridView = null;
+        public string _adlName = null;
+        public string _feedName = null;
         public TabInfo(DataGridView dataGridView, string adlName , string feedName) 
         {
             _dataGridView = dataGridView;
             _adlName = adlName;
             _feedName = feedName;
         }
-        public DataGridView GetParamGrid()
-        {
-            return _dataGridView;
-        }
-        public string GetAdlName()
-        {
-            return _adlName;
-        }
-        public string GetFeedName()
-        {
-            return _feedName;
-        }
+        
     }
 }

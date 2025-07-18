@@ -63,3 +63,15 @@ C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\
 C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\obj\x64\Debug\ADLManag.550943BA.Up2Date
 C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\obj\x64\Debug\ADLManagerPro.exe
 C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\obj\x64\Debug\ADLManagerPro.pdb
+C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\System.IO.Pipelines.dll
+C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\System.Text.Encodings.Web.dll
+C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\System.Text.Json.dll
+C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\System.ValueTuple.dll
+C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\System.IO.Pipelines.xml
+C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\System.Text.Encodings.Web.xml
+C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\System.Text.Json.xml
+C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\System.Threading.Tasks.Extensions.xml
+C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\System.ValueTuple.xml

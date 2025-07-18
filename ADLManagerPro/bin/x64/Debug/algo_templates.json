@@ -1,0 +1,20 @@
+[
+  {
+    "algo_name": "Algo1",
+    "templates": [
+      {
+        "template_name": "Template_1",
+        "template_parameters": {
+          "parameter1": {
+            "type": "int",
+            "value": "10"
+          },
+          "parameter2": {
+            "type": "string",
+            "value": "ABC"
+          }
+        }
+      }
+    ]
+  }
+]

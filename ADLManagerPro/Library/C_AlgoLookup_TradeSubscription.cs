@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ADLManager;
 using tt_net_sdk;
 
 namespace ADLManagerPro
 {
-    internal class C_AlgoLookup_TradeSubscription
+    public class C_AlgoLookup_TradeSubscription
     {
         private Algo m_algo = null;
         private bool m_isDisposed = false;
@@ -19,6 +20,7 @@ namespace ADLManagerPro
         private AlgoLookupSubscription m_algoLookupSubscription = null;
         private Dispatcher m_dispatcher = null;
         private bool orderAdded = false;
+        
         public C_AlgoLookup_TradeSubscription(Dispatcher dispatcher, string algoName) 
         {
             m_dispatcher = dispatcher;
@@ -37,6 +39,66 @@ namespace ADLManagerPro
                     Form1.algos.Add(m_algo);
                     Console.WriteLine("Algo Instrument Found: {0}", e.AlgoLookup.Algo.Alias);
                     Form1.ShowMainGrid();
+
+                    string algoName = e.AlgoLookup.Algo.Alias;
+
+                    #region Populate dictionaries
+                    var userparamListWithType = new List<(string paramName, ParameterType)>();
+                    var orderProfileListWithType = new List<(string paramName, ParameterType)>();
+
+                    var userparamList = new List<string>();
+                    var orderProfileList = new List<string>();
+
+
+                    foreach (var item in e.AlgoLookup.Algo.AlgoParameters)
+                    {
+                        ParameterType type;
+
+                        if (item.Type == "Int_t")
+                            type = ParameterType.Int;
+                        else if (item.Type == "Float_t")
+                            type = ParameterType.Float;
+                        else if (item.Type == "String_t")
+                            type = ParameterType.String;
+                        else if (item.Type == "Boolean_t")
+                            type = ParameterType.Bool;
+                        else
+                        {
+                            if (item.EnumClass == "tt_net_sdk.OrderSide")
+                            {
+                                type = ParameterType.BuySell;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Converted " + item.Type + " to string.");
+                                type = ParameterType.String;
+                            }
+                        }
+
+                        if (item.IsRequired == "true")
+                        {
+                            if (item.FieldLocation.ToString() == "UserParameters")
+                            {
+                                userparamListWithType.Add((item.Name, type));
+                                userparamList.Add(item.Name);
+
+                            }
+                            else if (item.FieldLocation.ToString() == "OrderProfile")
+                            {
+                                orderProfileListWithType.Add((item.Name, type));
+                                orderProfileList.Add(item.Name);
+                            }
+                        }
+                    }
+
+                    AdlParameters adlParameters = new AdlParameters(userparamListWithType, orderProfileListWithType, userparamList, orderProfileList);
+
+                    if(!Form1.algoNameWithParameters.ContainsKey(algoName))
+                    {
+                        Form1.algoNameWithParameters.Add(algoName, adlParameters);
+                    }
+
+                    #endregion
 
                     // Create an Algo TradeSubscription to listen for order / fill events only for orders submitted through it
                     m_algoTradeSubscription = new AlgoTradeSubscription(m_dispatcher, m_algo);
@@ -72,36 +134,39 @@ namespace ADLManagerPro
             }
         }
 
-        void StartAlgo()
+        public string StartAlgo(int accountIndex,Instrument m_instrument,Dictionary<string, object> algo_userparams, Dictionary<string, object> algo_orderprofileparams)
         {
-            if (!orderAdded)
+            while (m_algo == null)
+                mre.WaitOne();
+
+            foreach (KeyValuePair<string, object> kvp in algo_userparams)
             {
-                orderAdded = true;
-                while (m_algo == null)
-                    mre.WaitOne();
-
-                // To retrieve the list of parameters valid for the Algo you can call algo.AlgoParameters;
-                // Construct a dictionary of the parameters and the values to send out 
-                Dictionary<string, object> algo_userparams = new Dictionary<string, object>
-                    {
-                        {"Ignore Market State",     true},
-                    };
-
-                var lines = algo_userparams.Select(kvp => kvp.Key + ": " + kvp.Value.ToString());
-                Console.WriteLine(string.Join(Environment.NewLine, lines));
-
-                //OrderProfile algo_op = m_algo.GetOrderProfile(m_instrument);
-                //algo_op.Account = m_accounts.ElementAt(0);
-                //algo_op.OrderQuantity = Quantity.FromString(m_instrument, "5");
-                //algo_op.Side = OrderSide.Buy;
-                //algo_op.OrderType = OrderType.Limit;
-                //algo_op.UserParameters = algo_userparams;
-                //algo_op.TimeInForce = TimeInForce.GoodTillCancel;
-                //algo_op.LimitPrice = Price.FromDecimal(m_instrument, Convert.ToDecimal(algo_orderprofileparams["Order Price"]));
-                //m_algoTradeSubscription.SendOrder(algo_op);
-
-                //orderkey = algo_op.SiteOrderKey;
+                Console.WriteLine($"{kvp.Key} : {kvp.Value}");
             }
+
+            OrderProfile algo_op = m_algo.GetOrderProfile(m_instrument);
+            algo_op.Account = Form1.m_accounts.ElementAt(accountIndex);
+            //algo_op.OrderQuantity = Quantity.FromString(m_instrument, "5");
+            //algo_op.Side = OrderSide.Buy;
+            //algo_op.OrderType = OrderType.Limit;
+            algo_op.UserParameters = algo_userparams;
+            algo_op.TimeInForce = TimeInForce.GoodTillCancel;
+            algo_op.LimitPrice = Price.FromDecimal(m_instrument, Convert.ToDecimal(algo_orderprofileparams["Pricing_Feed"]));
+            m_algoTradeSubscription.SendOrder(algo_op);
+            return algo_op.SiteOrderKey;
+
+
+        }
+
+        public string DeleteAlgoOrder(string siteOrderKey)
+        {
+            if(siteOrderKey != null && m_algoTradeSubscription.Orders.ContainsKey(siteOrderKey))
+            {
+                OrderProfile op = m_algoTradeSubscription.Orders[siteOrderKey].GetOrderProfile();
+                op.Action = OrderAction.Delete;
+                m_algoTradeSubscription.SendOrder(op);
+            }
+            return string.Empty;
         }
 
         #region ADL events
