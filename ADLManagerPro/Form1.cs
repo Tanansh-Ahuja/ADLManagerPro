@@ -270,18 +270,38 @@ namespace ADLManagerPro
             selectedRowIndexList.Clear();
 
 
-            Dictionary<int, int> map = new Dictionary<int, int>();
+            Dictionary<string, string> map = new Dictionary<string, string>();
             //         old,new
 
             for (int i = mainGrid.Rows.Count - 1; i >= 0; i--)
             {
-                map[(int)mainGrid.Rows[i].Cells[columnOneName].Value] = i + 1;
-                mainGrid.Rows[i].Cells[columnOneName].Value = i + 1;
+                int x = i + 1;
+                map[mainGrid.Rows[i].Cells[columnOneName].Value.ToString()] = x.ToString();
+                mainGrid.Rows[i].Cells[columnOneName].Value = x.ToString();
             }
-            var curr_index = 0;
+
+            Dictionary<string, TabInfo> temp_tabIndexWithTabInfo = new Dictionary<string, TabInfo>();
+            foreach (KeyValuePair<string, TabInfo> entry in temp_tabIndexWithTabInfo)
+            {
+                string old_key = entry.Key;
+                if (map.ContainsKey(old_key))
+                {
+                    string new_key = map[old_key];
+                    temp_tabIndexWithTabInfo[new_key] = entry.Value;
+                }
+
+            }
+            tabIndexWithTabInfo.Clear();
+            tabIndexWithTabInfo = temp_tabIndexWithTabInfo.ToDictionary(
+                                entry => entry.Key,
+                                entry => entry.Value // still shallow copy of value
+                            );
+            temp_tabIndexWithTabInfo.Clear();
+
+            string curr_index;
             for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
             {
-                curr_index = int.Parse(MainTab.TabPages[i].Text);
+                curr_index = MainTab.TabPages[i].Text;
                 if (map.ContainsKey(curr_index))
                 {
                     MainTab.TabPages[i].Text = map[curr_index].ToString();
@@ -517,6 +537,8 @@ namespace ADLManagerPro
             {
                 OnStartbtnClick(paramGrid, adlValue);
             };
+            TabInfo tabInfo = new TabInfo(paramGrid, adlValue,feedValue);
+            tabIndexWithTabInfo.Add(serial, tabInfo);
 
             newTab.Controls.Add(btnStartAlgo);
 
