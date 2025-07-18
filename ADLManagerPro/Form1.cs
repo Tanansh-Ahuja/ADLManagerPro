@@ -26,6 +26,10 @@ namespace ADLManagerPro
         string columnThreeName = "adl";
         string columnFourName = "createTab";
 
+        private string _appSecretKey;
+
+        private FileHandlers _fileHandlers = null;
+
 
         // Declare the API objects
         private TTAPI m_api = null;
@@ -59,12 +63,14 @@ namespace ADLManagerPro
         #endregion
 
 
-        public Form1()
+        public Form1(string appSecretKey)
         {
             InitializeComponent();
             mainGrid.Columns[columnOneName].ReadOnly = true;
             MainTab.Hide();
             UpdateAdlDropdownSource();
+            _appSecretKey = appSecretKey;
+            _fileHandlers = new FileHandlers();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -99,6 +105,7 @@ namespace ADLManagerPro
             if (ex == null)
             {
                 Console.WriteLine("TT.NET SDK INITIALIZED");
+                _fileHandlers.SaveApiKey("Key.txt", _appSecretKey);
 
                 // Authenticate your credentials
                 m_api = api;
@@ -107,22 +114,14 @@ namespace ADLManagerPro
             }
             else if (ex.IsRecoverable)
             {
-                // this is in informational update from the SDK
-                Console.WriteLine("TT.NET SDK Initialization Message: {0}", ex.Message);
-                if (ex.Code == ApiCreationException.ApiCreationError.NewAPIVersionAvailable)
-                {
-                    // a newer version of the SDK is available - notify someone to upgrade
-                }
+                MessageBox.Show("TT.NET SDK Initialization Failed");
+                DisposeEverything();
             }
             else
             {
                 Console.WriteLine("TT.NET SDK Initialization Failed: {0}", ex.Message);
-                if (ex.Code == ApiCreationException.ApiCreationError.NewAPIVersionRequired)
-                {
-                    // do something to upgrade the SDK package since it will not start until it is upgraded 
-                    // to the minimum version noted in the exception message
-                }
-                Dispose();
+                MessageBox.Show(ex.Message);
+                DisposeEverything();
             }
         }
 
@@ -631,7 +630,7 @@ namespace ADLManagerPro
 
 
         #region Dispose and Shutdown
-        public void Dispose()
+        public void DisposeEverything()
         {
             lock (m_Lock)
             {
@@ -643,6 +642,7 @@ namespace ADLManagerPro
 
 
                 TTAPI.Shutdown();
+                Dispose();
             }
         }
 

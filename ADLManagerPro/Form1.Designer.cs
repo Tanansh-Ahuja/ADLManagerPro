@@ -31,7 +31,7 @@ namespace ADLManagerPro
         private void InitializeComponent()
         {
             this.mainGrid = new System.Windows.Forms.DataGridView();
-            this.MainTab = new System.Windows.Forms.TabControl();
+            MainTab = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.NeonFeedButton = new System.Windows.Forms.Button();
             this.del_btn = new System.Windows.Forms.Button();
@@ -42,7 +42,7 @@ namespace ADLManagerPro
             this.adl = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.createTab = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.mainGrid)).BeginInit();
-            this.MainTab.SuspendLayout();
+            MainTab.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -72,14 +72,14 @@ namespace ADLManagerPro
             // 
             // MainTab
             // 
-            this.MainTab.Controls.Add(this.tabPage1);
-            this.MainTab.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MainTab.Location = new System.Drawing.Point(0, 0);
-            this.MainTab.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.MainTab.Name = "MainTab";
-            this.MainTab.SelectedIndex = 0;
-            this.MainTab.Size = new System.Drawing.Size(864, 798);
-            this.MainTab.TabIndex = 1;
+            MainTab.Controls.Add(this.tabPage1);
+            MainTab.Dock = System.Windows.Forms.DockStyle.Fill;
+            MainTab.Location = new System.Drawing.Point(0, 0);
+            MainTab.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            MainTab.Name = "MainTab";
+            MainTab.SelectedIndex = 0;
+            MainTab.Size = new System.Drawing.Size(864, 798);
+            MainTab.TabIndex = 1;
             // 
             // tabPage1
             // 
@@ -191,7 +191,7 @@ namespace ADLManagerPro
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(864, 798);
-            this.Controls.Add(this.MainTab);
+            this.Controls.Add(MainTab);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MinimumSize = new System.Drawing.Size(749, 468);
             this.Name = "Form1";
@@ -199,7 +199,7 @@ namespace ADLManagerPro
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.mainGrid)).EndInit();
-            this.MainTab.ResumeLayout(false);
+            MainTab.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -218,7 +218,7 @@ namespace ADLManagerPro
         private DataGridViewComboBoxColumn feed;
         private DataGridViewComboBoxColumn adl;
         private DataGridViewCheckBoxColumn createTab;
-        private TabControl MainTab;
+        private static TabControl MainTab;
     }
 }
 
