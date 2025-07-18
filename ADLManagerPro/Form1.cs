@@ -405,9 +405,9 @@ namespace ADLManagerPro
                     if (!TabExists(serial))
                     {
                         CreateTabWithLabels(serial, feedValue, adlValue);
-                        
-                        mainGrid.Columns[columnTwoName].ReadOnly = true;
-                        mainGrid.Columns[columnThreeName].ReadOnly = true;
+
+                        mainGrid.Rows[row.Index].Cells[columnTwoName].ReadOnly = true;
+                        mainGrid.Rows[row.Index].Cells[columnThreeName].ReadOnly = true;
                     }
                 }
                 else
@@ -423,9 +423,9 @@ namespace ADLManagerPro
                             break;
                         }
                     }
-                    
-                    mainGrid.Columns[columnTwoName].ReadOnly = false;
-                    mainGrid.Columns[columnThreeName].ReadOnly = false;
+
+                    mainGrid.Rows[row.Index].Cells[columnTwoName].ReadOnly = false;
+                    mainGrid.Rows[row.Index].Cells[columnThreeName].ReadOnly = false;
                 }
             }
         }
@@ -665,7 +665,8 @@ namespace ADLManagerPro
                 Width = 200,
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            savedTemplates.Items.AddRange(new string[] { "Algo1", "Algo2", "Algo3" });
+            //TODO: add functionality and handle edge case
+            savedTemplates.Items.AddRange(new string[] { "Temp1", "Temp2", "Temp3" });
 
             TextBox txtTemplateName = new TextBox
             {
@@ -691,7 +692,7 @@ namespace ADLManagerPro
 
             btnSaveTemplate.Click += (s, e) =>
             {
-                string selectedAlgo = savedTemplates.SelectedItem?.ToString();
+                string selectedAlgo = adlValue;
                 string templateName = txtTemplateName.Text.Trim();
 
                 if (string.IsNullOrEmpty(selectedAlgo) || string.IsNullOrEmpty(templateName))
@@ -725,7 +726,7 @@ namespace ADLManagerPro
                     if (result != DialogResult.Yes) return;
 
                     // Update template
-                    existingTemplate.template_parameters = GenerateDummyParameters(); // Replace with your parameter fetch logic
+                    existingTemplate.template_parameters = SaveParameterToTemplate(paramGrid); // Replace with your parameter fetch logic
                 }
                 else
                 {
@@ -733,7 +734,7 @@ namespace ADLManagerPro
                     algoEntry.templates.Add(new Template
                     {
                         template_name = templateName,
-                        template_parameters = GenerateDummyParameters() // Replace with real param fetch
+                        template_parameters = SaveParameterToTemplate(paramGrid) // Replace with real param fetch
                     });
                 }
 
@@ -752,13 +753,18 @@ namespace ADLManagerPro
             // Add tab to TabControl
             MainTab.TabPages.Add(newTab);
         }
-        private Dictionary<string, Parameter> GenerateDummyParameters()
+
+        //TODO : add functionality
+        private Dictionary<string, Parameter> SaveParameterToTemplate(DataGridView paramGrid)
         {
             return new Dictionary<string, Parameter>
     {
         { "parameter1", new Parameter { type = "int", value = "10" } },
         { "parameter2", new Parameter { type = "string", value = "ABC" } }
     };
+
+
+
         }
 
         private void OnStartbtnClick(DataGridView paramGrid, string AlgoName)
@@ -794,6 +800,7 @@ namespace ADLManagerPro
 
                 if (valueCell != null)
                 {
+
                     if (string.IsNullOrEmpty(paramName)) continue;
 
                     object value = null;
@@ -841,6 +848,7 @@ namespace ADLManagerPro
                         }
                     }
 
+
                 }
                 else
                 {
@@ -865,11 +873,13 @@ namespace ADLManagerPro
                 {
                     tabIndexWithSiteOrderKey[currentTab] = orderKey;
                 }
+
                     
             }
             else
             {
                 MessageBox.Show("Please check the parameters.");
+                return;
             }
 
 
