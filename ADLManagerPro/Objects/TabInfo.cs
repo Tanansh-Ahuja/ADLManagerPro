@@ -19,5 +19,17 @@ namespace ADLManagerPro
             _adlName = adlName;
             _feedName = feedName;
         }
+        public DataGridView GetParamGrid()
+        {
+            return _dataGridView;
+        }
+        public string GetAdlName()
+        {
+            return _adlName;
+        }
+        public string GetFeedName()
+        {
+            return _feedName;
+        }
     }
 }

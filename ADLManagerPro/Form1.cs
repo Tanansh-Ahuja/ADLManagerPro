@@ -27,6 +27,9 @@ namespace ADLManagerPro
         string columnFourName = "createTab";
 
         private string _appSecretKey;
+        private static Label loadingLabel;
+        private static System.Windows.Forms.Timer loadingTimer;
+        private int loadingDotCount = 0;
 
         private FileHandlers _fileHandlers = null;
 
@@ -67,7 +70,7 @@ namespace ADLManagerPro
         {
             InitializeComponent();
             mainGrid.Columns[columnOneName].ReadOnly = true;
-            MainTab.Hide();
+            //MainTab.Hide();
             UpdateAdlDropdownSource();
             _appSecretKey = appSecretKey;
             _fileHandlers = new FileHandlers();
@@ -75,6 +78,7 @@ namespace ADLManagerPro
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            InitialiseLoadingLabel();
             mainGrid.DefaultCellStyle.SelectionBackColor = mainGrid.DefaultCellStyle.BackColor;
             mainGrid.DefaultCellStyle.SelectionForeColor = mainGrid.DefaultCellStyle.ForeColor;
         }
@@ -114,13 +118,11 @@ namespace ADLManagerPro
             }
             else if (ex.IsRecoverable)
             {
-                LoadingForm.CloseLoadingForm();
                 MessageBox.Show("TT.NET SDK Initialization Failed");
                 DisposeEverything();
             }
             else
             {
-                LoadingForm.CloseLoadingForm();
                 Console.WriteLine("TT.NET SDK Initialization Failed: {0}", ex.Message);
                 MessageBox.Show(ex.Message);
                 DisposeEverything();
@@ -158,8 +160,7 @@ namespace ADLManagerPro
         {
             if(m_isOrderBookDownloaded && instruments.Count() == dummy_instruments.Count() && algos.Count() == dummy_algos.Count())
             {
-                LoadingForm.CloseLoadingForm();
-                MainTab.Show();
+                ShowMainTab();  
             }
 
         }
@@ -167,6 +168,43 @@ namespace ADLManagerPro
 
 
         #region UI
+
+        #region Loading
+
+        public void InitialiseLoadingLabel()
+        {
+            loadingLabel = new Label()
+            {
+                Text = "Loading",
+                AutoSize = true,
+                Font = new Font("Arial", 16, FontStyle.Bold),
+                Location = new Point((this.Width / 2) - 50, (this.Height / 2) - 10)
+            };
+            this.Controls.Add(loadingLabel);
+            loadingLabel.BringToFront();
+
+            // Timer to animate loading...
+            loadingTimer = new System.Windows.Forms.Timer();
+            loadingTimer.Interval = 400; // milliseconds
+            loadingTimer.Tick += LoadingTimer_Tick;
+            loadingTimer.Start();
+
+            // Hide the main tab (you can add more components here)
+            MainTab.Hide();
+        }
+        private static void ShowMainTab()
+        {
+            loadingTimer.Stop();
+            loadingLabel.Hide();
+            MainTab.Show();
+        }
+        private void LoadingTimer_Tick(object sender, EventArgs e)
+        {
+            loadingDotCount = (loadingDotCount + 1) % 4;
+            loadingLabel.Text = "Loading" + new string('.', loadingDotCount);
+        }
+
+        #endregion
 
         private void UpdateAdlDropdownSource()
         {
@@ -285,13 +323,11 @@ namespace ADLManagerPro
 
                     if (string.IsNullOrWhiteSpace(feedValue) || string.IsNullOrWhiteSpace(adlValue))
                     {
-                        MessageBox.Show("Please select both Feed and ADL before activating.", "Validation Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
                         // Reset the checkbox (temporarily disable event to avoid loop)
                         mainGrid.CellValueChanged -= mainGrid_CellValueChanged;
                         row.Cells[columnFourName].Value = false;
                         mainGrid.CellValueChanged += mainGrid_CellValueChanged;
-
+                        MessageBox.Show("Please select both Feed and ADL before activating.", "Validation Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
