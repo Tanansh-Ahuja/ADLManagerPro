@@ -9,9 +9,7 @@ namespace ADLManagerPro
 {
     internal static class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
+        public static LoadingForm loadingForm;
         [STAThread]
         static void Main()
         {
@@ -21,6 +19,11 @@ namespace ADLManagerPro
                 {
                     return;
                 }
+
+                // Show loading form before attempting TTAPI init
+                loadingForm = new LoadingForm();
+                loadingForm.StartAnimation();
+                loadingForm.Show();
 
                 string appSecretKey = keyForm.SecretKey;
                 tt_net_sdk.ServiceEnvironment environment = tt_net_sdk.ServiceEnvironment.UatCert;

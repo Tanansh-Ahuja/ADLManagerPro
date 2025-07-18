@@ -114,11 +114,13 @@ namespace ADLManagerPro
             }
             else if (ex.IsRecoverable)
             {
+                LoadingForm.CloseLoadingForm();
                 MessageBox.Show("TT.NET SDK Initialization Failed");
                 DisposeEverything();
             }
             else
             {
+                LoadingForm.CloseLoadingForm();
                 Console.WriteLine("TT.NET SDK Initialization Failed: {0}", ex.Message);
                 MessageBox.Show(ex.Message);
                 DisposeEverything();
@@ -156,7 +158,7 @@ namespace ADLManagerPro
         {
             if(m_isOrderBookDownloaded && instruments.Count() == dummy_instruments.Count() && algos.Count() == dummy_algos.Count())
             {
-                
+                LoadingForm.CloseLoadingForm();
                 MainTab.Show();
             }
 
