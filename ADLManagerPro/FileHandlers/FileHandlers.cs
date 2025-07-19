@@ -11,6 +11,8 @@ namespace ADLManagerPro
 {
     public class FileHandlers
     {
+        string jsonPath = "algo_templates.json";
+        Dictionary<string, List<Template>> algoWithTemplate = new Dictionary<string, List<Template>>();
 
         public void SaveApiKey(string path, string key)
         {
@@ -33,6 +35,36 @@ namespace ADLManagerPro
             return null;
 
         }
+
+
+        public Dictionary<string, List<Template>> FetchJsonFromFile()
+        {
+            string jsonContent = File.ReadAllText(jsonPath);
+            var algoTemplateRoots = JsonConvert.DeserializeObject<List<AlgoTemplateRoot>>(jsonContent);
+            foreach (var algo in algoTemplateRoots)
+            {
+                List<Template> templateList = new List<Template>();
+
+                foreach (var t in algo.Templates)
+                {
+                    var template = new Template
+                    {
+                        TemplateName = t.TemplateName,
+                        ParamNameWithTypeAndValue = t.TemplateParameters.ToDictionary(
+                            kvp => kvp.Key,
+                            kvp => (kvp.Value.Type, kvp.Value.Value))
+                    };
+
+                    templateList.Add(template);
+                }
+
+                algoWithTemplate[algo.AlgoName] = templateList;
+            }
+            return algoWithTemplate;
+        }
+
+
+
 
         // Save CSV
         public void SaveCsv(string path, List<string[]> rows)

@@ -153,6 +153,10 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\TabInfo.cs" />
+    <Compile Include="Utilities\ButtonEvents.cs" />
+    <Compile Include="Utilities\HelperFunctions.cs" />
+    <Compile Include="Utilities\LoadingLabel.cs" />
+    <Compile Include="Utilities\UI.cs" />
     <EmbeddedResource Include="ApiKeyForm.resx">
       <DependentUpon>ApiKeyForm.cs</DependentUpon>
     </EmbeddedResource>

@@ -31,44 +31,39 @@ namespace ADLManagerPro
 
         private string _appSecretKey;
         private static Label loadingLabel;
-        private static System.Windows.Forms.Timer loadingTimer;
-        private int loadingDotCount = 0;
         private string currentTab = null;
 
 
         private FileHandlers _fileHandlers = null;
+        private HelperFunctions _helperFunctions = null;
+        private ButtonEvents _buttonEvents = null;
+        private UI _uI = null;
 
 
         // Declare the API objects
         private TTAPI m_api = null;
-        
-     
         private tt_net_sdk.WorkerDispatcher m_disp = null;
         private Dispatcher m_dispatcher = null;
         public static IReadOnlyCollection<Account> m_accounts = null;
         public static bool m_isOrderBookDownloaded = false;
-        private string m_orderKey = "";
+        //private string m_orderKey = "";
         private object m_Lock = new object();
         private bool m_isDisposed = false;
 
 
+        // Lists
         public static List<Instrument> instruments = new List<Instrument>();
         public static List<Algo> algos = new List<Algo>();
         private List<int> selectedRowIndexList = new List<int>();
+        private List<string> _accounts = new List<string>();
 
-        //private static Dictionary<string, List<(string paramName, ParameterType)>> adlUserParametersWithType = new Dictionary<string, List<(string, ParameterType)>>();
-        //private static Dictionary<string, List<(string paramName, ParameterType)>> adlOrderProfileParametersWithType = new Dictionary<string, List<(string, ParameterType)>>();
-        //private static Dictionary<string, List<string>> adlUserParameters = new Dictionary<string, List<string>>();
-        //private static Dictionary<string, List<string>> adlOrderProfileParameters = new Dictionary<string, List<string>>();
+        //Dictionaries
         public static Dictionary<string, AdlParameters> algoNameWithParameters = new Dictionary<string, AdlParameters>();
-
-        public Dictionary<string,TabInfo> tabIndexWithTabInfo = new Dictionary<string,TabInfo>();
         public static Dictionary<string,Instrument> instrumentNameWithInstrument = new Dictionary<string,Instrument>();
-
         public static Dictionary<string, C_AlgoLookup_TradeSubscription> algoNameWithTradeSubscription = new Dictionary<string, C_AlgoLookup_TradeSubscription>();
         public static Dictionary<string,string> tabIndexWithSiteOrderKey = new Dictionary<string, string>();
-
-        private List<string> _accounts = new List<string>();
+        public Dictionary<string,TabInfo> tabIndexWithTabInfo = new Dictionary<string,TabInfo>();
+        private Dictionary<string, List<Template>> _algoNameWithTemplateList = new Dictionary<string, List<Template>>();
         public static List<string> dummy_algos = new List<string> { "MET_ScalarBias_2_0" };
         public static List<string> dummy_instruments = new List<string> { "BRN Sep25", "BRN Dec25"};
 
@@ -77,20 +72,24 @@ namespace ADLManagerPro
 
         public Form1(string appSecretKey)
         {
-            InitializeComponent();
-            mainGrid.Columns[columnOneName].ReadOnly = true;
-            //MainTab.Hide();
-            UpdateAdlDropdownSource();
             _appSecretKey = appSecretKey;
             _fileHandlers = new FileHandlers();
+            _helperFunctions = new HelperFunctions();
+            _buttonEvents = new ButtonEvents();
+            _uI = new UI();
+            InitializeComponent();
+           
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            InitialiseLoadingLabel();
+            InitialiseLoadingLabel("Loading");
+            mainGrid.Columns[columnOneName].ReadOnly = true;
+            UpdateAdlDropdownSource();
             mainGrid.DefaultCellStyle.SelectionBackColor = mainGrid.DefaultCellStyle.BackColor;
             mainGrid.DefaultCellStyle.SelectionForeColor = mainGrid.DefaultCellStyle.ForeColor;
             MainTab.SelectedIndexChanged += MainTab_SelectedIndexChanged;
+            _algoNameWithTemplateList = _fileHandlers.FetchJsonFromFile();
         }
 
         #region TT API
@@ -119,6 +118,7 @@ namespace ADLManagerPro
             if (ex == null)
             {
                 Console.WriteLine("TT.NET SDK INITIALIZED");
+                ChangeLoadingLabelText("TT.NET SDK INITIALIZED");
                 _fileHandlers.SaveApiKey("Key.txt", _appSecretKey);
 
                 // Authenticate your credentials
@@ -142,6 +142,8 @@ namespace ADLManagerPro
         public void m_api_TTAPIStatusUpdate(object sender, TTAPIStatusUpdateEventArgs e)
         {
             Console.WriteLine("TTAPIStatusUpdate: {0}", e);
+            string loadingLabelText = "TTAPIStatusUpdate: " + e.ToString();
+            ChangeLoadingLabelText(loadingLabelText);
             if (e.IsReady == false)
             {
                 // TODO: Do any connection lost processing here
@@ -199,38 +201,31 @@ namespace ADLManagerPro
 
         #region Loading
 
-        public void InitialiseLoadingLabel()
+        public void InitialiseLoadingLabel(string showThis)
         {
             loadingLabel = new Label()
             {
-                Text = "Loading",
+                Text = showThis,
                 AutoSize = true,
-                Font = new Font("Arial", 16, FontStyle.Bold),
-                Location = new Point((this.Width / 2) - 50, (this.Height / 2) - 10)
+                Font = new Font("Arial", 8, FontStyle.Bold),
+                Location = new Point(50, (this.Height / 2) - 10)
             };
             this.Controls.Add(loadingLabel);
             loadingLabel.BringToFront();
 
-            // Timer to animate loading...
-            loadingTimer = new System.Windows.Forms.Timer();
-            loadingTimer.Interval = 400; // milliseconds
-            loadingTimer.Tick += LoadingTimer_Tick;
-            loadingTimer.Start();
-
             // Hide the main tab (you can add more components here)
             MainTab.Hide();
         }
+        private void ChangeLoadingLabelText(string showThis)
+        {
+            loadingLabel.Text = showThis;
+        }
         private static void ShowMainTab()
         {
-            loadingTimer.Stop();
             loadingLabel.Hide();
             MainTab.Show();
         }
-        private void LoadingTimer_Tick(object sender, EventArgs e)
-        {
-            loadingDotCount = (loadingDotCount + 1) % 4;
-            loadingLabel.Text = "Loading" + new string('.', loadingDotCount);
-        }
+        
 
         #endregion
 
@@ -361,78 +356,83 @@ namespace ADLManagerPro
 
         private void mainGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == columnZeroName)
+            bool createParamGrid = _uI.CellValueChanged(sender, e,mainGrid,columnZeroName,columnOneName,columnTwoName,columnThreeName,columnFourName,selectedRowIndexList,MainTab);
+            if(createParamGrid)
             {
-                //e.RowIndex
                 var row = mainGrid.Rows[e.RowIndex];
-                bool isChecked = Convert.ToBoolean(row.Cells[columnZeroName].Value);
-
-                if (isChecked)
-                {
-                    if (!selectedRowIndexList.Contains(e.RowIndex))
-                        selectedRowIndexList.Add(e.RowIndex);
-                }
-                else
-                {
-                    selectedRowIndexList.Remove(e.RowIndex);
-                }
+                string serial = row.Cells[columnOneName].Value.ToString();
+                var feedValue = row.Cells[columnTwoName].Value?.ToString();
+                var adlName = row.Cells[columnThreeName].Value?.ToString();
+                _uI.CreateTabWithLabels(serial, feedValue, adlName,algoNameWithParameters,_accounts,instrumentNameWithInstrument,
+                    _algoNameWithTemplateList,tabIndexWithSiteOrderKey,currentTab,algoNameWithTradeSubscription,tabIndexWithTabInfo,MainTab);
             }
+            //if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == columnZeroName)
+            //{
+            //    //e.RowIndex
+            //    var row = mainGrid.Rows[e.RowIndex];
+            //    bool isChecked = Convert.ToBoolean(row.Cells[columnZeroName].Value);
 
-            if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == columnFourName) // "createTab"
-            {
-                var row = mainGrid.Rows[e.RowIndex];
-                var activateCell = row.Cells[columnFourName];
-                bool isChecked = Convert.ToBoolean(activateCell.Value);
-                int sno = Convert.ToInt32(mainGrid.Rows[e.RowIndex].Cells[columnOneName].Value);
+            //    if (isChecked)
+            //    {
+            //        if (!selectedRowIndexList.Contains(e.RowIndex))
+            //            selectedRowIndexList.Add(e.RowIndex);
+            //    }
+            //    else
+            //    {
+            //        selectedRowIndexList.Remove(e.RowIndex);
+            //    }
+            //}
 
-                // Only validate if user is trying to activate
-                if (isChecked)
-                {
-                    var feedValue = row.Cells[columnTwoName].Value?.ToString();
-                    var adlValue = row.Cells[columnThreeName].Value?.ToString();
+            //if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == columnFourName) // "createTab"
+            //{
+            //    var row = mainGrid.Rows[e.RowIndex];
+            //    var activateCell = row.Cells[columnFourName];
+            //    bool isChecked = Convert.ToBoolean(activateCell.Value);
+            //    int sno = Convert.ToInt32(mainGrid.Rows[e.RowIndex].Cells[columnOneName].Value);
 
-                    if (string.IsNullOrWhiteSpace(feedValue) || string.IsNullOrWhiteSpace(adlValue))
-                    {
-                        // Reset the checkbox (temporarily disable event to avoid loop)
-                        mainGrid.CellValueChanged -= mainGrid_CellValueChanged;
-                        row.Cells[columnFourName].Value = false;
-                        mainGrid.CellValueChanged += mainGrid_CellValueChanged;
-                        MessageBox.Show("Please select both Feed and ADL before activating.", "Validation Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
+            //    // Only validate if user is trying to activate
+            //    if (isChecked)
+            //    {
+            //        var feedValue = row.Cells[columnTwoName].Value?.ToString();
+            //        var adlValue = row.Cells[columnThreeName].Value?.ToString();
 
-                    string serial = row.Cells[columnOneName].Value.ToString();
-                    if (!TabExists(serial))
-                    {
-                        CreateTabWithLabels(serial, feedValue, adlValue);
+            //        if (string.IsNullOrWhiteSpace(feedValue) || string.IsNullOrWhiteSpace(adlValue))
+            //        {
+            //            // Reset the checkbox (temporarily disable event to avoid loop)
+            //            mainGrid.CellValueChanged -= mainGrid_CellValueChanged;
+            //            row.Cells[columnFourName].Value = false;
+            //            mainGrid.CellValueChanged += mainGrid_CellValueChanged;
+            //            MessageBox.Show("Please select both Feed and ADL before activating.", "Validation Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //            return;
+            //        }
 
-                        mainGrid.Rows[row.Index].Cells[columnTwoName].ReadOnly = true;
-                        mainGrid.Rows[row.Index].Cells[columnThreeName].ReadOnly = true;
-                    }
-                }
-                else
-                {
-                    //TODO: If tab has adl order delete it
-                    string serial = row.Cells[columnOneName].Value.ToString();
-                    for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
-                    {
-                        if (MainTab.TabPages[i].Text == serial)
-                        {
+            //        string serial = row.Cells[columnOneName].Value.ToString();
+            //        if (!TabExists(serial))
+            //        {
+            //            CreateTabWithLabels(serial, feedValue, adlValue);
+
+            //            mainGrid.Rows[row.Index].Cells[columnTwoName].ReadOnly = true;
+            //            mainGrid.Rows[row.Index].Cells[columnThreeName].ReadOnly = true;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        //TODO: If tab has adl order delete it
+            //        string serial = row.Cells[columnOneName].Value.ToString();
+            //        for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
+            //        {
+            //            if (MainTab.TabPages[i].Text == serial)
+            //            {
                            
-                            MainTab.TabPages.RemoveAt(i);
-                            break;
-                        }
-                    }
+            //                MainTab.TabPages.RemoveAt(i);
+            //                break;
+            //            }
+            //        }
 
-                    mainGrid.Rows[row.Index].Cells[columnTwoName].ReadOnly = false;
-                    mainGrid.Rows[row.Index].Cells[columnThreeName].ReadOnly = false;
-                }
-            }
-        }
-
-        private bool TabExists(string serial)
-        {
-            return MainTab.TabPages.Cast<TabPage>().Any(tab => tab.Text == serial);
+            //        mainGrid.Rows[row.Index].Cells[columnTwoName].ReadOnly = false;
+            //        mainGrid.Rows[row.Index].Cells[columnThreeName].ReadOnly = false;
+            //    }
+            //}
         }
 
         private void mainGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e)
@@ -611,12 +611,9 @@ namespace ADLManagerPro
                 }
             }
 
-           
-            
-
             newTab.Controls.Add(paramGrid);
 
-            #region Delete Button
+            
 
             //TODO: Add delete button and functionality: order remove
             Button btnDeleteAlgo = new Button
@@ -628,17 +625,13 @@ namespace ADLManagerPro
                 Height = 30
             };
 
-            btnDeleteAlgo.Click += (s, e) =>
-            {
-                OnDeletebtnClick(paramGrid, adlValue);
-            };
-            newTab.Controls.Add(btnDeleteAlgo);
+           
 
-            #endregion
+           
 
             //TODO: Template Save Button and name entering box
 
-            #region Start Button
+          
             // Add "Start Algo" button
             Button btnStartAlgo = new Button
             {
@@ -649,36 +642,23 @@ namespace ADLManagerPro
                 Height = 30
             };
 
-            
-
-            btnStartAlgo.Click += (s, e) =>
-            {
-                OnStartbtnClick(paramGrid, adlValue);
-            };
-            newTab.Controls.Add(btnStartAlgo);
-
-            #endregion
             ComboBox savedTemplates = new ComboBox
             {
                 Left = 450,
                 Top = 60,
-                Width = 200,
+                Width = 150,
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
             //TODO: add functionality and handle edge case
-            savedTemplates.Items.AddRange(new string[] { "Temp1", "Temp2", "Temp3" });
+            if(_algoNameWithTemplateList.ContainsKey(adlValue))
+                savedTemplates.Items.AddRange(_helperFunctions.GetTemplateNames(_algoNameWithTemplateList[adlValue]).ToArray());
 
             TextBox txtTemplateName = new TextBox
             {
                 Left = 450,
                 Top = savedTemplates.Bottom + 10,
-                Width = 200,
+                Width = 150,
                 //TODO : placeholder text
-            };
-
-            savedTemplates.SelectedIndexChanged += (s, e) =>
-            {
-                txtTemplateName.Text = savedTemplates.SelectedItem?.ToString();
             };
 
             Button btnSaveTemplate = new Button
@@ -689,6 +669,32 @@ namespace ADLManagerPro
                 Width = 120,
                 Height = 30
             };
+
+            #region Events for UI objects
+
+            btnStartAlgo.Click += (s, e) =>
+            {
+                
+                _buttonEvents.OnStartbtnClick(paramGrid, adlValue,_accounts,tabIndexWithSiteOrderKey,currentTab,
+                    algoNameWithParameters,algoNameWithTradeSubscription,instrumentNameWithInstrument);
+            };
+            newTab.Controls.Add(btnStartAlgo);
+
+
+            btnDeleteAlgo.Click += (s, e) =>
+            {
+                _buttonEvents.OnDeletebtnClick(paramGrid, adlValue,tabIndexWithSiteOrderKey,currentTab,algoNameWithTradeSubscription);
+            };
+
+            newTab.Controls.Add(btnDeleteAlgo);
+
+            savedTemplates.SelectedIndexChanged += (s, e) =>
+            {
+                txtTemplateName.Text = savedTemplates.SelectedItem?.ToString();
+            };
+
+
+            #endregion
 
             btnSaveTemplate.Click += (s, e) =>
             {
@@ -712,36 +718,38 @@ namespace ADLManagerPro
                 }
 
                 // Find or add algo section
-                var algoEntry = templatesData.FirstOrDefault(a => a.algo_name == selectedAlgo);
-                if (algoEntry == null)
-                {
-                    algoEntry = new AlgoTemplateRoot { algo_name = selectedAlgo, templates = new List<Template>() };
-                    templatesData.Add(algoEntry);
-                }
+                //var algoEntry = templatesData.FirstOrDefault(a => a.algo_name == selectedAlgo);
+                //if (algoEntry == null)
+                //{
+                //    algoEntry = new AlgoTemplateRoot { algo_name = selectedAlgo, templates = new List<Template>() };
+                //    templatesData.Add(algoEntry);
+                //}
 
-                var existingTemplate = algoEntry.templates.FirstOrDefault(t => t.template_name == templateName);
-                if (existingTemplate != null)
-                {
-                    var result = MessageBox.Show("Template exists. Do you want to override?", "Confirm", MessageBoxButtons.YesNo);
-                    if (result != DialogResult.Yes) return;
+                //var existingTemplate = algoEntry.templates.FirstOrDefault(t => t.template_name == templateName);
+                //if (existingTemplate != null)
+                //{
+                //    var result = MessageBox.Show("Template exists. Do you want to override?", "Confirm", MessageBoxButtons.YesNo);
+                //    if (result != DialogResult.Yes) return;
 
-                    // Update template
-                    existingTemplate.template_parameters = SaveParameterToTemplate(paramGrid); // Replace with your parameter fetch logic
-                }
-                else
-                {
-                    // Add new
-                    algoEntry.templates.Add(new Template
-                    {
-                        template_name = templateName,
-                        template_parameters = SaveParameterToTemplate(paramGrid) // Replace with real param fetch
-                    });
-                }
+                //    // Update template
+                //    existingTemplate.template_parameters = SaveParameterToTemplate(paramGrid); // Replace with your parameter fetch logic
+                //}
+                //else
+                //{
+                //    // Add new
+                //    algoEntry.templates.Add(new Template
+                //    {
+                //        template_name = templateName,
+                //        template_parameters = SaveParameterToTemplate(paramGrid) // Replace with real param fetch
+                //    });
+                //}
 
                 // Save JSON
                 File.WriteAllText(jsonFilePath, System.Text.Json.JsonSerializer.Serialize(templatesData, new JsonSerializerOptions { WriteIndented = true }));
                 MessageBox.Show("Template saved.");
             };
+
+            #endregion
 
 
             newTab.Controls.Add(savedTemplates);
@@ -758,173 +766,21 @@ namespace ADLManagerPro
         private Dictionary<string, Parameter> SaveParameterToTemplate(DataGridView paramGrid)
         {
             return new Dictionary<string, Parameter>
-    {
-        { "parameter1", new Parameter { type = "int", value = "10" } },
-        { "parameter2", new Parameter { type = "string", value = "ABC" } }
-    };
+            {
+                { "parameter1", new Parameter { type = "int", value = "10" } },
+                { "parameter2", new Parameter { type = "string", value = "ABC" } }
+            };
 
 
 
         }
 
-        private void OnStartbtnClick(DataGridView paramGrid, string AlgoName)
-        {
-            if(tabIndexWithSiteOrderKey.ContainsKey(currentTab))
-            {
-                MessageBox.Show("Order already placed!");
-                return;
-            }
+        
 
-            DialogResult result = MessageBox.Show(
-                "Are you sure you want to place this order?",
-                "Confirm sending order",
-                MessageBoxButtons.OKCancel,
-                MessageBoxIcon.Warning
-            );
-
-            if (result != DialogResult.OK)
-            {
-                // User clicked Cancel or closed the dialog — do nothing
-                return;
-            }
-            Dictionary<string, object> algo_userparams = new Dictionary<string, object>();
-            Dictionary<string, object> algo_orderprofileparams = new Dictionary<string, object>();
-            string instrumentName = null;
-            int accountNumber = -1;
-            foreach (DataGridViewRow row in paramGrid.Rows)
-            {
-                if (row.IsNewRow) continue; // skip any placeholder row
-
-                string paramName = row.Cells["ParamName"].Value?.ToString()?.Trim();
-                var valueCell = row.Cells["Value"];
-
-                if (valueCell != null)
-                {
-
-                    if (string.IsNullOrEmpty(paramName)) continue;
-
-                    object value = null;
-
-                    // Handle cell type: TextBox, ComboBox, CheckBox
-                    if (valueCell is DataGridViewTextBoxCell || valueCell is DataGridViewComboBoxCell)
-                    {
-                        value = valueCell.Value;
-                        if (value == null || (value is string && string.IsNullOrWhiteSpace((string)value)))
-                        {
-                            MessageBox.Show("Please enter all the parameters before starting the algo.");
-                            return;
-                        }
-                    }
-                    else if (valueCell is DataGridViewCheckBoxCell && valueCell.Value != null)
-                    {
-                        value = Convert.ToBoolean(valueCell.Value);
-                    }
-
-
-                    if (algoNameWithParameters.ContainsKey(AlgoName))
-                    {
-                        if (paramName == "Quoting Instrument Account")
-                        {
-                            accountNumber = _accounts.IndexOf(value.ToString());
-                            
-                        }
-                        if (paramName == "Quoting Instrument")
-                        {
-                            instrumentName = value.ToString();
-                            
-                        }
-
-                        if (algoNameWithParameters[AlgoName]._adlUserParameters.Contains(paramName))
-                        {
-                            algo_userparams[paramName] = value;
-                        }
-                        else if (algoNameWithParameters[AlgoName]._adlOrderProfileParameters.Contains(paramName))
-                        {
-                            algo_orderprofileparams[paramName] = value;
-                        }
-                        else
-                        {
-                            Console.WriteLine("ERROR: unknown param: " + paramName + " value: " + value);
-                        }
-                    }
-
-
-                }
-                else
-                {
-                    MessageBox.Show("Please enter all the parameters before starting the algo.");
-                    return;
-                }
-            }
-
-            if (accountNumber>=0 && 
-                algoNameWithTradeSubscription.ContainsKey(AlgoName) && 
-                instrumentNameWithInstrument.ContainsKey(instrumentName))
-            {
-                string orderKey = algoNameWithTradeSubscription[AlgoName].StartAlgo(accountNumber,
-                        instrumentNameWithInstrument[instrumentName],
-                        algo_userparams,
-                        algo_orderprofileparams);
-                if (tabIndexWithSiteOrderKey.ContainsKey(currentTab))
-                {
-                    tabIndexWithSiteOrderKey.Add(currentTab,orderKey); 
-                }
-                else
-                {
-                    tabIndexWithSiteOrderKey[currentTab] = orderKey;
-                }
-
-                    
-            }
-            else
-            {
-                MessageBox.Show("Please check the parameters.");
-                return;
-            }
-
-
-
-
-        }
-
-        private void OnDeletebtnClick(DataGridView paramGrid, string AlgoName)
-        {
-            if (!tabIndexWithSiteOrderKey.ContainsKey(currentTab) 
-                || (tabIndexWithSiteOrderKey.ContainsKey(currentTab) && tabIndexWithSiteOrderKey[currentTab]==string.Empty))
-            {
-                MessageBox.Show("Order already placed!");
-                return;
-            }
-            DialogResult result = MessageBox.Show(
-                "Are you sure you want to delete this order?",
-                "Confirm Deletion",
-                MessageBoxButtons.OKCancel,
-                MessageBoxIcon.Warning
-            );
-
-            if (result != DialogResult.OK)
-            {
-                // User clicked Cancel or closed the dialog — do nothing
-                return;
-            }
-            // TODO: Complete implementation
-
-            //foreach (DataGridViewRow row in mainGrid.Rows)
-            //{
-            //    var cellValue = row.Cells[columnOneName].Value;
-
-            //}
-            if (tabIndexWithSiteOrderKey.ContainsKey(currentTab) && algoNameWithTradeSubscription.ContainsKey(AlgoName))
-            {
-                string orderKey = tabIndexWithSiteOrderKey[currentTab];
-                
-                algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
-            }
-        }
+        
         private void add_btn_Click(object sender, EventArgs e)
         {
-            int serialNumber = mainGrid.Rows.Count + 1;
-            mainGrid.Rows.Add(false, serialNumber);
+            _buttonEvents.AddRowInMainGrid(mainGrid);
         }
 
         //TODO funtionality thik karo
@@ -1005,7 +861,6 @@ namespace ADLManagerPro
         }
 
 
-        #endregion
 
 
 

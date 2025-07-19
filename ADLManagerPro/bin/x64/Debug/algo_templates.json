@@ -1,17 +1,406 @@
 [
   {
-    "algo_name": "Algo1",
+    "algo_name": "MET_ScalarBias_2_0",
     "templates": [
       {
         "template_name": "Template_1",
         "template_parameters": {
-          "parameter1": {
-            "type": "int",
+          "Quoting Instrument": {
+            "type": "dropdown",
+            "value": "ZQ Sep25"
+          },
+          "Quoting Instrument Account": {
+            "type": "dropdown",
+            "value": "Tim"
+          },
+          "Pricing_Feed": {
+            "type": "float",
+            "value": "69.64"
+          },
+          "ADL Multiplier": {
+            "type": "float",
+            "value": "1"
+          },
+          "BPS for Quoting": {
+            "type": "float",
+            "value": "25"
+          },
+          "Quoting BID Qty": {
+            "type": "float",
             "value": "10"
           },
-          "parameter2": {
-            "type": "string",
-            "value": "ABC"
+          "Quoting ASK Qty": {
+            "type": "float",
+            "value": "10"
+          },
+          "Quote Anyway": {
+            "type": "boolean",
+            "value": "True"
+          },
+          "Multiplier": {
+            "type": "float",
+            "value": "0"
+          },
+          "Ticks Behind for Lean": {
+            "type": "float",
+            "value": "0"
+          },
+          "Collar Ratio": {
+            "type": "float",
+            "value": "20"
+          },
+          "Fast Mkt Inst": {
+            "type": "dropdown",
+            "value": "ZQ Sep25"
+          },
+          "Fast Mkt Inst Account": {
+            "type": "dropdown",
+            "value": "Tim"
+          },
+          "Size of Move [Ticks]": {
+            "type": "float",
+            "value": "25000"
+          },
+          "Time of Move [Sec]": {
+            "type": "float",
+            "value": "2.5"
+          },
+          "Hedge Instrument": {
+            "type": "dropdown",
+            "value": "ZQ Sep25"
+          },
+          "Hedge Instrument Account": {
+            "type": "dropdown",
+            "value": "Tim"
+          },
+          "Excel Delete": {
+            "type": "float",
+            "value": "1"
+          },
+          "Use Bias": {
+            "type": "boolean",
+            "value": "True"
+          },
+          "Bid [T] Ask [F] Bias": {
+            "type": "boolean",
+            "value": "True"
+          },
+          "Bias # Ticks": {
+            "type": "float",
+            "value": "110"
+          },
+          "Hedge Trigger [Ticks]": {
+            "type": "float",
+            "value": "0"
+          },
+          "Hedge Trigger Qty": {
+            "type": "float",
+            "value": "1"
+          },
+          "Hedge Ratio": {
+            "type": "float",
+            "value": "1"
+          },
+          "Use IOC Volume Rule?": {
+            "type": "boolean",
+            "value": "True"
+          },
+          "Use TP": {
+            "type": "boolean",
+            "value": "True"
+          },
+          "TP [Ticks]": {
+            "type": "float",
+            "value": "0"
+          },
+          "Hedge w Limit": {
+            "type": "boolean",
+            "value": "True"
+          },
+          "Hedge Chase [Ticks]": {
+            "type": "float",
+            "value": "2"
+          },
+          "Quoting Spread": {
+            "type": "float",
+            "value": "8"
+          },
+          "FV Smpl [0] Wtd [1] LBFV [2]": {
+            "type": "float",
+            "value": "0"
+          },
+          "Scalar": {
+            "type": "float",
+            "value": "1"
+          },
+          "Quote in BPS": {
+            "type": "boolean",
+            "value": "False"
+          },
+          "Pull After Partial": {
+            "type": "boolean",
+            "value": "True"
+          },
+          "Collar_T PxBands_F": {
+            "type": "boolean",
+            "value": "False"
+          },
+          "Upper Px Band": {
+            "type": "float",
+            "value": "2000000"
+          },
+          "Lower Px Band": {
+            "type": "float",
+            "value": "10"
+          },
+          "Messaging Throttle": {
+            "type": "boolean",
+            "value": "False"
+          },
+          "Msgs per SecCount": {
+            "type": "float",
+            "value": "50"
+          },
+          "Delay on Chg/Del ms": {
+            "type": "float",
+            "value": "100"
+          },
+          "Per Px Chg Limit [Ticks]": {
+            "type": "float",
+            "value": "5"
+          },
+          "Time Allowable Px Chg [Sec]": {
+            "type": "float",
+            "value": "5"
+          },
+          "Per Time Px Chg [Ticks]": {
+            "type": "float",
+            "value": "5"
+          },
+          "IOC Cover": {
+            "type": "float",
+            "value": "10"
+          },
+          "Use Safe Distance": {
+            "type": "boolean",
+            "value": "False"
+          },
+          "Safe Distance [Ticks]": {
+            "type": "float",
+            "value": "1000000"
+          },
+          "LR Refresh [ms]": {
+            "type": "float",
+            "value": "2500"
+          },
+          "Ignore Market State": {
+            "type": "boolean",
+            "value": "False"
+          },
+          "Ladder Display": {
+            "type": "int",
+            "value": "2"
+          }
+        }
+      },
+      {
+        "template_name": "Template_Dum",
+        "template_parameters": {
+          "Quoting Instrument": {
+            "type": "dropdown",
+            "value": "ZQ Sep25"
+          },
+          "Quoting Instrument Account": {
+            "type": "dropdown",
+            "value": "Tim2"
+          },
+          "Pricing_Feed": {
+            "type": "float",
+            "value": "1"
+          },
+          "ADL Multiplier": {
+            "type": "float",
+            "value": "1"
+          },
+          "BPS for Quoting": {
+            "type": "float",
+            "value": "1"
+          },
+          "Quoting BID Qty": {
+            "type": "float",
+            "value": "1"
+          },
+          "Quoting ASK Qty": {
+            "type": "float",
+            "value": "1"
+          },
+          "Quote Anyway": {
+            "type": "boolean",
+            "value": "True"
+          },
+          "Multiplier": {
+            "type": "float",
+            "value": "0"
+          },
+          "Ticks Behind for Lean": {
+            "type": "float",
+            "value": "0"
+          },
+          "Collar Ratio": {
+            "type": "float",
+            "value": "20"
+          },
+          "Fast Mkt Inst": {
+            "type": "dropdown",
+            "value": "ZQ Sep25"
+          },
+          "Fast Mkt Inst Account": {
+            "type": "dropdown",
+            "value": "Tim"
+          },
+          "Size of Move [Ticks]": {
+            "type": "float",
+            "value": "25000"
+          },
+          "Time of Move [Sec]": {
+            "type": "float",
+            "value": "2.5"
+          },
+          "Hedge Instrument": {
+            "type": "dropdown",
+            "value": "ZQ Sep25"
+          },
+          "Hedge Instrument Account": {
+            "type": "dropdown",
+            "value": "Tim"
+          },
+          "Excel Delete": {
+            "type": "float",
+            "value": "1"
+          },
+          "Use Bias": {
+            "type": "boolean",
+            "value": "True"
+          },
+          "Bid [T] Ask [F] Bias": {
+            "type": "boolean",
+            "value": "True"
+          },
+          "Bias # Ticks": {
+            "type": "float",
+            "value": "110"
+          },
+          "Hedge Trigger [Ticks]": {
+            "type": "float",
+            "value": "0"
+          },
+          "Hedge Trigger Qty": {
+            "type": "float",
+            "value": "1"
+          },
+          "Hedge Ratio": {
+            "type": "float",
+            "value": "1"
+          },
+          "Use IOC Volume Rule?": {
+            "type": "boolean",
+            "value": "True"
+          },
+          "Use TP": {
+            "type": "boolean",
+            "value": "True"
+          },
+          "TP [Ticks]": {
+            "type": "float",
+            "value": "0"
+          },
+          "Hedge w Limit": {
+            "type": "boolean",
+            "value": "True"
+          },
+          "Hedge Chase [Ticks]": {
+            "type": "float",
+            "value": "2"
+          },
+          "Quoting Spread": {
+            "type": "float",
+            "value": "8"
+          },
+          "FV Smpl [0] Wtd [1] LBFV [2]": {
+            "type": "float",
+            "value": "0"
+          },
+          "Scalar": {
+            "type": "float",
+            "value": "1"
+          },
+          "Quote in BPS": {
+            "type": "boolean",
+            "value": "False"
+          },
+          "Pull After Partial": {
+            "type": "boolean",
+            "value": "True"
+          },
+          "Collar_T PxBands_F": {
+            "type": "boolean",
+            "value": "False"
+          },
+          "Upper Px Band": {
+            "type": "float",
+            "value": "2000000"
+          },
+          "Lower Px Band": {
+            "type": "float",
+            "value": "10"
+          },
+          "Messaging Throttle": {
+            "type": "boolean",
+            "value": "False"
+          },
+          "Msgs per SecCount": {
+            "type": "float",
+            "value": "50"
+          },
+          "Delay on Chg/Del ms": {
+            "type": "float",
+            "value": "100"
+          },
+          "Per Px Chg Limit [Ticks]": {
+            "type": "float",
+            "value": "5"
+          },
+          "Time Allowable Px Chg [Sec]": {
+            "type": "float",
+            "value": "5"
+          },
+          "Per Time Px Chg [Ticks]": {
+            "type": "float",
+            "value": "5"
+          },
+          "IOC Cover": {
+            "type": "float",
+            "value": "10"
+          },
+          "Use Safe Distance": {
+            "type": "boolean",
+            "value": "False"
+          },
+          "Safe Distance [Ticks]": {
+            "type": "float",
+            "value": "1000000"
+          },
+          "LR Refresh [ms]": {
+            "type": "float",
+            "value": "2500"
+          },
+          "Ignore Market State": {
+            "type": "boolean",
+            "value": "False"
+          },
+          "Ladder Display": {
+            "type": "int",
+            "value": "2"
           }
         }
       }

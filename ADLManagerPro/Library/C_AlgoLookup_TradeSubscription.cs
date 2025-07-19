@@ -12,6 +12,7 @@ namespace ADLManagerPro
     public class C_AlgoLookup_TradeSubscription
     {
         private Algo m_algo = null;
+        //TODO : does this have any work, i feel it does
         private bool m_isDisposed = false;
         private object m_Lock = new object();
         private AlgoTradeSubscription m_algoTradeSubscription = null;
@@ -19,6 +20,7 @@ namespace ADLManagerPro
         private ManualResetEvent mre = new ManualResetEvent(false);
         private AlgoLookupSubscription m_algoLookupSubscription = null;
         private Dispatcher m_dispatcher = null;
+        //TODO: any work for this here
         private bool orderAdded = false;
         
         public C_AlgoLookup_TradeSubscription(Dispatcher dispatcher, string algoName) 

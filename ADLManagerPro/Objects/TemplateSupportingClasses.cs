@@ -3,24 +3,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ADLManagerPro
 {
     public class AlgoTemplateRoot
     {
-        public string algo_name { get; set; }
-        public List<Template> templates { get; set; }
+        [JsonProperty("algo_name")]
+        public string AlgoName { get; set; }
+
+        [JsonProperty("templates")]
+        public List<AlgoTemplate> Templates { get; set; }
     }
 
-    public class Template
+    public class AlgoTemplate
     {
-        public string template_name { get; set; }
-        public Dictionary<string, Parameter> template_parameters { get; set; }
+        [JsonProperty("template_name")]
+        public string TemplateName { get; set; }
+
+        [JsonProperty("template_parameters")]
+        public Dictionary<string, ParameterData> TemplateParameters { get; set; }
     }
+    public class ParameterData
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("value")]
+        public string Value { get; set; }
+    }
+    //public class Template
+    //{
+    //    public string template_name { get; set; }
+    //    public Dictionary<string, Parameter> template_parameters { get; set; }
+    //}
 
     public class Parameter
     {
         public string type { get; set; }
         public string value { get; set; }
     }
+
+    public class Template
+    {
+        public string TemplateName { get; set; }
+
+        public Dictionary<string, (string Type, string Value)> ParamNameWithTypeAndValue { get; set; }
+    }
+
 }
