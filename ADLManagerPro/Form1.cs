@@ -291,7 +291,7 @@ namespace ADLManagerPro
 
         private void mainGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            bool createParamGrid = _uI.CellValueChanged(sender, e,mainGrid,columnZeroName,columnOneName,columnTwoName,columnThreeName,columnFourName,selectedRowIndexList,MainTab);
+            bool createParamGrid = _uI.CellValueChanged(sender, e,mainGrid,columnZeroName,columnOneName,columnTwoName,columnThreeName,columnFourName,selectedRowIndexList,MainTab,tabIndexWithTabInfo);
             if(createParamGrid)
             {
                 var row = mainGrid.Rows[e.RowIndex];
@@ -318,17 +318,17 @@ namespace ADLManagerPro
 
 
         //TODO : add functionality
-        private Dictionary<string, Parameter> SaveParameterToTemplate(DataGridView paramGrid)
-        {
-            return new Dictionary<string, Parameter>
-            {
-                { "parameter1", new Parameter { type = "int", value = "10" } },
-                { "parameter2", new Parameter { type = "string", value = "ABC" } }
-            };
+        //private Dictionary<string, Parameter> SaveParameterToTemplate(DataGridView paramGrid)
+        //{
+        //    return new Dictionary<string, Parameter>
+        //    {
+        //        { "parameter1", new Parameter { type = "int", value = "10" } },
+        //        { "parameter2", new Parameter { type = "string", value = "ABC" } }
+        //    };
 
 
 
-        }
+        //}
 
 
         //TODO funtionality thik karo

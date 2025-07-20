@@ -4,15 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ADLManager;
 using tt_net_sdk;
 
 namespace ADLManagerPro
 {
     public class ButtonEvents
     {
+        private static FileHandlers _fileHandlers = null;
         public ButtonEvents()
         {
-
+            _fileHandlers = new FileHandlers();
         }
         public void AddRowInMainGrid(DataGridView mainGrid)
         {
@@ -233,5 +235,191 @@ namespace ADLManagerPro
                 algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
             }
         }
+
+
+
+        public void OnSaveOrUpdateTemplateBtnClick(object s, EventArgs e, TextBox txtTemplateName, string adlValue, Dictionary<string, List<Template>> _algoNameWithTemplateList,
+            DataGridView paramGrid, Dictionary<string, AdlParameters> algoNameWithParameters)
+        {
+            string templateName = txtTemplateName.Text.Trim();
+            if (string.IsNullOrWhiteSpace(templateName))
+            {
+                MessageBox.Show("Template name cannot be empty.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            string adlName = adlValue; // assuming this holds the currently selected algo name for this tab
+            if (!_algoNameWithTemplateList.ContainsKey(adlName))
+            {
+                MessageBox.Show("Algo not found in template dictionary.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            List<Template> templates = _algoNameWithTemplateList[adlName];
+            Template existingTemplate = templates.FirstOrDefault(t => t.TemplateName == templateName);
+
+            if (existingTemplate != null)
+            {
+                // Template exists, confirm update
+                DialogResult result = MessageBox.Show(
+                    $"Do you want to update the template '{templateName}'?",
+                    "Confirm Update",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (result == DialogResult.Yes)
+                {
+                    // Update values only, not param types
+                    foreach (DataGridViewRow row in paramGrid.Rows)
+                    {
+                        if (row.IsNewRow) continue;
+
+                        string paramName = row.Cells["ParamName"].Value?.ToString();
+                        string paramValue = row.Cells["Value"].Value?.ToString();
+                        
+
+                        if (!string.IsNullOrEmpty(paramName))
+                        {
+                            if (existingTemplate.ParamNameWithTypeAndValue.ContainsKey(paramName))
+                            {
+                                var old = existingTemplate.ParamNameWithTypeAndValue[paramName];
+                                existingTemplate.ParamNameWithTypeAndValue[paramName] = (old.Type, paramValue);
+                            }
+                        }
+                    }
+
+                    // Update dictionary
+                    _algoNameWithTemplateList.Remove(adlName);
+                    _algoNameWithTemplateList.Add(adlName, templates);
+
+                    // Save to file
+                    _fileHandlers.SaveTemplateDictionaryToFile(_algoNameWithTemplateList);
+
+                    MessageBox.Show("Template updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
+                return;
+            }
+
+
+
+
+            // Get selected ADL name
+            if (string.IsNullOrEmpty(adlName))
+            {
+                MessageBox.Show("Invalid ADL selection.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            // Get the parameter definitions for this ADL
+            if (algoNameWithParameters.ContainsKey(adlName))
+            {
+                //We have the adl name already, so we will add to the given json
+                AdlParameters adlParams = algoNameWithParameters[adlName];
+                Dictionary<string, ParameterType> paramTypes = adlParams.GetParamNameWithTypeAll();
+                // New Template
+                Template newTemplate = new Template
+                {
+                    TemplateName = templateName,
+                    ParamNameWithTypeAndValue = new Dictionary<string, (string Type, string Value)>()
+                };
+                // Iterate over paramGrid rows to populate parameters
+                foreach (DataGridViewRow row in paramGrid.Rows)
+                {
+                    if (row.IsNewRow) continue;
+
+                    string paramName = row.Cells["ParamName"].Value?.ToString();
+                    string paramValue = row.Cells["Value"].Value?.ToString();
+
+                    if (!string.IsNullOrEmpty(paramName) && paramTypes.ContainsKey(paramName))
+                    {
+                        newTemplate.ParamNameWithTypeAndValue[paramName] = (row.Cells["Value"].ValueType.Name, paramValue ?? "");
+                    }
+                }
+                // Add or update the template in dictionary
+                if (_algoNameWithTemplateList.ContainsKey(adlName))
+                {
+                    var existingList = _algoNameWithTemplateList[adlName];
+                    existingList.Add(newTemplate);
+                    _algoNameWithTemplateList.Remove(adlName);
+                    _algoNameWithTemplateList.Add(adlName, existingList);
+                }
+                _fileHandlers.SaveTemplateDictionaryToFile(_algoNameWithTemplateList);
+                MessageBox.Show("Template saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
+            }
+            else
+            {
+                // need to make a new json for this specific adl
+            }
+                
+
+
+            // New Template
+            
+
+            //// TODO: In future, fetch parameter types from algoNameWithParameters
+            //foreach (DataGridViewRow row in paramGrid.Rows)
+            //{
+            //    if (row.IsNewRow) continue;
+
+            //    string paramName = row.Cells["ParamName"].Value?.ToString();
+            //    string paramValue = row.Cells["ParamValue"].Value?.ToString();
+
+            //    if (!string.IsNullOrEmpty(paramName))
+            //    {
+            //        newTemplate.Parameters.Add(new TemplateParameter
+            //        {
+            //            ParamName = paramName,
+            //            ParamValue = paramValue,
+            //            ParamType = "string" // Placeholder; will be replaced in future using algoNameWithParameters
+            //        });
+            //    }
+            //}
+
+            //templates.Add(newTemplate);
+            //_algoNameWithTemplateList[adlName] = templates;
+
+            //SaveTemplateDictionaryToFile(_algoNameWithTemplateList);
+
+            MessageBox.Show("Template saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        }
+    
+        
+        public void SavedTemplatesIndexChanged(object s, EventArgs e,ComboBox savedTemplates, TextBox txtTemplateName, Dictionary<string, List<Template>> _algoNameWithTemplateList,
+            string adlValue, DataGridView paramGrid)
+        {
+            string selectedTemplateName = savedTemplates.SelectedItem?.ToString();
+            txtTemplateName.Text = selectedTemplateName;
+
+            if (string.IsNullOrEmpty(selectedTemplateName) || string.IsNullOrEmpty(adlValue))
+                return;
+
+            // Step 1: Fetch the correct Template object
+            if (!_algoNameWithTemplateList.TryGetValue(adlValue, out List<Template> templatesForAlgo))
+                return;
+
+            var selectedTemplate = templatesForAlgo.FirstOrDefault(t => t.TemplateName == selectedTemplateName);
+            if (selectedTemplate == null)
+                return;
+
+            // Step 2: Populate paramGrid with values from the template
+            foreach (DataGridViewRow row in paramGrid.Rows)
+            {
+                if (row.IsNewRow) continue;
+
+                string paramName = row.Cells["ParamName"].Value?.ToString();
+
+                if (!string.IsNullOrEmpty(paramName) &&
+                    selectedTemplate.ParamNameWithTypeAndValue.TryGetValue(paramName, out var paramData))
+                {
+                    row.Cells["Value"].Value = paramData.Value;  // Only set Value column
+                }
+            }
+        }
+    
+    
     }
 }

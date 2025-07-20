@@ -64,30 +64,36 @@ namespace ADLManagerPro
         }
 
 
-
-
-        // Save CSV
-        public void SaveCsv(string path, List<string[]> rows)
+        public void SaveTemplateDictionaryToFile(Dictionary<string, List<Template>> algoWithTemplate)
         {
-            using (StreamWriter writer = new StreamWriter(path))
+            var algoTemplateRoots = new List<AlgoTemplateRoot>();
+
+            foreach (var kvp in algoWithTemplate)
             {
-                foreach (var row in rows)
+                var algoName = kvp.Key;
+                var templates = kvp.Value;
+
+                var algoTemplateRoot = new AlgoTemplateRoot
                 {
-                    writer.WriteLine(string.Join(",", row));
-                }
-            }
-        }
+                    AlgoName = algoName,
+                    Templates = templates.Select(t => new AlgoTemplate
+                    {
+                        TemplateName = t.TemplateName,
+                        TemplateParameters = t.ParamNameWithTypeAndValue.ToDictionary(
+                            param => param.Key,
+                            param => new ParameterData
+                            {
+                                Type = param.Value.Type,
+                                Value = param.Value.Value
+                            })
+                    }).ToList()
+                };
 
-        // Read CSV
-        public List<string[]> ReadCsv(string path)
-        {
-            var result = new List<string[]>();
-            if (File.Exists(path))
-            {
-                var lines = File.ReadAllLines(path);
-                result = lines.Select(line => line.Split(',')).ToList();
+                algoTemplateRoots.Add(algoTemplateRoot);
             }
-            return result;
+
+            string jsonContent = JsonConvert.SerializeObject(algoTemplateRoots, Formatting.Indented);
+            File.WriteAllText(jsonPath, jsonContent);
         }
 
         // Load Config JSON

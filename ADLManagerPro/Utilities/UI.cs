@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using ADLManager;
 using tt_net_sdk;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace ADLManagerPro
 {
@@ -22,7 +23,7 @@ namespace ADLManagerPro
 
         public bool CellValueChanged(object sender, DataGridViewCellEventArgs e, DataGridView mainGrid,
             string columnZeroName,string columnOneName,string columnTwoName, string columnThreeName,string columnFourName, 
-            List<int> selectedRowIndexList,TabControl MainTab)
+            List<int> selectedRowIndexList,TabControl MainTab, Dictionary<string, TabInfo> tabIndexWithTabInfo)
         {
             if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == columnZeroName)
             {
@@ -82,6 +83,13 @@ namespace ADLManagerPro
                         {
 
                             MainTab.TabPages.RemoveAt(i);
+
+                            if(tabIndexWithTabInfo.Remove(i.ToString()))
+                            {
+
+                                tabIndexWithTabInfo.Remove(i.ToString());
+                            }
+                            
                             break;
                         }
                     }
@@ -152,8 +160,6 @@ namespace ADLManagerPro
                 RowHeadersVisible = false,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
             };
-
-
 
 
             paramGrid.DataError += (s, e) =>
@@ -261,8 +267,6 @@ namespace ADLManagerPro
 
             newTab.Controls.Add(paramGrid);
 
-
-
             //TODO: Add delete button and functionality: order remove
             Button btnDeleteAlgo = new Button
             {
@@ -272,9 +276,6 @@ namespace ADLManagerPro
                 Width = 120,
                 Height = 30
             };
-
-
-
 
 
             //TODO: Template Save Button and name entering box
@@ -338,66 +339,15 @@ namespace ADLManagerPro
 
             savedTemplates.SelectedIndexChanged += (s, e) =>
             {
-                txtTemplateName.Text = savedTemplates.SelectedItem?.ToString();
+                _buttonEvents.SavedTemplatesIndexChanged(s, e, savedTemplates, txtTemplateName, _algoNameWithTemplateList, adlValue, paramGrid);
             };
-
-
-            #endregion
 
             btnSaveTemplate.Click += (s, e) =>
             {
-                string selectedAlgo = adlValue;
-                string templateName = txtTemplateName.Text.Trim();
-
-                if (string.IsNullOrEmpty(selectedAlgo) || string.IsNullOrEmpty(templateName))
-                {
-                    MessageBox.Show("Please select an algo and enter template name.");
-                    return;
-                }
-
-                string jsonFilePath = "algo_templates.json";
-                List<AlgoTemplateRoot> templatesData = new List<AlgoTemplateRoot>();
-
-                // Load existing file
-                if (File.Exists(jsonFilePath))
-                {
-                    string existing = File.ReadAllText(jsonFilePath);
-                    templatesData = System.Text.Json.JsonSerializer.Deserialize<List<AlgoTemplateRoot>>(existing) ?? new List<AlgoTemplateRoot>();
-                }
-
-                // Find or add algo section
-                //var algoEntry = templatesData.FirstOrDefault(a => a.algo_name == selectedAlgo);
-                //if (algoEntry == null)
-                //{
-                //    algoEntry = new AlgoTemplateRoot { algo_name = selectedAlgo, templates = new List<Template>() };
-                //    templatesData.Add(algoEntry);
-                //}
-
-                //var existingTemplate = algoEntry.templates.FirstOrDefault(t => t.template_name == templateName);
-                //if (existingTemplate != null)
-                //{
-                //    var result = MessageBox.Show("Template exists. Do you want to override?", "Confirm", MessageBoxButtons.YesNo);
-                //    if (result != DialogResult.Yes) return;
-
-                //    // Update template
-                //    existingTemplate.template_parameters = SaveParameterToTemplate(paramGrid); // Replace with your parameter fetch logic
-                //}
-                //else
-                //{
-                //    // Add new
-                //    algoEntry.templates.Add(new Template
-                //    {
-                //        template_name = templateName,
-                //        template_parameters = SaveParameterToTemplate(paramGrid) // Replace with real param fetch
-                //    });
-                //}
-
-                // Save JSON
-                File.WriteAllText(jsonFilePath, System.Text.Json.JsonSerializer.Serialize(templatesData, new JsonSerializerOptions { WriteIndented = true }));
-                MessageBox.Show("Template saved.");
+                _buttonEvents.OnSaveOrUpdateTemplateBtnClick(s, e,txtTemplateName,adlValue,_algoNameWithTemplateList,paramGrid,algoNameWithParameters);
             };
 
-
+            #endregion
 
 
             newTab.Controls.Add(savedTemplates);

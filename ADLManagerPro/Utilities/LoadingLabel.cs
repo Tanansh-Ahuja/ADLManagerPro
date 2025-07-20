@@ -20,10 +20,10 @@ namespace ADLManagerPro
         {
             loadingLabel = new Label()
             {
-                Text = showThis,
+                Text = "Status: " + showThis + "...",
                 AutoSize = true,
                 Font = new Font("Arial", 8, FontStyle.Bold),
-                Location = new Point(50, (form1.Height / 2) - 10)
+                Location = new Point(5, 5)
             };
             form1.Controls.Add(loadingLabel);
             loadingLabel.BringToFront();
@@ -34,7 +34,7 @@ namespace ADLManagerPro
         }
         public void ChangeLoadingLabelText(string showThis,Label loadingLabel)
         {
-            loadingLabel.Text = showThis;
+            loadingLabel.Text = "Status: " + showThis + "...";
         }
         
     }

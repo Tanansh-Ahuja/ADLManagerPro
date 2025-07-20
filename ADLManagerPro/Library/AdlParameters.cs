@@ -25,5 +25,24 @@ namespace ADLManagerPro
             _adlUserParametersWithType = adlUserParametersWithType;
 
         }
+
+        public Dictionary<string, ParameterType> GetParamNameWithTypeAll()
+        {
+            var paramDict = new Dictionary<string, ParameterType>();
+
+            foreach (var (paramName, paramType) in _adlUserParametersWithType)
+            {
+                if (!paramDict.ContainsKey(paramName))
+                    paramDict[paramName] = paramType;
+            }
+
+            foreach (var (paramName, paramType) in _adlOrderProfileParametersWithType)
+            {
+                if (!paramDict.ContainsKey(paramName))
+                    paramDict[paramName] = paramType;
+            }
+
+            return paramDict;
+        }
     }
 }

@@ -32,17 +32,7 @@ namespace ADLManagerPro
         [JsonProperty("value")]
         public string Value { get; set; }
     }
-    //public class Template
-    //{
-    //    public string template_name { get; set; }
-    //    public Dictionary<string, Parameter> template_parameters { get; set; }
-    //}
-
-    public class Parameter
-    {
-        public string type { get; set; }
-        public string value { get; set; }
-    }
+    
 
     public class Template
     {
