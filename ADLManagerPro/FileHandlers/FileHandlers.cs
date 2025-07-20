@@ -12,6 +12,8 @@ namespace ADLManagerPro
     public class FileHandlers
     {
         string jsonPath = "algo_templates.json";
+        string csvPath = "InstrumentsToBeFetched.csv";
+        string txtPath = "ADLsToBeFetched.txt";
         Dictionary<string, List<Template>> algoWithTemplate = new Dictionary<string, List<Template>>();
 
         public void SaveApiKey(string path, string key)
@@ -94,6 +96,55 @@ namespace ADLManagerPro
 
             string jsonContent = JsonConvert.SerializeObject(algoTemplateRoots, Formatting.Indented);
             File.WriteAllText(jsonPath, jsonContent);
+        }
+
+        public List<string> GetInstrumentAliasList()
+        {
+            var result = new List<string>();
+
+            using (var reader = new StreamReader(csvPath))
+            {
+                int lineNumber = 0;
+
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    lineNumber++;
+
+                    // Skip header
+                    if (lineNumber == 1)
+                        continue;
+
+                    var columns = line.Split(',');
+
+                    // Ensure there are at least 4 columns
+                    if (columns.Length >= 4)
+                    {
+                        result.Add(columns[3]); // 0-based index
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public List<string> GetADLNameList()
+        {
+            var result = new List<string>();
+
+            using (var reader = new StreamReader(txtPath))
+            {
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        result.Add(line.Trim());
+                    }
+                }
+            }
+
+            return result;
         }
 
         // Load Config JSON

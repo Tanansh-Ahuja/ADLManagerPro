@@ -64,8 +64,8 @@ namespace ADLManagerPro
         public static Dictionary<string,string> tabIndexWithSiteOrderKey = new Dictionary<string, string>();
         public Dictionary<string,TabInfo> tabIndexWithTabInfo = new Dictionary<string,TabInfo>();
         private Dictionary<string, List<Template>> _algoNameWithTemplateList = new Dictionary<string, List<Template>>();
-        public static List<string> dummy_algos = new List<string> { "MET_ScalarBias_2_0" };
-        public static List<string> dummy_instruments = new List<string> { "BRN Sep25", "BRN Dec25"};
+        public static List<string> dummy_algos = null;
+        public static List<string> dummy_instruments = null;
 
         #endregion
 
@@ -84,6 +84,8 @@ namespace ADLManagerPro
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            dummy_algos = _fileHandlers.GetADLNameList();
+            dummy_instruments= _fileHandlers.GetInstrumentAliasList();
             loadingLabel = _loadingLabel.InitialiseLoadingLabel("Loading",loadingLabel,this,MainTab);
             mainGrid.Columns[columnOneName].ReadOnly = true;
             UpdateAdlDropdownSource();

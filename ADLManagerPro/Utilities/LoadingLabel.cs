@@ -22,7 +22,7 @@ namespace ADLManagerPro
             {
                 Text = "Status: " + showThis + "...",
                 AutoSize = true,
-                Font = new Font("Arial", 8, FontStyle.Bold),
+                Font = new Font("Arial", 11, FontStyle.Bold),
                 Location = new Point(5, 5)
             };
             form1.Controls.Add(loadingLabel);

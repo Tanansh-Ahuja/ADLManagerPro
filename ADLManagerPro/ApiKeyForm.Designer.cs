@@ -45,13 +45,13 @@ namespace ADLManagerPro
             this.txtKey.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.txtKey.Location = new System.Drawing.Point(194, 12);
             this.txtKey.Name = "txtKey";
-            this.txtKey.Size = new System.Drawing.Size(1174, 34);
+            this.txtKey.Size = new System.Drawing.Size(857, 34);
             this.txtKey.TabIndex = 0;
             // 
             // SubmitButton
             // 
             this.SubmitButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SubmitButton.Location = new System.Drawing.Point(559, 93);
+            this.SubmitButton.Location = new System.Drawing.Point(477, 93);
             this.SubmitButton.Name = "SubmitButton";
             this.SubmitButton.Size = new System.Drawing.Size(98, 30);
             this.SubmitButton.TabIndex = 1;
@@ -96,13 +96,13 @@ namespace ADLManagerPro
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1406, 135);
+            this.ClientSize = new System.Drawing.Size(1081, 135);
             this.Controls.Add(this.EnvComboBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtKey);
             this.Controls.Add(this.SubmitButton);
             this.Controls.Add(this.lblPrompt);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ApiKeyForm";

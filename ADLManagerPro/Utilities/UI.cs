@@ -355,7 +355,15 @@ namespace ADLManagerPro
             newTab.Controls.Add(txtTemplateName);
             newTab.Controls.Add(btnSaveTemplate);
             TabInfo tabInfo = new TabInfo(paramGrid, adlValue, feedValue);
-            tabIndexWithTabInfo.Add(serial, tabInfo);
+            if(tabIndexWithTabInfo.ContainsKey(serial))
+            {
+                tabIndexWithTabInfo[serial] = tabInfo;
+            }
+            else
+            {
+
+                tabIndexWithTabInfo.Add(serial, tabInfo);
+            }
 
             // Add tab to TabControl
             MainTab.TabPages.Add(newTab);
