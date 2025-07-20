@@ -317,19 +317,7 @@ namespace ADLManagerPro
         }
 
 
-        //TODO : add functionality
-        //private Dictionary<string, Parameter> SaveParameterToTemplate(DataGridView paramGrid)
-        //{
-        //    return new Dictionary<string, Parameter>
-        //    {
-        //        { "parameter1", new Parameter { type = "int", value = "10" } },
-        //        { "parameter2", new Parameter { type = "string", value = "ABC" } }
-        //    };
-
-
-
-        //}
-
+    
 
         //TODO funtionality thik karo
         private void mainGrid_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)

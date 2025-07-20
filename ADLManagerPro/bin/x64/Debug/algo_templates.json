@@ -982,6 +982,585 @@
             "value": "2500"
           }
         }
+      },
+      {
+        "template_name": "Template_Dum_5",
+        "template_parameters": {
+          "Quoting Instrument": {
+            "type": "Object",
+            "value": "ZQ Sep25"
+          },
+          "Quoting Instrument Account": {
+            "type": "Object",
+            "value": "Tim2"
+          },
+          "Pricing_Feed": {
+            "type": "Object",
+            "value": "2"
+          },
+          "ADL Multiplier": {
+            "type": "Object",
+            "value": "1"
+          },
+          "BPS for Quoting": {
+            "type": "Object",
+            "value": "2"
+          },
+          "Quoting BID Qty": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Quoting ASK Qty": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Quote Anyway": {
+            "type": "Object",
+            "value": "False"
+          },
+          "Multiplier": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Ticks Behind for Lean": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Collar Ratio": {
+            "type": "Object",
+            "value": "20000"
+          },
+          "Fast Mkt Inst": {
+            "type": "Object",
+            "value": "ZQ Sep25"
+          },
+          "Fast Mkt Inst Account": {
+            "type": "Object",
+            "value": "Tim"
+          },
+          "Size of Move [Ticks]": {
+            "type": "Object",
+            "value": "25000"
+          },
+          "Time of Move [Sec]": {
+            "type": "Object",
+            "value": "2.5"
+          },
+          "Hedge Instrument": {
+            "type": "Object",
+            "value": "ZQ Sep25"
+          },
+          "Hedge Instrument Account": {
+            "type": "Object",
+            "value": "Tim"
+          },
+          "Excel Delete": {
+            "type": "Object",
+            "value": "1"
+          },
+          "Use Bias": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Bid [T] Ask [F] Bias": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Bias # Ticks": {
+            "type": "Object",
+            "value": "110"
+          },
+          "Hedge Trigger [Ticks]": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Hedge Trigger Qty": {
+            "type": "Object",
+            "value": "1"
+          },
+          "Hedge Ratio": {
+            "type": "Object",
+            "value": "1"
+          },
+          "Use IOC Volume Rule?": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Use TP": {
+            "type": "Object",
+            "value": "True"
+          },
+          "TP [Ticks]": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Hedge w Limit": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Hedge Chase [Ticks]": {
+            "type": "Object",
+            "value": "2"
+          },
+          "Quoting Spread": {
+            "type": "Object",
+            "value": "8"
+          },
+          "FV Smpl [0] Wtd [1] LBFV [2]": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Scalar": {
+            "type": "Object",
+            "value": "1"
+          },
+          "Quote in BPS": {
+            "type": "Object",
+            "value": "False"
+          },
+          "Pull After Partial": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Collar_T PxBands_F": {
+            "type": "Object",
+            "value": "False"
+          },
+          "Upper Px Band": {
+            "type": "Object",
+            "value": "2000000"
+          },
+          "Lower Px Band": {
+            "type": "Object",
+            "value": "10"
+          },
+          "Messaging Throttle": {
+            "type": "Object",
+            "value": "False"
+          },
+          "Msgs per SecCount": {
+            "type": "Object",
+            "value": "50"
+          },
+          "Delay on Chg/Del ms": {
+            "type": "Object",
+            "value": "100"
+          },
+          "Per Px Chg Limit [Ticks]": {
+            "type": "Object",
+            "value": "5"
+          },
+          "Time Allowable Px Chg [Sec]": {
+            "type": "Object",
+            "value": "5"
+          },
+          "Per Time Px Chg [Ticks]": {
+            "type": "Object",
+            "value": "5"
+          },
+          "IOC Cover": {
+            "type": "Object",
+            "value": "10"
+          },
+          "Use Safe Distance": {
+            "type": "Object",
+            "value": "False"
+          },
+          "Safe Distance [Ticks]": {
+            "type": "Object",
+            "value": "1000000"
+          },
+          "LR Refresh [ms]": {
+            "type": "Object",
+            "value": "2500"
+          }
+        }
+      },
+      {
+        "template_name": "Template_Dum_6",
+        "template_parameters": {
+          "Quoting Instrument": {
+            "type": "Object",
+            "value": "ZQ Sep25"
+          },
+          "Quoting Instrument Account": {
+            "type": "Object",
+            "value": "Tim2"
+          },
+          "Pricing_Feed": {
+            "type": "Object",
+            "value": "2"
+          },
+          "ADL Multiplier": {
+            "type": "Object",
+            "value": "1"
+          },
+          "BPS for Quoting": {
+            "type": "Object",
+            "value": "2"
+          },
+          "Quoting BID Qty": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Quoting ASK Qty": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Quote Anyway": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Multiplier": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Ticks Behind for Lean": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Collar Ratio": {
+            "type": "Object",
+            "value": "20000"
+          },
+          "Fast Mkt Inst": {
+            "type": "Object",
+            "value": "ZQ Sep25"
+          },
+          "Fast Mkt Inst Account": {
+            "type": "Object",
+            "value": "Tim"
+          },
+          "Size of Move [Ticks]": {
+            "type": "Object",
+            "value": "25000"
+          },
+          "Time of Move [Sec]": {
+            "type": "Object",
+            "value": "2.5"
+          },
+          "Hedge Instrument": {
+            "type": "Object",
+            "value": "ZQ Sep25"
+          },
+          "Hedge Instrument Account": {
+            "type": "Object",
+            "value": "Tim"
+          },
+          "Excel Delete": {
+            "type": "Object",
+            "value": "1"
+          },
+          "Use Bias": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Bid [T] Ask [F] Bias": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Bias # Ticks": {
+            "type": "Object",
+            "value": "110"
+          },
+          "Hedge Trigger [Ticks]": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Hedge Trigger Qty": {
+            "type": "Object",
+            "value": "1"
+          },
+          "Hedge Ratio": {
+            "type": "Object",
+            "value": "1"
+          },
+          "Use IOC Volume Rule?": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Use TP": {
+            "type": "Object",
+            "value": "True"
+          },
+          "TP [Ticks]": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Hedge w Limit": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Hedge Chase [Ticks]": {
+            "type": "Object",
+            "value": "2"
+          },
+          "Quoting Spread": {
+            "type": "Object",
+            "value": "8"
+          },
+          "FV Smpl [0] Wtd [1] LBFV [2]": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Scalar": {
+            "type": "Object",
+            "value": "1"
+          },
+          "Quote in BPS": {
+            "type": "Object",
+            "value": "False"
+          },
+          "Pull After Partial": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Collar_T PxBands_F": {
+            "type": "Object",
+            "value": "False"
+          },
+          "Upper Px Band": {
+            "type": "Object",
+            "value": "2000000"
+          },
+          "Lower Px Band": {
+            "type": "Object",
+            "value": "10"
+          },
+          "Messaging Throttle": {
+            "type": "Object",
+            "value": "False"
+          },
+          "Msgs per SecCount": {
+            "type": "Object",
+            "value": "50"
+          },
+          "Delay on Chg/Del ms": {
+            "type": "Object",
+            "value": "100"
+          },
+          "Per Px Chg Limit [Ticks]": {
+            "type": "Object",
+            "value": "5"
+          },
+          "Time Allowable Px Chg [Sec]": {
+            "type": "Object",
+            "value": "5"
+          },
+          "Per Time Px Chg [Ticks]": {
+            "type": "Object",
+            "value": "5"
+          },
+          "IOC Cover": {
+            "type": "Object",
+            "value": "10"
+          },
+          "Use Safe Distance": {
+            "type": "Object",
+            "value": "False"
+          },
+          "Safe Distance [Ticks]": {
+            "type": "Object",
+            "value": "1000000"
+          },
+          "LR Refresh [ms]": {
+            "type": "Object",
+            "value": "2500"
+          }
+        }
+      },
+      {
+        "template_name": "Template_Dum_7",
+        "template_parameters": {
+          "Quoting Instrument": {
+            "type": "Object",
+            "value": "ZQ Sep25"
+          },
+          "Quoting Instrument Account": {
+            "type": "Object",
+            "value": "Tim2"
+          },
+          "Pricing_Feed": {
+            "type": "Object",
+            "value": "2"
+          },
+          "ADL Multiplier": {
+            "type": "Object",
+            "value": "1"
+          },
+          "BPS for Quoting": {
+            "type": "Object",
+            "value": "2"
+          },
+          "Quoting BID Qty": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Quoting ASK Qty": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Quote Anyway": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Multiplier": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Ticks Behind for Lean": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Collar Ratio": {
+            "type": "Object",
+            "value": "20000"
+          },
+          "Fast Mkt Inst": {
+            "type": "Object",
+            "value": "ZQ Sep25"
+          },
+          "Fast Mkt Inst Account": {
+            "type": "Object",
+            "value": "Tim"
+          },
+          "Size of Move [Ticks]": {
+            "type": "Object",
+            "value": "25000"
+          },
+          "Time of Move [Sec]": {
+            "type": "Object",
+            "value": "2.56"
+          },
+          "Hedge Instrument": {
+            "type": "Object",
+            "value": "ZQ Sep25"
+          },
+          "Hedge Instrument Account": {
+            "type": "Object",
+            "value": "Tim"
+          },
+          "Excel Delete": {
+            "type": "Object",
+            "value": "1"
+          },
+          "Use Bias": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Bid [T] Ask [F] Bias": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Bias # Ticks": {
+            "type": "Object",
+            "value": "110"
+          },
+          "Hedge Trigger [Ticks]": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Hedge Trigger Qty": {
+            "type": "Object",
+            "value": "1"
+          },
+          "Hedge Ratio": {
+            "type": "Object",
+            "value": "1"
+          },
+          "Use IOC Volume Rule?": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Use TP": {
+            "type": "Object",
+            "value": "True"
+          },
+          "TP [Ticks]": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Hedge w Limit": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Hedge Chase [Ticks]": {
+            "type": "Object",
+            "value": "2"
+          },
+          "Quoting Spread": {
+            "type": "Object",
+            "value": "8"
+          },
+          "FV Smpl [0] Wtd [1] LBFV [2]": {
+            "type": "Object",
+            "value": "0"
+          },
+          "Scalar": {
+            "type": "Object",
+            "value": "1"
+          },
+          "Quote in BPS": {
+            "type": "Object",
+            "value": "False"
+          },
+          "Pull After Partial": {
+            "type": "Object",
+            "value": "True"
+          },
+          "Collar_T PxBands_F": {
+            "type": "Object",
+            "value": "False"
+          },
+          "Upper Px Band": {
+            "type": "Object",
+            "value": "2000000"
+          },
+          "Lower Px Band": {
+            "type": "Object",
+            "value": "10"
+          },
+          "Messaging Throttle": {
+            "type": "Object",
+            "value": "False"
+          },
+          "Msgs per SecCount": {
+            "type": "Object",
+            "value": "50"
+          },
+          "Delay on Chg/Del ms": {
+            "type": "Object",
+            "value": "100"
+          },
+          "Per Px Chg Limit [Ticks]": {
+            "type": "Object",
+            "value": "5"
+          },
+          "Time Allowable Px Chg [Sec]": {
+            "type": "Object",
+            "value": "5"
+          },
+          "Per Time Px Chg [Ticks]": {
+            "type": "Object",
+            "value": "5"
+          },
+          "IOC Cover": {
+            "type": "Object",
+            "value": "10"
+          },
+          "Use Safe Distance": {
+            "type": "Object",
+            "value": "False"
+          },
+          "Safe Distance [Ticks]": {
+            "type": "Object",
+            "value": "1000000"
+          },
+          "LR Refresh [ms]": {
+            "type": "Object",
+            "value": "2500"
+          }
+        }
       }
     ]
   }

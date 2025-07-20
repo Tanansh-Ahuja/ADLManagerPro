@@ -12,9 +12,11 @@ namespace ADLManagerPro
     public class ButtonEvents
     {
         private static FileHandlers _fileHandlers = null;
+        private static HelperFunctions _helperFunctions = null;
         public ButtonEvents()
         {
             _fileHandlers = new FileHandlers();
+            _helperFunctions = new HelperFunctions();
         }
         public void AddRowInMainGrid(DataGridView mainGrid)
         {
@@ -239,7 +241,7 @@ namespace ADLManagerPro
 
 
         public void OnSaveOrUpdateTemplateBtnClick(object s, EventArgs e, TextBox txtTemplateName, string adlValue, Dictionary<string, List<Template>> _algoNameWithTemplateList,
-            DataGridView paramGrid, Dictionary<string, AdlParameters> algoNameWithParameters)
+            DataGridView paramGrid, Dictionary<string, AdlParameters> algoNameWithParameters, ComboBox savedTemplates,TabControl MainTab)
         {
             string templateName = txtTemplateName.Text.Trim();
             if (string.IsNullOrWhiteSpace(templateName))
@@ -249,15 +251,19 @@ namespace ADLManagerPro
             }
 
             string adlName = adlValue; // assuming this holds the currently selected algo name for this tab
-            if (!_algoNameWithTemplateList.ContainsKey(adlName))
+            // Get selected ADL name
+            if (string.IsNullOrEmpty(adlName))
             {
-                MessageBox.Show("Algo not found in template dictionary.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Invalid ADL selection.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            
 
             List<Template> templates = _algoNameWithTemplateList[adlName];
             Template existingTemplate = templates.FirstOrDefault(t => t.TemplateName == templateName);
 
+
+            #region Updating a template
             if (existingTemplate != null)
             {
                 // Template exists, confirm update
@@ -292,7 +298,7 @@ namespace ADLManagerPro
                     // Update dictionary
                     _algoNameWithTemplateList.Remove(adlName);
                     _algoNameWithTemplateList.Add(adlName, templates);
-
+                    
                     // Save to file
                     _fileHandlers.SaveTemplateDictionaryToFile(_algoNameWithTemplateList);
 
@@ -301,16 +307,12 @@ namespace ADLManagerPro
 
                 return;
             }
+            #endregion
 
 
 
-
-            // Get selected ADL name
-            if (string.IsNullOrEmpty(adlName))
-            {
-                MessageBox.Show("Invalid ADL selection.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
+            #region Adding new Template
+            
             // Get the parameter definitions for this ADL
             if (algoNameWithParameters.ContainsKey(adlName))
             {
@@ -333,6 +335,7 @@ namespace ADLManagerPro
 
                     if (!string.IsNullOrEmpty(paramName) && paramTypes.ContainsKey(paramName))
                     {
+                        //TODO
                         newTemplate.ParamNameWithTypeAndValue[paramName] = (row.Cells["Value"].ValueType.Name, paramValue ?? "");
                     }
                 }
@@ -345,6 +348,48 @@ namespace ADLManagerPro
                     _algoNameWithTemplateList.Add(adlName, existingList);
                 }
                 _fileHandlers.SaveTemplateDictionaryToFile(_algoNameWithTemplateList);
+                if (_algoNameWithTemplateList.ContainsKey(adlValue))
+                {
+                    savedTemplates.Items.Clear();
+                    savedTemplates.Items.AddRange(_helperFunctions.GetTemplateNames(_algoNameWithTemplateList[adlValue]).ToArray());
+                }
+                
+                savedTemplates.Refresh();
+                if (savedTemplates.Items.Contains(newTemplate.TemplateName))
+                {
+                    savedTemplates.SelectedItem = newTemplate.TemplateName;
+                }   
+
+                txtTemplateName.Text = newTemplate.TemplateName;
+
+                foreach (TabPage tabPage in MainTab.TabPages)
+                {
+                    foreach (Control control in tabPage.Controls)
+                    {
+                        if (control is Label lb && lb.Name == "Adl Value" && lb.Text == adlName)
+                            break;
+                    }
+
+                    //TODO : Update the combobox for each tab 
+                    // Try to find the ComboBox inside the tab (assuming there's one per tab)
+                    foreach (Control control in tabPage.Controls)
+                    {
+                        if (control is ComboBox comboBox)
+                        {
+                            // Optional: refresh or repopulate items here
+                            // comboBox.Items.Clear();
+                            // comboBox.Items.AddRange(yourUpdatedItems);
+                            comboBox.SelectedItem
+
+                            // Select the desired item
+                            if (comboBox.Items.Contains(itemToSelect))
+                            {
+                                comboBox.SelectedItem = itemToSelect;
+                            }
+                        }
+                    }
+
+                }
                 MessageBox.Show("Template saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
@@ -353,41 +398,11 @@ namespace ADLManagerPro
             {
                 // need to make a new json for this specific adl
             }
-                
-
-
-            // New Template
-            
-
-            //// TODO: In future, fetch parameter types from algoNameWithParameters
-            //foreach (DataGridViewRow row in paramGrid.Rows)
-            //{
-            //    if (row.IsNewRow) continue;
-
-            //    string paramName = row.Cells["ParamName"].Value?.ToString();
-            //    string paramValue = row.Cells["ParamValue"].Value?.ToString();
-
-            //    if (!string.IsNullOrEmpty(paramName))
-            //    {
-            //        newTemplate.Parameters.Add(new TemplateParameter
-            //        {
-            //            ParamName = paramName,
-            //            ParamValue = paramValue,
-            //            ParamType = "string" // Placeholder; will be replaced in future using algoNameWithParameters
-            //        });
-            //    }
-            //}
-
-            //templates.Add(newTemplate);
-            //_algoNameWithTemplateList[adlName] = templates;
-
-            //SaveTemplateDictionaryToFile(_algoNameWithTemplateList);
-
-            MessageBox.Show("Template saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            #endregion
 
         }
-    
-        
+
+
         public void SavedTemplatesIndexChanged(object s, EventArgs e,ComboBox savedTemplates, TextBox txtTemplateName, Dictionary<string, List<Template>> _algoNameWithTemplateList,
             string adlValue, DataGridView paramGrid)
         {

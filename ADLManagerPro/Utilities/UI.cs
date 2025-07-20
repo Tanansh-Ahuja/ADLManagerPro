@@ -138,6 +138,7 @@ namespace ADLManagerPro
             // Dynamic label: actual adl value
             Label lblAdlValue = new Label
             {
+                Name = "Adl Value",
                 Text = adlValue,
                 Left = 150,
                 Top = 30,
@@ -344,7 +345,7 @@ namespace ADLManagerPro
 
             btnSaveTemplate.Click += (s, e) =>
             {
-                _buttonEvents.OnSaveOrUpdateTemplateBtnClick(s, e,txtTemplateName,adlValue,_algoNameWithTemplateList,paramGrid,algoNameWithParameters);
+                _buttonEvents.OnSaveOrUpdateTemplateBtnClick(s, e,txtTemplateName,adlValue,_algoNameWithTemplateList,paramGrid,algoNameWithParameters,savedTemplates,MainTab);
             };
 
             #endregion
