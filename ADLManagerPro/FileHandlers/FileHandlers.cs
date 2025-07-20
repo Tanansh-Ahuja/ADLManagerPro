@@ -147,14 +147,6 @@ namespace ADLManagerPro
             return result;
         }
 
-        // Load Config JSON
-        public Dictionary<string, string> LoadConfig(string path)
-        {
-            if (!File.Exists(path))
-                return new Dictionary<string, string>();
-
-            string json = File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-        }
+        
     }
 }
