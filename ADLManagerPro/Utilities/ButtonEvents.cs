@@ -348,6 +348,7 @@ namespace ADLManagerPro
                     _algoNameWithTemplateList.Add(adlName, existingList);
                 }
                 _fileHandlers.SaveTemplateDictionaryToFile(_algoNameWithTemplateList);
+                //Update the combo box in the tab we are in
                 if (_algoNameWithTemplateList.ContainsKey(adlValue))
                 {
                     savedTemplates.Items.Clear();
@@ -362,13 +363,20 @@ namespace ADLManagerPro
 
                 txtTemplateName.Text = newTemplate.TemplateName;
 
+                //Update the combobox of all other tabs where the same Algo is there
                 foreach (TabPage tabPage in MainTab.TabPages)
                 {
+                    bool moveForward = false;
                     foreach (Control control in tabPage.Controls)
                     {
                         if (control is Label lb && lb.Name == "Adl Value" && lb.Text == adlName)
+                        {
+                            moveForward = true;
                             break;
+                        }
                     }
+                    if (!moveForward)
+                        continue;
 
                     //TODO : Update the combobox for each tab 
                     // Try to find the ComboBox inside the tab (assuming there's one per tab)
@@ -377,14 +385,24 @@ namespace ADLManagerPro
                         if (control is ComboBox comboBox)
                         {
                             // Optional: refresh or repopulate items here
-                            // comboBox.Items.Clear();
-                            // comboBox.Items.AddRange(yourUpdatedItems);
-                            comboBox.SelectedItem
+                            object currentValueObj = comboBox.SelectedItem;
+                            string currentValue;
+                            if(currentValueObj==null)
+                            {
+                                currentValue = "";
+                            }
+                            else
+                            {
+                                currentValue=currentValueObj.ToString();
+                            }
+
+                                comboBox.Items.Clear();
+                            comboBox.Items.AddRange(_helperFunctions.GetTemplateNames(_algoNameWithTemplateList[adlValue]).ToArray());
 
                             // Select the desired item
-                            if (comboBox.Items.Contains(itemToSelect))
+                            if (comboBox.Items.Contains(currentValue))
                             {
-                                comboBox.SelectedItem = itemToSelect;
+                                comboBox.SelectedItem = currentValue;
                             }
                         }
                     }

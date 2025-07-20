@@ -21,7 +21,20 @@ namespace ADLManagerPro
                 }
 
                 string appSecretKey = keyForm.SecretKey;
-                tt_net_sdk.ServiceEnvironment environment = tt_net_sdk.ServiceEnvironment.UatCert;
+                tt_net_sdk.ServiceEnvironment environment;
+                switch (keyForm.SelectedEnvironment)
+                {
+                    case "ProdSim":
+                        environment = tt_net_sdk.ServiceEnvironment.ProdSim;
+                        break;
+                    case "ProdLive":
+                        environment = tt_net_sdk.ServiceEnvironment.ProdLive;
+                        break;
+                    case "UatCert":
+                    default:
+                        environment = tt_net_sdk.ServiceEnvironment.UatCert;
+                        break;
+                }
                 tt_net_sdk.TTAPIOptions apiConfig = new tt_net_sdk.TTAPIOptions(environment, appSecretKey, 5000);
 
 

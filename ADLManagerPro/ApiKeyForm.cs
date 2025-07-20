@@ -15,6 +15,10 @@ namespace ADLManagerPro
     {
 
         public string SecretKey { get; private set; }
+        public string SelectedEnvironment
+        {
+            get { return EnvComboBox.SelectedItem?.ToString(); }
+        }
         private readonly string keyFilePath = "key.txt";
         private FileHandlers _fileHandlers = null;
 
@@ -27,6 +31,7 @@ namespace ADLManagerPro
 
         private void ApiKeyForm_Load(object sender, EventArgs e)
         {
+            EnvComboBox.SelectedItem = "UatCert";
             string existingKey = _fileHandlers.FetchApiKey(keyFilePath);
             if (existingKey != null)
                 txtKey.Text = existingKey;

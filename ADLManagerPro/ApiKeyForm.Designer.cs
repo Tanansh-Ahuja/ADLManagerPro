@@ -36,20 +36,22 @@ namespace ADLManagerPro
             this.txtKey = new System.Windows.Forms.TextBox();
             this.SubmitButton = new System.Windows.Forms.Button();
             this.lblPrompt = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.EnvComboBox = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // txtKey
             // 
             this.txtKey.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.txtKey.Location = new System.Drawing.Point(29, 39);
+            this.txtKey.Location = new System.Drawing.Point(194, 12);
             this.txtKey.Name = "txtKey";
-            this.txtKey.Size = new System.Drawing.Size(852, 34);
+            this.txtKey.Size = new System.Drawing.Size(1174, 34);
             this.txtKey.TabIndex = 0;
             // 
             // SubmitButton
             // 
             this.SubmitButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SubmitButton.Location = new System.Drawing.Point(416, 79);
+            this.SubmitButton.Location = new System.Drawing.Point(559, 93);
             this.SubmitButton.Name = "SubmitButton";
             this.SubmitButton.Size = new System.Drawing.Size(98, 30);
             this.SubmitButton.TabIndex = 1;
@@ -60,17 +62,43 @@ namespace ADLManagerPro
             // 
             this.lblPrompt.AutoSize = true;
             this.lblPrompt.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPrompt.Location = new System.Drawing.Point(25, 15);
+            this.lblPrompt.Location = new System.Drawing.Point(25, 19);
             this.lblPrompt.Name = "lblPrompt";
             this.lblPrompt.Size = new System.Drawing.Size(141, 20);
             this.lblPrompt.TabIndex = 2;
             this.lblPrompt.Text = "Enter Secret Key:";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(25, 65);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(152, 20);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Enter Environment:";
+            // 
+            // EnvComboBox
+            // 
+            this.EnvComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.EnvComboBox.FormattingEnabled = true;
+            this.EnvComboBox.ItemHeight = 20;
+            this.EnvComboBox.Items.AddRange(new object[] {
+            "UatCert",
+            "ProdSim",
+            "ProdLive"});
+            this.EnvComboBox.Location = new System.Drawing.Point(194, 64);
+            this.EnvComboBox.Name = "EnvComboBox";
+            this.EnvComboBox.Size = new System.Drawing.Size(188, 28);
+            this.EnvComboBox.TabIndex = 4;
+            // 
             // ApiKeyForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(938, 135);
+            this.ClientSize = new System.Drawing.Size(1406, 135);
+            this.Controls.Add(this.EnvComboBox);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtKey);
             this.Controls.Add(this.SubmitButton);
             this.Controls.Add(this.lblPrompt);
@@ -86,5 +114,8 @@ namespace ADLManagerPro
         }
 
         #endregion
+
+        private Label label1;
+        private ComboBox EnvComboBox;
     }
 }

@@ -152,19 +152,11 @@ namespace ADLManagerPro
             this.feed.HeaderText = "Feed";
             this.feed.Items.AddRange(new object[] {
             "EUR/USD",
-            "",
             "EUR/GBP",
-            "",
             "EUR/CHF",
-            "",
             "EUR/JPY",
-            "",
-            "",
             "GBP/USD",
-            "",
             "GBP/CHF",
-            "",
-            "",
             "USD/CHF"});
             this.feed.MinimumWidth = 6;
             this.feed.Name = "feed";
