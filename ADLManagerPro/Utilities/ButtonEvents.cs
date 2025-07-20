@@ -20,6 +20,63 @@ namespace ADLManagerPro
             mainGrid.Rows.Add(false, serialNumber);
         }
 
+        public void DeleteRowsInMainGrid(object sender, EventArgs e, List<int> selectedRowIndexList, DataGridView mainGrid, string columnOneName, string columnFourName, 
+            Dictionary<string, TabInfo> tabIndexWithTabInfo, TabControl MainTab)
+        {
+            if (selectedRowIndexList.Count == 0) return;
+
+            selectedRowIndexList.Sort();
+
+            for (int i = 0; i < selectedRowIndexList.Count; i++)
+            {
+                int index_to_delete = selectedRowIndexList[i];
+                DataGridViewRow rowToRemove = mainGrid.Rows[index_to_delete - i];
+                mainGrid.Rows[index_to_delete - i].Cells[columnFourName].Value = false;
+                mainGrid.Rows.Remove(rowToRemove);
+            }
+            selectedRowIndexList.Clear();
+
+
+            Dictionary<string, string> map = new Dictionary<string, string>();
+            //         old,new
+
+            for (int i = mainGrid.Rows.Count - 1; i >= 0; i--)
+            {
+                int x = i + 1;
+                map[mainGrid.Rows[i].Cells[columnOneName].Value.ToString()] = x.ToString();
+                mainGrid.Rows[i].Cells[columnOneName].Value = x.ToString();
+            }
+
+            Dictionary<string, TabInfo> temp_tabIndexWithTabInfo = new Dictionary<string, TabInfo>();
+            foreach (KeyValuePair<string, TabInfo> entry in temp_tabIndexWithTabInfo)
+            {
+                string old_key = entry.Key;
+                if (map.ContainsKey(old_key))
+                {
+                    string new_key = map[old_key];
+                    temp_tabIndexWithTabInfo[new_key] = entry.Value;
+                }
+
+            }
+            tabIndexWithTabInfo.Clear();
+            tabIndexWithTabInfo = temp_tabIndexWithTabInfo.ToDictionary(
+                                entry => entry.Key,
+                                entry => entry.Value // still shallow copy of value
+                            );
+            temp_tabIndexWithTabInfo.Clear();
+
+            string curr_index;
+            for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
+            {
+                curr_index = MainTab.TabPages[i].Text;
+                if (map.ContainsKey(curr_index))
+                {
+                    MainTab.TabPages[i].Text = map[curr_index].ToString();
+                }
+            }
+
+        }
+
         public void OnStartbtnClick(DataGridView paramGrid, string AlgoName, List<string> _accounts,
             Dictionary<string, string> tabIndexWithSiteOrderKey, string currentTab, Dictionary<string, AdlParameters> algoNameWithParameters,
              Dictionary<string, C_AlgoLookup_TradeSubscription> algoNameWithTradeSubscription, Dictionary<string, Instrument> instrumentNameWithInstrument)

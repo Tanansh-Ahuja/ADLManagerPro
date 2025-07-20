@@ -4,37 +4,38 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ADLManagerPro
 {
     internal class LoadingLabel
     {
-        public LoadingLabel() { }
+        public LoadingLabel() 
+        {
+ 
+        }
 
-        //TODO 
-        //public void InitialiseLoadingLabel(string showThis)
-        //{
-        //    loadingLabel = new Label()
-        //    {
-        //        Text = showThis,
-        //        AutoSize = true,
-        //        Font = new Font("Arial", 8, FontStyle.Bold),
-        //        Location = new Point(50, (this.Height / 2) - 10)
-        //    };
-        //    this.Controls.Add(loadingLabel);
-        //    loadingLabel.BringToFront();
+        
+        public Label InitialiseLoadingLabel(string showThis, Label loadingLabel, Form1 form1, TabControl MainTab)
+        {
+            loadingLabel = new Label()
+            {
+                Text = showThis,
+                AutoSize = true,
+                Font = new Font("Arial", 8, FontStyle.Bold),
+                Location = new Point(50, (form1.Height / 2) - 10)
+            };
+            form1.Controls.Add(loadingLabel);
+            loadingLabel.BringToFront();
 
-        //    // Hide the main tab (you can add more components here)
-        //    MainTab.Hide();
-        //}
-        //public void ChangeLoadingLabelText(string showThis)
-        //{
-        //    loadingLabel.Text = showThis;
-        //}
-        //public static void ShowMainTab()
-        //{
-        //    loadingLabel.Hide();
-        //    MainTab.Show();
-        //}
+            // Hide the main tab (you can add more components here)
+            MainTab.Hide();
+            return loadingLabel;
+        }
+        public void ChangeLoadingLabelText(string showThis,Label loadingLabel)
+        {
+            loadingLabel.Text = showThis;
+        }
+        
     }
 }
