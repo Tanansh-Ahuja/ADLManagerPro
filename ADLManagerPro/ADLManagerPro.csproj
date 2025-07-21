@@ -148,6 +148,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Library\C_InstrumentLookup.cs" />
+    <Compile Include="Library\InstrumentInfo.cs" />
     <Compile Include="Objects\ParmeterType.cs" />
     <Compile Include="Objects\TemplateSupportingClasses.cs" />
     <Compile Include="Program.cs" />

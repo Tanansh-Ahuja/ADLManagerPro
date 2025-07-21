@@ -31,7 +31,7 @@ namespace ADLManagerPro
 
         private string _appSecretKey;
         private static Label loadingLabel;
-        private string currentTab = null;
+        //private string currentTab = null;
 
 
         private FileHandlers _fileHandlers = null;
@@ -64,8 +64,9 @@ namespace ADLManagerPro
         public static Dictionary<string,string> tabIndexWithSiteOrderKey = new Dictionary<string, string>();
         public Dictionary<string,TabInfo> tabIndexWithTabInfo = new Dictionary<string,TabInfo>();
         private Dictionary<string, List<Template>> _algoNameWithTemplateList = new Dictionary<string, List<Template>>();
-        public static List<string> dummy_algos = null;
-        public static List<string> dummy_instruments = null;
+        public static List<string> userAlgos = null;
+        public static List<InstrumentInfo> instrumentInfoList = null;
+        public static List<string> instrumentsPriceSubscribed = new List<string>();
 
         #endregion
 
@@ -84,8 +85,8 @@ namespace ADLManagerPro
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            dummy_algos = _fileHandlers.GetADLNameList();
-            dummy_instruments= _fileHandlers.GetInstrumentAliasList();
+            userAlgos = _fileHandlers.GetADLNameList();
+            instrumentInfoList = _fileHandlers.GetInstrumentInfoList();
             loadingLabel = _loadingLabel.InitialiseLoadingLabel("Loading",loadingLabel,this,MainTab);
             mainGrid.Columns[columnOneName].ReadOnly = true;
             UpdateAdlDropdownSource();
@@ -153,16 +154,18 @@ namespace ADLManagerPro
                 return;
             }
             m_dispatcher = tt_net_sdk.Dispatcher.Current;
+
+            foreach(var instrumentInfo in instrumentInfoList)
+            {
+                C_InstrumentLookup c_InstrumentLookup = new C_InstrumentLookup(m_dispatcher,instrumentInfo);
+            }
             
-            C_InstrumentLookup c_InstrumentLookup = new C_InstrumentLookup(m_dispatcher,
-                                                                           "ICE",
-                                                                           "Future", "BRN", "BRN Sep25");
-            C_InstrumentLookup c_InstrumentLookup1 = new C_InstrumentLookup(m_dispatcher,
-                                                                           "ICE",
-                                                                           "Future", "BRN", "BRN Dec25");
+            
 
-
-            algoLookup("MET_ScalarBias_2_0");
+            foreach(var adlName in userAlgos)
+            {
+                algoLookup(adlName);
+            }
             // Get the accounts
             m_accounts = m_api.Accounts;
             foreach(var account in m_accounts)
@@ -191,7 +194,7 @@ namespace ADLManagerPro
 
         public static void ShowMainGrid()
         {
-            if(m_isOrderBookDownloaded && instruments.Count() == dummy_instruments.Count() && algos.Count() == dummy_algos.Count())
+            if(m_isOrderBookDownloaded && instruments.Count() == instrumentInfoList.Count() && algos.Count() == userAlgos.Count() && instruments.Count() == instrumentsPriceSubscribed.Count())
             {
                 ShowMainTab();  
             }
@@ -222,7 +225,7 @@ namespace ADLManagerPro
             if (adlColumn != null)
             {
                 adlColumn.Items.Clear();
-                foreach(var algo in dummy_algos)
+                foreach(var algo in userAlgos)
                 { 
                     adlColumn.Items.Add(algo);
                 }
@@ -271,24 +274,24 @@ namespace ADLManagerPro
 
         private void MainTab_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var selectedTab = MainTab.SelectedTab;
-            if (selectedTab != null)
-            {
-                string tabName = selectedTab.Text;
+            //var selectedTab = MainTab.SelectedTab;
+            //if (selectedTab != null)
+            //{
+            //    string tabName = selectedTab.Text;
 
-                if (tabName == "main")
-                {
-                    currentTab = null;
-                }
-                else if (tabIndexWithTabInfo.ContainsKey(tabName))
-                {
-                    currentTab = tabName;
-                }
-                else
-                {
-                    currentTab = null;
-                }
-            }
+            //    if (tabName == "main")
+            //    {
+            //        currentTab = null;
+            //    }
+            //    else if (tabIndexWithTabInfo.ContainsKey(tabName))
+            //    {
+            //        currentTab = tabName;
+            //    }
+            //    else
+            //    {
+            //        currentTab = null;
+            //    }
+            //}
         }
 
         private void mainGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -301,7 +304,7 @@ namespace ADLManagerPro
                 var feedValue = row.Cells[columnTwoName].Value?.ToString();
                 var adlName = row.Cells[columnThreeName].Value?.ToString();
                 _uI.CreateTabWithLabels(serial, feedValue, adlName,algoNameWithParameters,_accounts,instrumentNameWithInstrument,
-                    _algoNameWithTemplateList,tabIndexWithSiteOrderKey,currentTab,algoNameWithTradeSubscription,tabIndexWithTabInfo,MainTab);
+                    _algoNameWithTemplateList,tabIndexWithSiteOrderKey,algoNameWithTradeSubscription,tabIndexWithTabInfo,MainTab);
             }
         }
 

@@ -9,6 +9,7 @@ using ADLManager;
 using tt_net_sdk;
 using System.IO;
 using Newtonsoft.Json;
+using System.Drawing;
 
 namespace ADLManagerPro
 {
@@ -103,7 +104,7 @@ namespace ADLManagerPro
 
         public void CreateTabWithLabels(string serial, string feedValue, string adlValue, Dictionary<string, AdlParameters> algoNameWithParameters,
             List<string> _accounts, Dictionary<string, Instrument> instrumentNameWithInstrument,Dictionary<string, List<Template>> _algoNameWithTemplateList,
-            Dictionary<string, string> tabIndexWithSiteOrderKey,string currentTab, Dictionary<string, C_AlgoLookup_TradeSubscription> algoNameWithTradeSubscription,
+            Dictionary<string, string> tabIndexWithSiteOrderKey, Dictionary<string, C_AlgoLookup_TradeSubscription> algoNameWithTradeSubscription,
             Dictionary<string, TabInfo> tabIndexWithTabInfo, TabControl MainTab)
         {
             TabPage newTab = new TabPage(serial);
@@ -173,6 +174,7 @@ namespace ADLManagerPro
 
             paramGrid.Columns.Add("ParamName", "Parameter Name");
             paramGrid.Columns["ParamName"].ReadOnly = true; // Make ParamName column read-only
+            paramGrid.Columns["ParamName"].DefaultCellStyle.BackColor = Color.LightGray;
             paramGrid.Columns.Add("Value", "Value");
 
             if (algoNameWithParameters.ContainsKey(adlValue))
@@ -325,7 +327,7 @@ namespace ADLManagerPro
             btnStartAlgo.Click += (s, e) =>
             {
 
-                _buttonEvents.OnStartbtnClick(paramGrid, adlValue, _accounts, tabIndexWithSiteOrderKey, currentTab,
+                _buttonEvents.OnStartbtnClick(paramGrid, adlValue, _accounts, tabIndexWithSiteOrderKey, MainTab.SelectedTab.Text,
                     algoNameWithParameters, algoNameWithTradeSubscription, instrumentNameWithInstrument);
             };
             newTab.Controls.Add(btnStartAlgo);
@@ -333,7 +335,7 @@ namespace ADLManagerPro
 
             btnDeleteAlgo.Click += (s, e) =>
             {
-                _buttonEvents.OnDeletebtnClick(paramGrid, adlValue, tabIndexWithSiteOrderKey, currentTab, algoNameWithTradeSubscription);
+                _buttonEvents.OnDeletebtnClick(paramGrid, adlValue, tabIndexWithSiteOrderKey, MainTab.SelectedTab.Text, algoNameWithTradeSubscription);
             };
 
             newTab.Controls.Add(btnDeleteAlgo);

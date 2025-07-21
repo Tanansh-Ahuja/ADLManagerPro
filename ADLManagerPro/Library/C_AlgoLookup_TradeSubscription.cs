@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using ADLManager;
 using tt_net_sdk;
 
@@ -22,10 +23,12 @@ namespace ADLManagerPro
         private Dispatcher m_dispatcher = null;
         //TODO: any work for this here
         private bool orderAdded = false;
+        private string _algoName = string.Empty;
         
         public C_AlgoLookup_TradeSubscription(Dispatcher dispatcher, string algoName) 
         {
             m_dispatcher = dispatcher;
+            _algoName = algoName;
             m_algoLookupSubscription = new AlgoLookupSubscription(m_dispatcher, algoName);
             m_algoLookupSubscription.OnData += AlgoLookupSubscription_OnData;
             m_algoLookupSubscription.GetAsync();
@@ -40,6 +43,7 @@ namespace ADLManagerPro
                 {
                     Form1.algos.Add(m_algo);
                     Console.WriteLine("Algo Instrument Found: {0}", e.AlgoLookup.Algo.Alias);
+                    
                     Form1.ShowMainGrid();
 
                     string algoName = e.AlgoLookup.Algo.Alias;
@@ -54,6 +58,7 @@ namespace ADLManagerPro
 
                     foreach (var item in e.AlgoLookup.Algo.AlgoParameters)
                     {
+                        Console.WriteLine($"ParameterName: {item.Name}  type: {item.Type} isRequired: {item.IsRequired} field: {item.FieldLocation}");
                         ParameterType type;
 
                         if (item.Type == "Int_t")
@@ -138,23 +143,78 @@ namespace ADLManagerPro
 
         public string StartAlgo(int accountIndex,Instrument m_instrument,Dictionary<string, object> algo_userparams, Dictionary<string, object> algo_orderprofileparams)
         {
+           
+
             while (m_algo == null)
                 mre.WaitOne();
 
+            Console.WriteLine("Inside Start algo function.");
+
+            Console.WriteLine("\n\nBefore: \n\n\n");
             foreach (KeyValuePair<string, object> kvp in algo_userparams)
             {
-                Console.WriteLine($"{kvp.Key} : {kvp.Value}");
+                Console.WriteLine($"Key: {kvp.Key}, ValueType: {kvp.Value.GetType().Name} ");
+            }
+            foreach (var (userParameter, paramType) in Form1.algoNameWithParameters[_algoName]._adlUserParametersWithType)
+            {
+                
+                object value = algo_userparams[userParameter];
+                string svalue = value.ToString();
+                object result;
+                Console.WriteLine($"{userParameter}  :  {paramType}");
+                if(paramType == ParameterType.Int)
+                {
+                    
+                    //TODO
+                    if(svalue == "Tim")
+                    {
+                        result = 0;
+                    }
+                    else if(svalue == "Tim2")
+                    {
+                        result = 1;
+                    }
+                    else
+                    {
+                        result = int.Parse(svalue);
+                    }
+
+                        
+                }
+                else if(paramType == ParameterType.Float)
+                {
+                    result = float.Parse(svalue);
+                }
+                else if (paramType == ParameterType.Bool)
+                {
+                    result = bool.Parse(svalue);
+                }
+                else
+                {
+                    result = svalue;
+                }
+                algo_userparams[userParameter] = result;
+            }
+            Console.WriteLine("\n\n\nAFter: \n\n\n");
+            foreach(KeyValuePair<string, object> kvp in algo_userparams)
+            {
+                Console.WriteLine($"Key: {kvp.Key}, ValueType: {kvp.Value.GetType().Name} ");
             }
 
-            OrderProfile algo_op = m_algo.GetOrderProfile(m_instrument);
+
+
+
+            OrderProfile algo_op = m_algo.GetOrderProfile();
             algo_op.Account = Form1.m_accounts.ElementAt(accountIndex);
             //algo_op.OrderQuantity = Quantity.FromString(m_instrument, "5");
-            //algo_op.Side = OrderSide.Buy;
+            algo_op.Side = OrderSide.Buy;
             //algo_op.OrderType = OrderType.Limit;
             algo_op.UserParameters = algo_userparams;
             algo_op.TimeInForce = TimeInForce.GoodTillCancel;
-            algo_op.LimitPrice = Price.FromDecimal(m_instrument, Convert.ToDecimal(algo_orderprofileparams["Pricing_Feed"]));
+            //algo_op.LimitPrice = Price.FromDecimal(m_instrument, 69.64m);
+            
             m_algoTradeSubscription.SendOrder(algo_op);
+           
             return algo_op.SiteOrderKey;
 
 
@@ -183,7 +243,8 @@ namespace ADLManagerPro
 
         void m_algoTradeSubscription_OrderRejected(object sender, OrderRejectedEventArgs e)
         {
-            Console.WriteLine("\nOrderRejected for : [{0}]", e.Order.SiteOrderKey);
+
+            Console.WriteLine("\nOrderRejected for : [{0}]", e.Order.Message);
         }
 
         void m_algoTradeSubscription_OrderFilled(object sender, OrderFilledEventArgs e)

@@ -127,6 +127,36 @@ namespace ADLManagerPro
 
             return result;
         }
+        public List<InstrumentInfo> GetInstrumentInfoList()
+        {
+            var result = new List<InstrumentInfo>();
+
+            using (var reader = new StreamReader(csvPath))
+            {
+                int lineNumber = 0;
+
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    lineNumber++;
+
+                    // Skip header
+                    if (lineNumber == 1)
+                        continue;
+
+                    var columns = line.Split(',');
+
+                    // Ensure there are at least 4 columns
+                    if (columns.Length >= 4)
+                    {
+                        InstrumentInfo instrumentInfo = new InstrumentInfo(columns[0], columns[1], columns[2], columns[3]);
+                        result.Add(instrumentInfo); // 0-based index
+                    }
+                }
+            }
+
+            return result;
+        }
 
         public List<string> GetADLNameList()
         {

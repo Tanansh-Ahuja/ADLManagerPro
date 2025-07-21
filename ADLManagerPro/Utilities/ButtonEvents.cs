@@ -92,18 +92,7 @@ namespace ADLManagerPro
                 return;
             }
 
-            DialogResult result = MessageBox.Show(
-                "Are you sure you want to place this order?",
-                "Confirm sending order",
-                MessageBoxButtons.OKCancel,
-                MessageBoxIcon.Warning
-            );
-
-            if (result != DialogResult.OK)
-            {
-                // User clicked Cancel or closed the dialog — do nothing
-                return;
-            }
+            
             Dictionary<string, object> algo_userparams = new Dictionary<string, object>();
             Dictionary<string, object> algo_orderprofileparams = new Dictionary<string, object>();
             string instrumentName = null;
@@ -174,6 +163,19 @@ namespace ADLManagerPro
                 }
             }
 
+            DialogResult result = MessageBox.Show(
+                "Are you sure you want to place this order?",
+                "Confirm sending order",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Warning
+            );
+
+            if (result != DialogResult.OK)
+            {
+                // User clicked Cancel or closed the dialog — do nothing
+                return;
+            }
+
             if (accountNumber >= 0 &&
                 algoNameWithTradeSubscription.ContainsKey(AlgoName) &&
                 instrumentNameWithInstrument.ContainsKey(instrumentName))
@@ -182,7 +184,7 @@ namespace ADLManagerPro
                         instrumentNameWithInstrument[instrumentName],
                         algo_userparams,
                         algo_orderprofileparams);
-                if (tabIndexWithSiteOrderKey.ContainsKey(currentTab))
+                if (!tabIndexWithSiteOrderKey.ContainsKey(currentTab))
                 {
                     tabIndexWithSiteOrderKey.Add(currentTab, orderKey);
                 }
@@ -208,7 +210,7 @@ namespace ADLManagerPro
             if (!tabIndexWithSiteOrderKey.ContainsKey(currentTab)
                 || (tabIndexWithSiteOrderKey.ContainsKey(currentTab) && tabIndexWithSiteOrderKey[currentTab] == string.Empty))
             {
-                MessageBox.Show("Order already placed!");
+                MessageBox.Show("Order not found.");
                 return;
             }
             DialogResult result = MessageBox.Show(

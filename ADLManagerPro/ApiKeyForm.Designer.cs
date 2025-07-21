@@ -80,16 +80,16 @@ namespace ADLManagerPro
             // 
             // EnvComboBox
             // 
-            this.EnvComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.EnvComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.EnvComboBox.FormattingEnabled = true;
-            this.EnvComboBox.ItemHeight = 20;
+            this.EnvComboBox.ItemHeight = 22;
             this.EnvComboBox.Items.AddRange(new object[] {
             "UatCert",
             "ProdSim",
             "ProdLive"});
             this.EnvComboBox.Location = new System.Drawing.Point(194, 64);
             this.EnvComboBox.Name = "EnvComboBox";
-            this.EnvComboBox.Size = new System.Drawing.Size(188, 28);
+            this.EnvComboBox.Size = new System.Drawing.Size(188, 30);
             this.EnvComboBox.TabIndex = 4;
             // 
             // ApiKeyForm
