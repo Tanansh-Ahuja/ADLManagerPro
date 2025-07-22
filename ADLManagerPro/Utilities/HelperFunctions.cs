@@ -235,6 +235,47 @@ namespace ADLManagerPro
             return newTemplate;
         }
 
+        public void ParamgridCellValueValidate(object sender, DataGridViewCellValidatingEventArgs e, DataGridView paramGrid,string adlValue)
+        {
+            // Check if editing the "Value" column
+            if (paramGrid.Columns[e.ColumnIndex].Name != "Value") return;
+
+            string newValue = e.FormattedValue?.ToString() ?? "";
+            if (newValue == "")
+                return;
+
+            // Get corresponding ParamName from the same row
+            string paramName = paramGrid.Rows[e.RowIndex].Cells["ParamName"].Value?.ToString() ?? "";
+            if (Globals.SkipParamNames.Contains(paramName))
+                return;
+            // Skip if paramName is not found
+            if (string.IsNullOrWhiteSpace(paramName)) return;
+
+            // Replace this with your actual algoName
+            string algoName = adlValue;
+
+            if (!Globals.algoWithParamNameWithParamType.TryGetValue(algoName, out var paramMap)) return;
+            if (!paramMap.TryGetValue(paramName, out var paramType)) return;
+
+            // Now validate based on paramType
+            if (paramType == ParameterType.Int)
+            {
+                if (!System.Text.RegularExpressions.Regex.IsMatch(newValue, @"^\d+$"))
+                {
+                    MessageBox.Show("Only whole numbers (0–9) allowed for this parameter.");
+                    e.Cancel = true;
+                }
+            }
+            else if (paramType == ParameterType.Float)
+            {
+                if (!System.Text.RegularExpressions.Regex.IsMatch(newValue, @"^\d+(\.\d{1,})?$"))
+                {
+                    MessageBox.Show("Only numeric values with at most one decimal point allowed.");
+                    e.Cancel = true;
+                }
+            }
+        }
+
         
     }
 }

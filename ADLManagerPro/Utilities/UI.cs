@@ -181,13 +181,7 @@ namespace ADLManagerPro
                 AllowUserToResizeColumns = false
                 
             };
-            
 
-
-            paramGrid.DataError += (s, e) =>
-            {
-                e.ThrowException = false;
-            };
 
             paramGrid.DefaultCellStyle.SelectionBackColor = paramGrid.DefaultCellStyle.BackColor;
             paramGrid.DefaultCellStyle.SelectionForeColor = paramGrid.DefaultCellStyle.ForeColor;
@@ -197,6 +191,16 @@ namespace ADLManagerPro
             paramGrid.Columns["ParamName"].DefaultCellStyle.BackColor = Color.LightGray;
             paramGrid.Columns.Add("Value", "Value");
 
+            paramGrid.DataError += (s, e) =>
+            {
+                e.ThrowException = false;
+            };
+
+
+            paramGrid.CellValidating += (s, e) =>
+            {
+                _helperFunctions.ParamgridCellValueValidate(s, e, paramGrid, adlValue);
+            };
 
             if (Globals.algoNameWithParameters.ContainsKey(adlValue))
             {
@@ -312,6 +316,7 @@ namespace ADLManagerPro
             // Add tab to TabControl
             MainTab.TabPages.Add(newTab);
         }
+
 
 
     }
