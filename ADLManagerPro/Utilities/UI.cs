@@ -183,7 +183,7 @@ namespace ADLManagerPro
                 Width = 120,
                 Height = 30
             };
-
+            
             // Add "Start Algo" button
             Button btnStartAlgo = new Button
             {
@@ -196,6 +196,7 @@ namespace ADLManagerPro
 
             ComboBox savedTemplates = new ComboBox
             {
+                Name = "TemplateComboBox",
                 Left = 450,
                 Top = 60,
                 Width = 150,
@@ -207,34 +208,41 @@ namespace ADLManagerPro
 
             TextBox txtTemplateName = new TextBox
             {
+                Name = "TemplateTextBox",
                 Left = 450,
                 Top = savedTemplates.Bottom + 10,
-                Width = 150,
-                //TODO : placeholder text
+                Width = 150
             };
 
             Button btnSaveTemplate = new Button
             {
-                Text = "Save Template",
+                Text = "SaveTemplateButton",
                 Left = 450,
                 Top = txtTemplateName.Bottom + 10,
                 Width = 120,
                 Height = 30
             };
+            newTab.Controls.Add(savedTemplates);
+            newTab.Controls.Add(txtTemplateName);
+            newTab.Controls.Add(btnSaveTemplate);
+
 
             #region Events for UI objects
 
             btnStartAlgo.Click += (s, e) =>
             {
-
-                _buttonEvents.OnStartbtnClick(paramGrid, adlValue, MainTab.SelectedTab.Text);
+                
+                _buttonEvents.OnStartbtnClick(paramGrid, adlValue, MainTab.SelectedTab.Text, newTab);
+                
             };
             newTab.Controls.Add(btnStartAlgo);
 
 
             btnDeleteAlgo.Click += (s, e) =>
             {
-                _buttonEvents.OnDeletebtnClick(paramGrid, adlValue, MainTab.SelectedTab.Text);
+                
+                _buttonEvents.OnDeletebtnClick(paramGrid, adlValue, MainTab.SelectedTab.Text, newTab);
+                
             };
 
             newTab.Controls.Add(btnDeleteAlgo);
@@ -252,9 +260,6 @@ namespace ADLManagerPro
             #endregion
 
 
-            newTab.Controls.Add(savedTemplates);
-            newTab.Controls.Add(txtTemplateName);
-            newTab.Controls.Add(btnSaveTemplate);
             
             TabInfo tabInfo = new TabInfo(paramGrid, adlValue, feedValue);
             if(Globals.tabIndexWithTabInfo.ContainsKey(serial))

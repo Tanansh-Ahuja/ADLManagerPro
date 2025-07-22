@@ -157,47 +157,23 @@ namespace ADLManagerPro
 
         public string StartAlgo(int accountIndex,Instrument m_instrument,Dictionary<string, object> algo_userparams, Dictionary<string, object> algo_orderprofileparams)
         {
-           
-
             while (m_algo == null)
                 mre.WaitOne();
-
-            Console.WriteLine("Inside Start algo function.");
-
-            Console.WriteLine("\n\nBefore: \n\n\n");
-            foreach (KeyValuePair<string, object> kvp in algo_userparams)
-            {
-                Console.WriteLine($"Key: {kvp.Key}, ValueType: {kvp.Value.GetType().Name} ");
-            }
+            
             foreach (var (userParameter, paramType) in Globals.algoNameWithParameters[_algoName]._adlUserParametersWithType)
             {
                 
                 object value = algo_userparams[userParameter];
                 string svalue = value.ToString();
                 object result;
-                Console.WriteLine($"{userParameter}  :  {paramType}");
                 if(paramType == ParameterType.Int)
                 {
-                    
-                    //TODO
-                    if(svalue == "Tim")
-                    {
-                        result = 0;
-                    }
-                    else if(svalue == "Tim2")
-                    {
-                        result = 1;
-                    }
-                    else
-                    {
-                        result = int.Parse(svalue);
-                    }
-
-                        
+                    result = int.Parse(svalue);
+      
                 }
                 else if(paramType == ParameterType.Float)
                 {
-                    result = Decimal.Parse(svalue);
+                    result = Double.Parse(svalue);
                 }
                 else if (paramType == ParameterType.Bool)
                 {
@@ -209,26 +185,15 @@ namespace ADLManagerPro
                 }
                 algo_userparams[userParameter] = result;
             }
-            Console.WriteLine("\n\n\nAFter: \n\n\n");
-            foreach(KeyValuePair<string, object> kvp in algo_userparams)
-            {
-                Console.WriteLine($"Key: {kvp.Key}, ValueType: {kvp.Value.GetType().Name} ");
-            }
-
-
-
-
             OrderProfile algo_op = m_algo.GetOrderProfile();
-            algo_op.Account = Globals.m_accounts.ElementAt(accountIndex);
-            //algo_op.OrderQuantity = Quantity.FromString(m_instrument, "5");
-            algo_op.Side = OrderSide.Buy;
+            /*   algo_op.LimitPrice = m_price;
+               algo_op.OrderQuantity = Quantity.FromDecimal(m_instrument, 5); ;
+               algo_op.Side = OrderSide.Buy;*/
             algo_op.OrderType = OrderType.Limit;
+            algo_op.Account = Globals.m_accounts.ElementAt(accountIndex);
             algo_op.UserParameters = algo_userparams;
-            algo_op.TimeInForce = TimeInForce.GoodTillCancel;
-            //algo_op.LimitPrice = Price.FromDecimal(m_instrument, 69.64m);
-            
             m_algoTradeSubscription.SendOrder(algo_op);
-           
+
             return algo_op.SiteOrderKey;
 
 
@@ -276,6 +241,8 @@ namespace ADLManagerPro
 
         void m_algoTradeSubscription_OrderDeleted(object sender, OrderDeletedEventArgs e)
         {
+            //TODO: when order is deleted from tt
+
             Console.WriteLine("\nOrderDeleted [{0}] , Message : {1}", e.OldOrder.SiteOrderKey, e.Message);
         }
 

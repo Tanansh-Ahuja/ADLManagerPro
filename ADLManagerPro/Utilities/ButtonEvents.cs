@@ -50,8 +50,9 @@ namespace ADLManagerPro
                 mainGrid.Rows[i].Cells[Globals.columnOneName].Value = x.ToString();
             }
 
+
             Dictionary<string, TabInfo> temp_tabIndexWithTabInfo = new Dictionary<string, TabInfo>();
-            foreach (KeyValuePair<string, TabInfo> entry in temp_tabIndexWithTabInfo)
+            foreach (KeyValuePair<string, TabInfo> entry in Globals.tabIndexWithTabInfo)
             {
                 string old_key = entry.Key;
                 if (map.ContainsKey(old_key))
@@ -68,6 +69,26 @@ namespace ADLManagerPro
                             );
             temp_tabIndexWithTabInfo.Clear();
 
+            Dictionary<string, string> temp_tabIndexWithSiteOrderKey = new Dictionary<string, string>();
+            foreach (KeyValuePair<string, string> entry in Globals.tabIndexWithSiteOrderKey)
+            {
+                string old_key = entry.Key;
+                if (map.ContainsKey(old_key))
+                {
+                    string new_key = map[old_key];
+                    temp_tabIndexWithSiteOrderKey[new_key] = entry.Value;
+                }
+
+            }
+            Globals.tabIndexWithSiteOrderKey.Clear();
+            Globals.tabIndexWithSiteOrderKey = temp_tabIndexWithSiteOrderKey.ToDictionary(
+                                entry => entry.Key,
+                                entry => entry.Value // still shallow copy of value
+                            );
+            temp_tabIndexWithSiteOrderKey.Clear();
+
+
+
             string curr_index;
             for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
             {
@@ -80,10 +101,10 @@ namespace ADLManagerPro
 
         }
 
-        public void OnStartbtnClick(DataGridView paramGrid, string AlgoName, string currentTab)
+        public void OnStartbtnClick(DataGridView paramGrid, string AlgoName, string currentTabIndex, TabPage currentTab)
         {
 
-            if (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTab))
+            if (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex))
             {
                 MessageBox.Show("Order already placed!");
                 return;
@@ -139,12 +160,16 @@ namespace ADLManagerPro
                         if (paramName == "Quoting Instrument" || paramName == "Fast Mkt Inst" || paramName == "Hedge Instrument")
                         {
                             instrumentName = value.ToString();
-                            value = Globals.instrumentNameWithInstrument[instrumentName].InstrumentDetails.Alias.ToString();
+                            value = Globals.instrumentNameWithInstrument[instrumentName].InstrumentDetails.Id.ToString();
 
                         }
 
                         if (Globals.algoNameWithParameters[AlgoName]._adlUserParameters.Contains(paramName))
                         {
+                            if(paramName== "Quoting Instrument Account" || paramName == "Fast Mkt Inst Account" || paramName == "Hedge Instrument Account")
+                            {
+                                value = Globals.m_accounts.ElementAt(Globals._accounts.IndexOf(value.ToString())).AccountId;
+                            }
                             algo_userparams[paramName] = value;
                         }
                         else if (Globals.algoNameWithParameters[AlgoName]._adlOrderProfileParameters.Contains(paramName))
@@ -187,13 +212,29 @@ namespace ADLManagerPro
                         Globals.instrumentNameWithInstrument[instrumentName],
                         algo_userparams,
                         algo_orderprofileparams);
-                if (!Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTab))
+                if (!Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex))
                 {
-                    Globals.tabIndexWithSiteOrderKey.Add(currentTab, orderKey);
+                    Globals.tabIndexWithSiteOrderKey.Add(currentTabIndex, orderKey);
                 }
                 else
                 {
-                    Globals.tabIndexWithSiteOrderKey[currentTab] = orderKey;
+                    Globals.tabIndexWithSiteOrderKey[currentTabIndex] = orderKey;
+                }
+                paramGrid.Columns["Value"].ReadOnly = true;
+                Control[] foundComboBox = currentTab.Controls.Find("TemplateComboBox", true);
+                Control[] foundTextBox = currentTab.Controls.Find("TemplateTextBox", true);
+                Control[] foundTemplateButton = currentTab.Controls.Find("SaveTemplateButton", true);
+                if (foundComboBox.Length > 0)
+                {
+                    foundComboBox[0].Hide();
+                }
+                if (foundTextBox.Length > 0)
+                {
+                    foundTextBox[0].Hide();
+                }
+                if (foundTemplateButton.Length > 0)
+                {
+                    foundTemplateButton[0].Hide();
                 }
 
 
@@ -207,10 +248,10 @@ namespace ADLManagerPro
         }
 
 
-        public void OnDeletebtnClick(DataGridView paramGrid, string AlgoName, string currentTab)
+        public void OnDeletebtnClick(DataGridView paramGrid, string AlgoName, string currentTabIndex, TabPage currentTab)
         {
-            if (!Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTab)
-                || (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTab) && Globals.tabIndexWithSiteOrderKey[currentTab] == string.Empty))
+            if (!Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex)
+                || (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex) && Globals.tabIndexWithSiteOrderKey[currentTabIndex] == string.Empty))
             {
                 MessageBox.Show("Order not found.");
                 return;
@@ -234,11 +275,27 @@ namespace ADLManagerPro
             //    var cellValue = row.Cells[Globals.columnOneName].Value;
 
             //}
-            if (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTab) && Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName))
+            if (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex) && Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName))
             {
-                string orderKey = Globals.tabIndexWithSiteOrderKey[currentTab];
-
-                Globals.algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
+                string orderKey = Globals.tabIndexWithSiteOrderKey[currentTabIndex];
+                Globals.tabIndexWithSiteOrderKey[currentTabIndex] = Globals.algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
+                Globals.tabIndexWithSiteOrderKey.Remove(currentTabIndex);
+                paramGrid.Columns["Value"].ReadOnly = false;
+                Control[] foundComboBox = currentTab.Controls.Find("TemplateComboBox", true);
+                Control[] foundTextBox = currentTab.Controls.Find("TemplateTextBox", true);
+                Control[] foundTemplateButton = currentTab.Controls.Find("SaveTemplateButton", true);
+                if (foundComboBox.Length > 0)
+                {
+                    foundComboBox[0].Show();
+                }
+                if (foundTextBox.Length > 0)
+                {
+                    foundTextBox[0].Show();
+                }
+                if (foundTemplateButton.Length > 0)
+                {
+                    foundTemplateButton[0].Show();
+                }
             }
         }
 
@@ -264,24 +321,20 @@ namespace ADLManagerPro
                 return;
             }
             
-
-            List<Template> templates = Globals.algoNameWithTemplateList[adlName];
-
-            Template existingTemplate = templates.FirstOrDefault(t => t.TemplateName == templateName); //try to find template with same name
-
-            if (existingTemplate != null)
+            if(Globals.algoNameWithTemplateList.ContainsKey(adlName))
             {
-                //same name template exists
-                _helperFunctions.UpdateTemplate(existingTemplate, templateName,paramGrid,adlName,templates);
-                return;
-            }
+                List<Template> templates = Globals.algoNameWithTemplateList[adlName];
+                Template existingTemplate = templates.FirstOrDefault(t => t.TemplateName == templateName); //try to find template with same name
+                if (existingTemplate != null)
+                {
+                    //same name template exists
+                    _helperFunctions.UpdateTemplate(existingTemplate, templateName, paramGrid, adlName, templates);
+                    return;
+                }
 
-            #region Adding new Template
-            
-            // Get the parameter definitions for this ADL
-            if (Globals.algoNameWithParameters.ContainsKey(adlName))
-            {
-                Template newTemplate = _helperFunctions.GenerateANewTemplate(adlName,paramGrid,templateName);
+                // Get the parameter definitions for this ADL
+                
+                Template newTemplate = _helperFunctions.GenerateANewTemplate(adlName, paramGrid, templateName);
                 // Add or update the template in dictionary
                 if (Globals.algoNameWithTemplateList.ContainsKey(adlName))
                 {
@@ -292,17 +345,14 @@ namespace ADLManagerPro
                 }
                 _fileHandlers.SaveTemplateDictionaryToFile(Globals.algoNameWithTemplateList);
                 txtTemplateName.Text = newTemplate.TemplateName;
-                _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, adlValue);
+                _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, txtTemplateName.Text);
                 MessageBox.Show("Template saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                
 
             }
             else
             {
-                if (!Globals.algoWithParamNameWithParamType.ContainsKey(adlName))
-                {
-                    MessageBox.Show("ADL is Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
                 // Create new template
                 Template newTemplate = _helperFunctions.GenerateANewTemplate(adlName, paramGrid, templateName);
 
@@ -316,8 +366,8 @@ namespace ADLManagerPro
                 _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, adlValue);
 
                 MessageBox.Show("Template created and saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
             }
-            #endregion
 
         }
 

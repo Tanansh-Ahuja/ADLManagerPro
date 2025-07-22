@@ -79,51 +79,27 @@ namespace ADLManagerPro
             }
         }
 
-        public void PopulateEveryComboBoxInTabs(TabControl MainTab, string adlName, string adlValue)
+        public void PopulateEveryComboBoxInTabs(TabControl MainTab, string adlName, string newTemplateName)
         {
             //Update the combobox of all other tabs where the same Algo is there
             foreach (TabPage tabPage in MainTab.TabPages)
             {
-                bool moveForward = false;
-                foreach (Control control in tabPage.Controls)
+                if(Globals.tabIndexWithTabInfo.ContainsKey(tabPage.Name) && Globals.tabIndexWithTabInfo[tabPage.Name]._adlName == adlName )
                 {
-                    if (control is Label lb && lb.Name == "Adl Value" && lb.Text == adlName)
+                    Control[] foundControl = tabPage.Controls.Find("TemplateComboBox", true);
+                    if (foundControl.Length > 0 && foundControl[0] is ComboBox comboBox)
                     {
-                        moveForward = true;
-                        break;
-                    }
-                }
-                if (!moveForward)
-                    continue;
-
-                //TODO : Update the combobox for each tab 
-                // Try to find the ComboBox inside the tab (assuming there's one per tab)
-                foreach (Control control in tabPage.Controls)
-                {
-                    if (control is ComboBox comboBox)
-                    {
-                        // Optional: refresh or repopulate items here
-                        object currentValueObj = comboBox.SelectedItem;
-                        string currentValue;
-                        if (currentValueObj == null)
-                        {
-                            currentValue = "";
-                        }
-                        else
-                        {
-                            currentValue = currentValueObj.ToString();
-                        }
-
                         comboBox.Items.Clear();
-                        comboBox.Items.AddRange(GetTemplateNames(Globals.algoNameWithTemplateList[adlValue]).ToArray());
+                        comboBox.Items.AddRange(GetTemplateNames(Globals.algoNameWithTemplateList[adlName]).ToArray());
 
                         // Select the desired item
-                        if (comboBox.Items.Contains(currentValue))
+                        if (comboBox.Items.Contains(newTemplateName))
                         {
-                            comboBox.SelectedItem = currentValue;
+                            comboBox.SelectedItem = newTemplateName;
                         }
                     }
                 }
+                
             }
         }
 
@@ -258,5 +234,7 @@ namespace ADLManagerPro
             }
             return newTemplate;
         }
+
+        
     }
 }
