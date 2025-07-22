@@ -160,7 +160,10 @@ namespace ADLManagerPro
                         if (paramName == "Quoting Instrument" || paramName == "Fast Mkt Inst" || paramName == "Hedge Instrument")
                         {
                             instrumentName = value.ToString();
-                            value = Globals.instrumentNameWithInstrument[instrumentName].InstrumentDetails.Id.ToString();
+                            if(Globals.instrumentNameWithInstrument.ContainsKey(instrumentName))
+                            {
+                                value = Globals.instrumentNameWithInstrument[instrumentName].InstrumentDetails.Id.ToString();
+                            }
 
                         }
 

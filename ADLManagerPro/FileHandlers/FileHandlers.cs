@@ -149,6 +149,15 @@ namespace ADLManagerPro
                     // Ensure there are at least 4 columns
                     if (columns.Length >= 4)
                     {
+                        if (string.IsNullOrWhiteSpace(columns[0]) ||
+                            string.IsNullOrWhiteSpace(columns[1]) ||
+                            string.IsNullOrWhiteSpace(columns[2]) ||
+                            string.IsNullOrWhiteSpace(columns[3]))
+                            {
+                                Globals.loadingLabel.Text = "One or more required columns of instrument are empty or null";
+                                return null;
+                                //throw new InvalidDataException($"Line {lineNumber}: One or more required columns are empty or null.");
+                            }
                         InstrumentInfo instrumentInfo = new InstrumentInfo(columns[0], columns[1], columns[2], columns[3]);
                         result.Add(instrumentInfo); // 0-based index
                     }

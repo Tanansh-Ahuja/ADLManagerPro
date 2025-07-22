@@ -52,9 +52,9 @@ namespace ADLManagerPro
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            _loadingLabel.InitialiseLoadingLabel("Initialising TT",this,MainTab);
             Globals.userAlgos = _fileHandlers.GetADLNameList();
             Globals.instrumentInfoList = _fileHandlers.GetInstrumentInfoList();
-            _loadingLabel.InitialiseLoadingLabel("Initialising TT",this,MainTab);
             mainGrid.Columns[Globals.columnOneName].ReadOnly = true;
             UpdateAdlDropdownSource();
             mainGrid.DefaultCellStyle.SelectionBackColor = mainGrid.DefaultCellStyle.BackColor;
@@ -244,7 +244,7 @@ namespace ADLManagerPro
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(Globals.tabIndexWithSiteOrderKey.Count>0)
+            if(Globals.tabIndexWithSiteOrderKey.Keys.Count>0)
             {
                 MessageBox.Show("Remove all orders before closing the app.");
                 e.Cancel = true;

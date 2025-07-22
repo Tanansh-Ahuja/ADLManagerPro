@@ -159,7 +159,10 @@ namespace ADLManagerPro
         {
             while (m_algo == null)
                 mre.WaitOne();
-            
+            if(!Globals.algoNameWithParameters.ContainsKey(_algoName))
+            {
+                return string.Empty;
+            }
             foreach (var (userParameter, paramType) in Globals.algoNameWithParameters[_algoName]._adlUserParametersWithType)
             {
                 

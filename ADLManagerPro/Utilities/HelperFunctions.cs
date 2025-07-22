@@ -66,8 +66,16 @@ namespace ADLManagerPro
                     }
 
                     // Update dictionary
-                    Globals.algoNameWithTemplateList.Remove(adlName);
-                    Globals.algoNameWithTemplateList.Add(adlName, templates);
+                    if(Globals.algoNameWithTemplateList.ContainsKey(adlName))
+                    {
+                        Globals.algoNameWithTemplateList.Remove(adlName);
+                        Globals.algoNameWithTemplateList.Add(adlName, templates);
+                    }
+                    else
+                    {
+                        Globals.algoNameWithTemplateList.Add(adlName, templates);
+                    }
+                        
 
                     // Save to file
                     _fileHandlers.SaveTemplateDictionaryToFile(Globals.algoNameWithTemplateList);
@@ -90,7 +98,8 @@ namespace ADLManagerPro
                     if (foundControl.Length > 0 && foundControl[0] is ComboBox comboBox)
                     {
                         comboBox.Items.Clear();
-                        comboBox.Items.AddRange(GetTemplateNames(Globals.algoNameWithTemplateList[adlName]).ToArray());
+                        if(Globals.algoNameWithTemplateList.ContainsKey(adlName))
+                            comboBox.Items.AddRange(GetTemplateNames(Globals.algoNameWithTemplateList[adlName]).ToArray());
 
                         // Select the desired item
                         if (comboBox.Items.Contains(newTemplateName))
@@ -105,6 +114,7 @@ namespace ADLManagerPro
 
         public void PopulateParamGridWithOrderProfileParameters(DataGridView paramGrid,string adlValue)
         {
+            if(Globals.algoNameWithParameters.ContainsKey(adlValue))
             foreach (var (paramName, paramType) in Globals.algoNameWithParameters[adlValue]._adlOrderProfileParametersWithType)
             {
                 int rowIndex = paramGrid.Rows.Add(paramName, paramType);
@@ -124,9 +134,13 @@ namespace ADLManagerPro
                     paramName.Equals("Hedge Instrument", StringComparison.OrdinalIgnoreCase))
                 {
                     var combocell = new DataGridViewComboBoxCell();
-                    combocell.Items.AddRange(Globals.instrumentNameWithInstrument.Keys.ToArray());
-                    paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
+                    if(Globals.instrumentNameWithInstrument.Keys.Count > 0)
+                    {
+                        combocell.Items.AddRange(Globals.instrumentNameWithInstrument.Keys.ToArray());
+                        paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
+                    }
                     continue;
+                    
                 }
 
                 if (paramType == ParameterType.BuySell)
@@ -152,6 +166,7 @@ namespace ADLManagerPro
 
         public void PopulateParamGridWithUserParameters(DataGridView paramGrid, string adlValue)
         {
+            if(Globals.algoNameWithParameters.ContainsKey(adlValue))
             foreach (var (paramName, paramType) in Globals.algoNameWithParameters[adlValue]._adlUserParametersWithType)
             {
                 int rowIndex = paramGrid.Rows.Add(paramName, paramType);
@@ -171,8 +186,12 @@ namespace ADLManagerPro
                     paramName.Equals("Hedge Instrument", StringComparison.OrdinalIgnoreCase))
                 {
                     var combocell = new DataGridViewComboBoxCell();
-                    combocell.Items.AddRange(Globals.instrumentNameWithInstrument.Keys.ToArray());
-                    paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
+                    if(Globals.instrumentNameWithInstrument.Keys.Count > 0)
+                    {
+                        combocell.Items.AddRange(Globals.instrumentNameWithInstrument.Keys.ToArray());
+                        paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
+
+                    }
                     continue;
                 }
 
@@ -199,7 +218,10 @@ namespace ADLManagerPro
 
         public Template GenerateANewTemplate(string adlName, DataGridView paramGrid, string templateName)
         {
-            //We have the adl name already, so we will add to the given json
+            if(!Globals.algoNameWithParameters.ContainsKey(adlName))
+            {
+                return null;
+            }
             AdlParameters adlParams = Globals.algoNameWithParameters[adlName];
             Dictionary<string, ParameterType> paramTypes = null;
             if (Globals.algoWithParamNameWithParamType.ContainsKey(adlName))
