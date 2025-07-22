@@ -154,7 +154,7 @@ namespace ADLManagerPro
                             string.IsNullOrWhiteSpace(columns[2]) ||
                             string.IsNullOrWhiteSpace(columns[3]))
                             {
-                                Globals.loadingLabel.Text = "One or more required columns of instrument are empty or null";
+                               
                                 return null;
                                 //throw new InvalidDataException($"Line {lineNumber}: One or more required columns are empty or null.");
                             }

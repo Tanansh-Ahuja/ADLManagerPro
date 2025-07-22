@@ -122,7 +122,16 @@ namespace ADLManagerPro
                 return;
             }
             m_dispatcher = tt_net_sdk.Dispatcher.Current;
-
+            if(Globals.instrumentInfoList == null)
+            {
+                Globals.loadingLabel.Text = "Status: One or more required columns of instruments in \"InstrumentsToBeFetched.csv\" are empty or null.";
+                return;
+            }
+            if(Globals.userAlgos.Count == 0)
+            {
+                Globals.loadingLabel.Text = "Status: No Algos in \"ADLsToBeFetched.txt\" found.";
+                return;
+            }
             foreach(var instrumentInfo in Globals.instrumentInfoList)
             {
                 C_InstrumentLookup c_InstrumentLookup = new C_InstrumentLookup(m_dispatcher,instrumentInfo);
