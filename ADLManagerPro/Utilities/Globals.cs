@@ -24,7 +24,7 @@ namespace ADLManagerPro
 
         public static List<Instrument> instruments = new List<Instrument>();
         public static List<Algo> algos = new List<Algo>();
-        public static List<int> selectedRowIndexList = new List<int>();
+        public static List<int> selectedRowIndexList = new List<int>(); //TODO optimise later
         public static List<string> _accounts = new List<string>();
         public static List<string> userAlgos = null;
         public static List<InstrumentInfo> instrumentInfoList = null;

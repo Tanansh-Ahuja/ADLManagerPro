@@ -30,14 +30,15 @@ namespace ADLManagerPro
                 var row = mainGrid.Rows[e.RowIndex];
                 bool isChecked = Convert.ToBoolean(row.Cells[Globals.columnZeroName].Value);
 
+                string serial_no = row.Cells[Globals.columnOneName].Value.ToString();
                 if (isChecked)
                 {
-                    if (!Globals.selectedRowIndexList.Contains(e.RowIndex))
-                        Globals.selectedRowIndexList.Add(e.RowIndex);
+                    if (!Globals.selectedRowIndexList.Contains(int.Parse(serial_no)-1))
+                        Globals.selectedRowIndexList.Add(int.Parse(serial_no)-1);
                 }
                 else
                 {
-                    Globals.selectedRowIndexList.Remove(e.RowIndex);
+                    Globals.selectedRowIndexList.Remove(int.Parse(serial_no) - 1);
                 }
             }
 
@@ -77,6 +78,12 @@ namespace ADLManagerPro
                     {
                         if (MainTab.TabPages[i].Text == serial)
                         {
+                            Control[] foundStatusLabel = MainTab.TabPages[i].Controls.Find("OrderStatusValueLabel", true);
+                            if (foundStatusLabel.Length > 0 && foundStatusLabel[0].Text == "ACTIVATED")
+                            {
+                                MessageBox.Show($"Please delete algo order before deleting tab {serial}");
+                                return false;
+                            }
                             MainTab.TabPages.RemoveAt(i);
                             if(Globals.tabIndexWithTabInfo.ContainsKey(i.ToString()))
                             {
@@ -133,22 +140,48 @@ namespace ADLManagerPro
                 AutoSize = true
             };
 
+            Label lblOrderStatus = new Label
+            {
+                Name="OrderStatusLabel",
+                Text = "Order Status:",
+                Left = 20,
+                Top = 50,
+                AutoSize = true
+            };
+
+            
+            Label lblOrderStatusValue = new Label
+            {
+                Name = "OrderStatusValueLabel",
+                Text = "DEACTIVATED",
+                Left = 150,
+                Top = 50,
+                AutoSize = true
+            };
+            lblOrderStatusValue.Font = new Font(lblOrderStatusValue.Font, FontStyle.Bold);
+
             newTab.Controls.Add(lblFeedTitle);
             newTab.Controls.Add(lblFeedValue);
             newTab.Controls.Add(lblAdlTitle);
             newTab.Controls.Add(lblAdlValue);
+            newTab.Controls.Add(lblOrderStatus);
+            newTab.Controls.Add(lblOrderStatusValue);
 
             // Create DataGridView
             DataGridView paramGrid = new DataGridView
             {
                 Left = 20,
-                Top = 60,
+                Top = 80,
                 Width = 400,
                 Height = 500,
                 AllowUserToAddRows = false,
                 RowHeadersVisible = false,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                AllowUserToResizeRows = false,
+                AllowUserToResizeColumns = false
+                
             };
+            
 
 
             paramGrid.DataError += (s, e) =>
@@ -177,16 +210,19 @@ namespace ADLManagerPro
             //TODO: Add delete button and functionality: order remove
             Button btnDeleteAlgo = new Button
             {
+                Name = "DeleteAlgoButton",
                 Text = "Delete Algo",
                 Left = 160,
                 Top = paramGrid.Bottom + 10,
                 Width = 120,
                 Height = 30
             };
+            btnDeleteAlgo.Hide();
             
             // Add "Start Algo" button
             Button btnStartAlgo = new Button
             {
+                Name = "StartAlgoButton",
                 Text = "Start Algo",
                 Left = 20,
                 Top = paramGrid.Bottom + 10,
@@ -198,7 +234,7 @@ namespace ADLManagerPro
             {
                 Name = "TemplateComboBox",
                 Left = 450,
-                Top = 60,
+                Top = paramGrid.Top,
                 Width = 150,
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
@@ -216,7 +252,8 @@ namespace ADLManagerPro
 
             Button btnSaveTemplate = new Button
             {
-                Text = "SaveTemplateButton",
+                Name = "SaveTemplateButton",
+                Text = "Save Template",
                 Left = 450,
                 Top = txtTemplateName.Bottom + 10,
                 Width = 120,

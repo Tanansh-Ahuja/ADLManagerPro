@@ -31,16 +31,16 @@ namespace ADLManagerPro
         private void InitializeComponent()
         {
             this.mainGrid = new System.Windows.Forms.DataGridView();
-            this.Select = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Sno = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.feed = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.adl = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.createTab = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             MainTab = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.NeonFeedButton = new System.Windows.Forms.Button();
             this.del_btn = new System.Windows.Forms.Button();
             this.add_btn = new System.Windows.Forms.Button();
+            this.Select = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Sno = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.feed = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.adl = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.createTab = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.mainGrid)).BeginInit();
             MainTab.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -49,6 +49,8 @@ namespace ADLManagerPro
             // mainGrid
             // 
             this.mainGrid.AllowUserToAddRows = false;
+            this.mainGrid.AllowUserToResizeColumns = false;
+            this.mainGrid.AllowUserToResizeRows = false;
             this.mainGrid.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.mainGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.mainGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -68,54 +70,6 @@ namespace ADLManagerPro
             this.mainGrid.TabIndex = 0;
             this.mainGrid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.mainGrid_CellValueChanged);
             this.mainGrid.CurrentCellDirtyStateChanged += new System.EventHandler(this.mainGrid_CurrentCellDirtyStateChanged);
-            // 
-            // Select
-            // 
-            this.Select.Frozen = true;
-            this.Select.HeaderText = "";
-            this.Select.MinimumWidth = 6;
-            this.Select.Name = "Select";
-            this.Select.Width = 40;
-            // 
-            // Sno
-            // 
-            this.Sno.Frozen = true;
-            this.Sno.HeaderText = "S No";
-            this.Sno.MinimumWidth = 6;
-            this.Sno.Name = "Sno";
-            this.Sno.ReadOnly = true;
-            this.Sno.Width = 70;
-            // 
-            // feed
-            // 
-            this.feed.HeaderText = "Feed";
-            this.feed.Items.AddRange(new object[] {
-            "EUR/USD",
-            "EUR/GBP",
-            "EUR/CHF",
-            "EUR/JPY",
-            "GBP/USD",
-            "GBP/CHF",
-            "USD/CHF"});
-            this.feed.MinimumWidth = 6;
-            this.feed.Name = "feed";
-            this.feed.Width = 125;
-            // 
-            // adl
-            // 
-            this.adl.HeaderText = "ADL";
-            this.adl.Items.AddRange(new object[] {
-            "connecting..."});
-            this.adl.MinimumWidth = 6;
-            this.adl.Name = "adl";
-            this.adl.Width = 125;
-            // 
-            // createTab
-            // 
-            this.createTab.HeaderText = "Create Tab";
-            this.createTab.MinimumWidth = 6;
-            this.createTab.Name = "createTab";
-            this.createTab.Width = 125;
             // 
             // MainTab
             // 
@@ -176,6 +130,53 @@ namespace ADLManagerPro
             this.add_btn.Text = "Add Row";
             this.add_btn.UseVisualStyleBackColor = true;
             this.add_btn.Click += new System.EventHandler(this.add_btn_Click);
+            // 
+            // Select
+            // 
+            this.Select.Frozen = true;
+            this.Select.HeaderText = "";
+            this.Select.MinimumWidth = 6;
+            this.Select.Name = "Select";
+            this.Select.Width = 40;
+            // 
+            // Sno
+            // 
+            this.Sno.Frozen = true;
+            this.Sno.HeaderText = "S No";
+            this.Sno.MinimumWidth = 6;
+            this.Sno.Name = "Sno";
+            this.Sno.ReadOnly = true;
+            this.Sno.Width = 75;
+            // 
+            // feed
+            // 
+            this.feed.HeaderText = "Feed";
+            this.feed.Items.AddRange(new object[] {
+            "EUR/USD",
+            "EUR/GBP",
+            "EUR/CHF",
+            "EUR/JPY",
+            "GBP/USD",
+            "GBP/CHF",
+            "USD/CHF"});
+            this.feed.MinimumWidth = 6;
+            this.feed.Name = "feed";
+            this.feed.Width = 125;
+            // 
+            // adl
+            // 
+            this.adl.HeaderText = "ADL";
+            this.adl.Items.AddRange(new object[] {
+            "connecting..."});
+            this.adl.MinimumWidth = 6;
+            this.adl.Name = "adl";
+            this.adl.Width = 150;
+            // 
+            // createTab
+            // 
+            this.createTab.HeaderText = "Create Tab";
+            this.createTab.MinimumWidth = 6;
+            this.createTab.Name = "createTab";
             // 
             // Form1
             // 

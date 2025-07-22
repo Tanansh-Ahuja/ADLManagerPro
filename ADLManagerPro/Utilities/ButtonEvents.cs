@@ -38,7 +38,7 @@ namespace ADLManagerPro
                 mainGrid.Rows.Remove(rowToRemove);
             }
             Globals.selectedRowIndexList.Clear();
-
+           
 
             Dictionary<string, string> map = new Dictionary<string, string>();
             //         old,new
@@ -224,6 +224,9 @@ namespace ADLManagerPro
                 Control[] foundComboBox = currentTab.Controls.Find("TemplateComboBox", true);
                 Control[] foundTextBox = currentTab.Controls.Find("TemplateTextBox", true);
                 Control[] foundTemplateButton = currentTab.Controls.Find("SaveTemplateButton", true);
+                Control[] foundStatusLabel = currentTab.Controls.Find("OrderStatusValueLabel", true);
+                Control[] foundDeleteAlgoButton = currentTab.Controls.Find("DeleteAlgoButton", true);
+                Control[] foundStartAlgoButton = currentTab.Controls.Find("StartAlgoButton", true);
                 if (foundComboBox.Length > 0)
                 {
                     foundComboBox[0].Hide();
@@ -235,6 +238,18 @@ namespace ADLManagerPro
                 if (foundTemplateButton.Length > 0)
                 {
                     foundTemplateButton[0].Hide();
+                }
+                if (foundStatusLabel.Length > 0)
+                {
+                    foundStatusLabel[0].Text = "ACTIVATED";
+                }
+                if (foundDeleteAlgoButton.Length > 0)
+                {
+                    foundDeleteAlgoButton[0].Show();
+                }
+                if (foundStartAlgoButton.Length > 0)
+                {
+                    foundStartAlgoButton[0].Hide();
                 }
 
 
@@ -284,6 +299,9 @@ namespace ADLManagerPro
                 Control[] foundComboBox = currentTab.Controls.Find("TemplateComboBox", true);
                 Control[] foundTextBox = currentTab.Controls.Find("TemplateTextBox", true);
                 Control[] foundTemplateButton = currentTab.Controls.Find("SaveTemplateButton", true);
+                Control[] foundStatusLabel = currentTab.Controls.Find("OrderStatusValueLabel", true);
+                Control[] foundDeleteAlgoButton = currentTab.Controls.Find("DeleteAlgoButton", true);
+                Control[] foundStartAlgoButton = currentTab.Controls.Find("StartAlgoButton", true);
                 if (foundComboBox.Length > 0)
                 {
                     foundComboBox[0].Show();
@@ -295,6 +313,18 @@ namespace ADLManagerPro
                 if (foundTemplateButton.Length > 0)
                 {
                     foundTemplateButton[0].Show();
+                }
+                if (foundStatusLabel.Length > 0)
+                {
+                    foundStatusLabel[0].Text = "DEACTIVATED";
+                }
+                if (foundDeleteAlgoButton.Length > 0)
+                {
+                    foundDeleteAlgoButton[0].Hide();
+                }
+                if (foundStartAlgoButton.Length > 0)
+                {
+                    foundStartAlgoButton[0].Show();
                 }
             }
         }
