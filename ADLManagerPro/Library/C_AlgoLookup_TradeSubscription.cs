@@ -197,7 +197,7 @@ namespace ADLManagerPro
                 }
                 else if(paramType == ParameterType.Float)
                 {
-                    result = float.Parse(svalue);
+                    result = Decimal.Parse(svalue);
                 }
                 else if (paramType == ParameterType.Bool)
                 {
@@ -222,7 +222,7 @@ namespace ADLManagerPro
             algo_op.Account = Globals.m_accounts.ElementAt(accountIndex);
             //algo_op.OrderQuantity = Quantity.FromString(m_instrument, "5");
             algo_op.Side = OrderSide.Buy;
-            //algo_op.OrderType = OrderType.Limit;
+            algo_op.OrderType = OrderType.Limit;
             algo_op.UserParameters = algo_userparams;
             algo_op.TimeInForce = TimeInForce.GoodTillCancel;
             //algo_op.LimitPrice = Price.FromDecimal(m_instrument, 69.64m);

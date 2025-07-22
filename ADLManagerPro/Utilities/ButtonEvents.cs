@@ -92,7 +92,8 @@ namespace ADLManagerPro
             
             Dictionary<string, object> algo_userparams = new Dictionary<string, object>();
             Dictionary<string, object> algo_orderprofileparams = new Dictionary<string, object>();
-            string instrumentName = null;
+            string instrumentName = string.Empty;
+            string instrumentId = string.Empty;
             int accountNumber = -1;
             foreach (DataGridViewRow row in paramGrid.Rows)
             {
@@ -135,9 +136,10 @@ namespace ADLManagerPro
                                 MessageBox.Show("Error fetching account index from account name");
                                 
                         }
-                        if (paramName == "Quoting Instrument")
+                        if (paramName == "Quoting Instrument" || paramName == "Fast Mkt Inst" || paramName == "Hedge Instrument")
                         {
                             instrumentName = value.ToString();
+                            value = Globals.instrumentNameWithInstrument[instrumentName].InstrumentDetails.Alias.ToString();
 
                         }
 
@@ -244,6 +246,7 @@ namespace ADLManagerPro
 
         public void OnSaveOrUpdateTemplateBtnClick(object s, EventArgs e, TextBox txtTemplateName, string adlValue,DataGridView paramGrid, ComboBox savedTemplates,TabControl MainTab)
         {
+           
             //check template name is not null
             string templateName = txtTemplateName.Text.Trim();
             if (string.IsNullOrWhiteSpace(templateName))
@@ -278,40 +281,7 @@ namespace ADLManagerPro
             // Get the parameter definitions for this ADL
             if (Globals.algoNameWithParameters.ContainsKey(adlName))
             {
-                //We have the adl name already, so we will add to the given json
-                AdlParameters adlParams = Globals.algoNameWithParameters[adlName];
-                Dictionary<string, ParameterType> paramTypes = null;
-                if (Globals.algoWithParamNameWithParamType.ContainsKey(adlName))
-                {
-                    paramTypes = Globals.algoWithParamNameWithParamType[adlName];
-                }
-                else
-                {
-                    MessageBox.Show("ADL Parameters type not able to fetch", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-
-                // New Template
-                Template newTemplate = new Template
-                {
-                    TemplateName = templateName,
-                    ParamNameWithValue = new Dictionary<string, string>()
-                };
-                // Iterate over paramGrid rows to populate parameters
-                foreach (DataGridViewRow row in paramGrid.Rows)
-                {
-                    if (row.IsNewRow) continue;
-
-                    string paramName = row.Cells["ParamName"].Value?.ToString();
-                    string paramValue = row.Cells["Value"].Value?.ToString();
-
-                    if (!string.IsNullOrEmpty(paramName) && paramTypes.ContainsKey(paramName))
-                    {
-                        //TODO
-                        newTemplate.ParamNameWithValue[paramName] = paramValue ?? "";
-                    }
-                }
+                Template newTemplate = _helperFunctions.GenerateANewTemplate(adlName,paramGrid,templateName);
                 // Add or update the template in dictionary
                 if (Globals.algoNameWithTemplateList.ContainsKey(adlName))
                 {
@@ -321,28 +291,31 @@ namespace ADLManagerPro
                     Globals.algoNameWithTemplateList.Add(adlName, existingList);
                 }
                 _fileHandlers.SaveTemplateDictionaryToFile(Globals.algoNameWithTemplateList);
-                //Update the combo box in the tab we are in
-                if (Globals.algoNameWithTemplateList.ContainsKey(adlValue))
-                {
-                    savedTemplates.Items.Clear();
-                    savedTemplates.Items.AddRange(_helperFunctions.GetTemplateNames(Globals.algoNameWithTemplateList[adlValue]).ToArray());
-                }
-                
-                savedTemplates.Refresh();
-                if (savedTemplates.Items.Contains(newTemplate.TemplateName))
-                {
-                    savedTemplates.SelectedItem = newTemplate.TemplateName;
-                }   
-
                 txtTemplateName.Text = newTemplate.TemplateName;
                 _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, adlValue);
                 MessageBox.Show("Template saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-
             }
             else
             {
-                // need to make a new json for this specific adl
+                if (!Globals.algoWithParamNameWithParamType.ContainsKey(adlName))
+                {
+                    MessageBox.Show("ADL is Invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                // Create new template
+                Template newTemplate = _helperFunctions.GenerateANewTemplate(adlName, paramGrid, templateName);
+
+                // Create new list and add to the dictionary
+                var newList = new List<Template> { newTemplate };
+                Globals.algoNameWithTemplateList.Add(adlName, newList);
+
+                // Save to file
+                _fileHandlers.SaveTemplateDictionaryToFile(Globals.algoNameWithTemplateList);
+                txtTemplateName.Text = newTemplate.TemplateName;
+                _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, adlValue);
+
+                MessageBox.Show("Template created and saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             #endregion
 

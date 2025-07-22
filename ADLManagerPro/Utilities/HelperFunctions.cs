@@ -220,5 +220,43 @@ namespace ADLManagerPro
                 }
             }
         }
+
+        public Template GenerateANewTemplate(string adlName, DataGridView paramGrid, string templateName)
+        {
+            //We have the adl name already, so we will add to the given json
+            AdlParameters adlParams = Globals.algoNameWithParameters[adlName];
+            Dictionary<string, ParameterType> paramTypes = null;
+            if (Globals.algoWithParamNameWithParamType.ContainsKey(adlName))
+            {
+                paramTypes = Globals.algoWithParamNameWithParamType[adlName];
+            }
+            else
+            {
+                MessageBox.Show("ADL Parameters type not able to fetch", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+
+
+            // New Template
+            Template newTemplate = new Template
+            {
+                TemplateName = templateName,
+                ParamNameWithValue = new Dictionary<string, string>()
+            };
+            // Iterate over paramGrid rows to populate parameters
+            foreach (DataGridViewRow row in paramGrid.Rows)
+            {
+                if (row.IsNewRow) continue;
+
+                string paramName = row.Cells["ParamName"].Value?.ToString();
+                string paramValue = row.Cells["Value"].Value?.ToString();
+
+                if (!string.IsNullOrEmpty(paramName) && paramTypes.ContainsKey(paramName))
+                {
+                    newTemplate.ParamNameWithValue[paramName] = paramValue ?? "";
+                }
+            }
+            return newTemplate;
+        }
     }
 }
