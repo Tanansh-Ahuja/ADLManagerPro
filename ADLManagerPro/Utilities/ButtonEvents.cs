@@ -24,21 +24,20 @@ namespace ADLManagerPro
             mainGrid.Rows.Add(false, serialNumber);
         }
 
-        public void DeleteRowsInMainGrid(object sender, EventArgs e, List<int> selectedRowIndexList, DataGridView mainGrid, string columnOneName, string columnFourName, 
-            Dictionary<string, TabInfo> tabIndexWithTabInfo, TabControl MainTab)
+        public void DeleteRowsInMainGrid(object sender, EventArgs e, DataGridView mainGrid, TabControl MainTab)
         {
-            if (selectedRowIndexList.Count == 0) return;
+            if (Globals.selectedRowIndexList.Count == 0) return;
 
-            selectedRowIndexList.Sort();
+            Globals.selectedRowIndexList.Sort();
 
-            for (int i = 0; i < selectedRowIndexList.Count; i++)
+            for (int i = 0; i < Globals.selectedRowIndexList.Count; i++)
             {
-                int index_to_delete = selectedRowIndexList[i];
+                int index_to_delete = Globals.selectedRowIndexList[i];
                 DataGridViewRow rowToRemove = mainGrid.Rows[index_to_delete - i];
-                mainGrid.Rows[index_to_delete - i].Cells[columnFourName].Value = false;
+                mainGrid.Rows[index_to_delete - i].Cells[Globals.columnFourName].Value = false;
                 mainGrid.Rows.Remove(rowToRemove);
             }
-            selectedRowIndexList.Clear();
+            Globals.selectedRowIndexList.Clear();
 
 
             Dictionary<string, string> map = new Dictionary<string, string>();
@@ -47,8 +46,8 @@ namespace ADLManagerPro
             for (int i = mainGrid.Rows.Count - 1; i >= 0; i--)
             {
                 int x = i + 1;
-                map[mainGrid.Rows[i].Cells[columnOneName].Value.ToString()] = x.ToString();
-                mainGrid.Rows[i].Cells[columnOneName].Value = x.ToString();
+                map[mainGrid.Rows[i].Cells[Globals.columnOneName].Value.ToString()] = x.ToString();
+                mainGrid.Rows[i].Cells[Globals.columnOneName].Value = x.ToString();
             }
 
             Dictionary<string, TabInfo> temp_tabIndexWithTabInfo = new Dictionary<string, TabInfo>();
@@ -62,8 +61,8 @@ namespace ADLManagerPro
                 }
 
             }
-            tabIndexWithTabInfo.Clear();
-            tabIndexWithTabInfo = temp_tabIndexWithTabInfo.ToDictionary(
+            Globals.tabIndexWithTabInfo.Clear();
+            Globals.tabIndexWithTabInfo = temp_tabIndexWithTabInfo.ToDictionary(
                                 entry => entry.Key,
                                 entry => entry.Value // still shallow copy of value
                             );
@@ -81,12 +80,10 @@ namespace ADLManagerPro
 
         }
 
-        public void OnStartbtnClick(DataGridView paramGrid, string AlgoName, List<string> _accounts,
-            Dictionary<string, string> tabIndexWithSiteOrderKey, string currentTab, Dictionary<string, AdlParameters> algoNameWithParameters,
-             Dictionary<string, C_AlgoLookup_TradeSubscription> algoNameWithTradeSubscription, Dictionary<string, Instrument> instrumentNameWithInstrument)
+        public void OnStartbtnClick(DataGridView paramGrid, string AlgoName, string currentTab)
         {
 
-            if (tabIndexWithSiteOrderKey.ContainsKey(currentTab))
+            if (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTab))
             {
                 MessageBox.Show("Order already placed!");
                 return;
@@ -127,12 +124,16 @@ namespace ADLManagerPro
                     }
 
 
-                    if (algoNameWithParameters.ContainsKey(AlgoName))
+                    if (Globals.algoNameWithParameters.ContainsKey(AlgoName))
                     {
                         if (paramName == "Quoting Instrument Account")
                         {
-                            accountNumber = _accounts.IndexOf(value.ToString());
-
+                            accountNumber = Globals._accounts.IndexOf(value.ToString());
+                            if (accountNumber > -1)
+                                algo_userparams[paramName] = accountNumber;
+                            else
+                                MessageBox.Show("Error fetching account index from account name");
+                                
                         }
                         if (paramName == "Quoting Instrument")
                         {
@@ -140,11 +141,11 @@ namespace ADLManagerPro
 
                         }
 
-                        if (algoNameWithParameters[AlgoName]._adlUserParameters.Contains(paramName))
+                        if (Globals.algoNameWithParameters[AlgoName]._adlUserParameters.Contains(paramName))
                         {
                             algo_userparams[paramName] = value;
                         }
-                        else if (algoNameWithParameters[AlgoName]._adlOrderProfileParameters.Contains(paramName))
+                        else if (Globals.algoNameWithParameters[AlgoName]._adlOrderProfileParameters.Contains(paramName))
                         {
                             algo_orderprofileparams[paramName] = value;
                         }
@@ -177,20 +178,20 @@ namespace ADLManagerPro
             }
 
             if (accountNumber >= 0 &&
-                algoNameWithTradeSubscription.ContainsKey(AlgoName) &&
-                instrumentNameWithInstrument.ContainsKey(instrumentName))
+                Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName) &&
+                Globals.instrumentNameWithInstrument.ContainsKey(instrumentName))
             {
-                string orderKey = algoNameWithTradeSubscription[AlgoName].StartAlgo(accountNumber,
-                        instrumentNameWithInstrument[instrumentName],
+                string orderKey = Globals.algoNameWithTradeSubscription[AlgoName].StartAlgo(accountNumber,
+                        Globals.instrumentNameWithInstrument[instrumentName],
                         algo_userparams,
                         algo_orderprofileparams);
-                if (!tabIndexWithSiteOrderKey.ContainsKey(currentTab))
+                if (!Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTab))
                 {
-                    tabIndexWithSiteOrderKey.Add(currentTab, orderKey);
+                    Globals.tabIndexWithSiteOrderKey.Add(currentTab, orderKey);
                 }
                 else
                 {
-                    tabIndexWithSiteOrderKey[currentTab] = orderKey;
+                    Globals.tabIndexWithSiteOrderKey[currentTab] = orderKey;
                 }
 
 
@@ -204,11 +205,10 @@ namespace ADLManagerPro
         }
 
 
-        public void OnDeletebtnClick(DataGridView paramGrid, string AlgoName, Dictionary<string, string> tabIndexWithSiteOrderKey, string currentTab,
-            Dictionary<string, C_AlgoLookup_TradeSubscription> algoNameWithTradeSubscription)
+        public void OnDeletebtnClick(DataGridView paramGrid, string AlgoName, string currentTab)
         {
-            if (!tabIndexWithSiteOrderKey.ContainsKey(currentTab)
-                || (tabIndexWithSiteOrderKey.ContainsKey(currentTab) && tabIndexWithSiteOrderKey[currentTab] == string.Empty))
+            if (!Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTab)
+                || (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTab) && Globals.tabIndexWithSiteOrderKey[currentTab] == string.Empty))
             {
                 MessageBox.Show("Order not found.");
                 return;
@@ -229,21 +229,20 @@ namespace ADLManagerPro
 
             //foreach (DataGridViewRow row in mainGrid.Rows)
             //{
-            //    var cellValue = row.Cells[columnOneName].Value;
+            //    var cellValue = row.Cells[Globals.columnOneName].Value;
 
             //}
-            if (tabIndexWithSiteOrderKey.ContainsKey(currentTab) && algoNameWithTradeSubscription.ContainsKey(AlgoName))
+            if (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTab) && Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName))
             {
-                string orderKey = tabIndexWithSiteOrderKey[currentTab];
+                string orderKey = Globals.tabIndexWithSiteOrderKey[currentTab];
 
-                algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
+                Globals.algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
             }
         }
 
 
 
-        public void OnSaveOrUpdateTemplateBtnClick(object s, EventArgs e, TextBox txtTemplateName, string adlValue, Dictionary<string, List<Template>> _algoNameWithTemplateList,
-            DataGridView paramGrid, Dictionary<string, AdlParameters> algoNameWithParameters, ComboBox savedTemplates,TabControl MainTab)
+        public void OnSaveOrUpdateTemplateBtnClick(object s, EventArgs e, TextBox txtTemplateName, string adlValue,DataGridView paramGrid, ComboBox savedTemplates,TabControl MainTab)
         {
             string templateName = txtTemplateName.Text.Trim();
             if (string.IsNullOrWhiteSpace(templateName))
@@ -261,22 +260,22 @@ namespace ADLManagerPro
             }
             
 
-            List<Template> templates = _algoNameWithTemplateList[adlName];
+            List<Template> templates = Globals.algoNameWithTemplateList[adlName];
             Template existingTemplate = templates.FirstOrDefault(t => t.TemplateName == templateName);
 
             if (existingTemplate != null)
             {
-                _helperFunctions.UpdateTemplate(existingTemplate, templateName,paramGrid,_algoNameWithTemplateList,adlName,templates);
+                _helperFunctions.UpdateTemplate(existingTemplate, templateName,paramGrid,adlName,templates);
                 return;
             }
 
             #region Adding new Template
             
             // Get the parameter definitions for this ADL
-            if (algoNameWithParameters.ContainsKey(adlName))
+            if (Globals.algoNameWithParameters.ContainsKey(adlName))
             {
                 //We have the adl name already, so we will add to the given json
-                AdlParameters adlParams = algoNameWithParameters[adlName];
+                AdlParameters adlParams = Globals.algoNameWithParameters[adlName];
                 Dictionary<string, ParameterType> paramTypes = adlParams.GetParamNameWithTypeAll();
                 // New Template
                 Template newTemplate = new Template
@@ -299,19 +298,19 @@ namespace ADLManagerPro
                     }
                 }
                 // Add or update the template in dictionary
-                if (_algoNameWithTemplateList.ContainsKey(adlName))
+                if (Globals.algoNameWithTemplateList.ContainsKey(adlName))
                 {
-                    var existingList = _algoNameWithTemplateList[adlName];
+                    var existingList = Globals.algoNameWithTemplateList[adlName];
                     existingList.Add(newTemplate);
-                    _algoNameWithTemplateList.Remove(adlName);
-                    _algoNameWithTemplateList.Add(adlName, existingList);
+                    Globals.algoNameWithTemplateList.Remove(adlName);
+                    Globals.algoNameWithTemplateList.Add(adlName, existingList);
                 }
-                _fileHandlers.SaveTemplateDictionaryToFile(_algoNameWithTemplateList);
+                _fileHandlers.SaveTemplateDictionaryToFile(Globals.algoNameWithTemplateList);
                 //Update the combo box in the tab we are in
-                if (_algoNameWithTemplateList.ContainsKey(adlValue))
+                if (Globals.algoNameWithTemplateList.ContainsKey(adlValue))
                 {
                     savedTemplates.Items.Clear();
-                    savedTemplates.Items.AddRange(_helperFunctions.GetTemplateNames(_algoNameWithTemplateList[adlValue]).ToArray());
+                    savedTemplates.Items.AddRange(_helperFunctions.GetTemplateNames(Globals.algoNameWithTemplateList[adlValue]).ToArray());
                 }
                 
                 savedTemplates.Refresh();
@@ -321,7 +320,7 @@ namespace ADLManagerPro
                 }   
 
                 txtTemplateName.Text = newTemplate.TemplateName;
-                _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, _algoNameWithTemplateList, adlValue);
+                _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, adlValue);
                 MessageBox.Show("Template saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
@@ -335,8 +334,7 @@ namespace ADLManagerPro
         }
 
 
-        public void SavedTemplatesIndexChanged(object s, EventArgs e,ComboBox savedTemplates, TextBox txtTemplateName, Dictionary<string, List<Template>> _algoNameWithTemplateList,
-            string adlValue, DataGridView paramGrid)
+        public void SavedTemplatesIndexChanged(object s, EventArgs e,ComboBox savedTemplates, TextBox txtTemplateName,string adlValue, DataGridView paramGrid)
         {
             string selectedTemplateName = savedTemplates.SelectedItem?.ToString();
             txtTemplateName.Text = selectedTemplateName;
@@ -345,7 +343,7 @@ namespace ADLManagerPro
                 return;
 
             // Step 1: Fetch the correct Template object
-            if (!_algoNameWithTemplateList.TryGetValue(adlValue, out List<Template> templatesForAlgo))
+            if (!Globals.algoNameWithTemplateList.TryGetValue(adlValue, out List<Template> templatesForAlgo))
                 return;
 
             var selectedTemplate = templatesForAlgo.FirstOrDefault(t => t.TemplateName == selectedTemplateName);

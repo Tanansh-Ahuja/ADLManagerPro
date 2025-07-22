@@ -68,7 +68,6 @@ namespace ADLManagerPro
             this.mainGrid.TabIndex = 0;
             this.mainGrid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.mainGrid_CellValueChanged);
             this.mainGrid.CurrentCellDirtyStateChanged += new System.EventHandler(this.mainGrid_CurrentCellDirtyStateChanged);
-            this.mainGrid.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.mainGrid_EditingControlShowing);
             // 
             // Select
             // 

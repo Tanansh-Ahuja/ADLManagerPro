@@ -38,13 +38,14 @@ namespace ADLManagerPro
                 m_priceSubscription.Settings = new PriceSubscriptionSettings(PriceSubscriptionType.MarketDepth);
                 m_priceSubscription.FieldsUpdated += m_priceSubscription_FieldsUpdated;
                 m_priceSubscription.Start();
-                if (!Form1.instruments.Contains(instrument))
+                if (!Globals.instruments.Contains(instrument))
                 {
-                    Form1.instruments.Add(instrument);
-                    if (!Form1.instrumentNameWithInstrument.ContainsKey(instrument.InstrumentDetails.Alias))
-                        Form1.instrumentNameWithInstrument.Add(instrument.InstrumentDetails.Alias, instrument);
+                    Globals.instruments.Add(instrument);
+                    if (!Globals.instrumentNameWithInstrument.ContainsKey(instrument.InstrumentDetails.Alias))
+                        Globals.instrumentNameWithInstrument.Add(instrument.InstrumentDetails.Alias, instrument);
 
                     Console.WriteLine("Found: {0}", instrument);
+                     
 
 
                 }
@@ -69,10 +70,11 @@ namespace ADLManagerPro
             {
                
 
-                if(!Form1.instrumentsPriceSubscribed.Contains(e.Fields.Instrument.Name))
+                if(!Globals.instrumentsPriceSubscribed.Contains(e.Fields.Instrument.Name))
                 {
                     Console.WriteLine($"Price for {e.Fields.Instrument.InstrumentDetails.Alias}");
-                    Form1.instrumentsPriceSubscribed.Add(e.Fields.Instrument.Name);
+                    Globals.instrumentsPriceSubscribed.Add(e.Fields.Instrument.Name);
+                    Globals.loadingLabel.Text = "Status: All Instruments Found...";
                     Form1.ShowMainGrid();
                 }
             }

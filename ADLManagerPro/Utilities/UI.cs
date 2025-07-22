@@ -22,62 +22,61 @@ namespace ADLManagerPro
             _buttonEvents = new ButtonEvents();
         }
 
-        public bool CellValueChanged(object sender, DataGridViewCellEventArgs e, DataGridView mainGrid,
-            string columnZeroName,string columnOneName,string columnTwoName, string columnThreeName,string columnFourName, 
-            List<int> selectedRowIndexList,TabControl MainTab, Dictionary<string, TabInfo> tabIndexWithTabInfo)
+        public bool CellValueChanged(object sender, DataGridViewCellEventArgs e, DataGridView mainGrid, 
+            TabControl MainTab)
         {
-            if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == columnZeroName)
+            if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == Globals.columnZeroName)
             {
                 //e.RowIndex
                 var row = mainGrid.Rows[e.RowIndex];
-                bool isChecked = Convert.ToBoolean(row.Cells[columnZeroName].Value);
+                bool isChecked = Convert.ToBoolean(row.Cells[Globals.columnZeroName].Value);
 
                 if (isChecked)
                 {
-                    if (!selectedRowIndexList.Contains(e.RowIndex))
-                        selectedRowIndexList.Add(e.RowIndex);
+                    if (!Globals.selectedRowIndexList.Contains(e.RowIndex))
+                        Globals.selectedRowIndexList.Add(e.RowIndex);
                 }
                 else
                 {
-                    selectedRowIndexList.Remove(e.RowIndex);
+                    Globals.selectedRowIndexList.Remove(e.RowIndex);
                 }
             }
 
-            if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == columnFourName) // "createTab"
+            if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == Globals.columnFourName) // "createTab"
             {
                 var row = mainGrid.Rows[e.RowIndex];
-                var activateCell = row.Cells[columnFourName];
+                var activateCell = row.Cells[Globals.columnFourName];
                 bool isChecked = Convert.ToBoolean(activateCell.Value);
-                int sno = Convert.ToInt32(mainGrid.Rows[e.RowIndex].Cells[columnOneName].Value);
+                int sno = Convert.ToInt32(mainGrid.Rows[e.RowIndex].Cells[Globals.columnOneName].Value);
 
                 // Only validate if user is trying to activate
                 if (isChecked)
                 {
-                    var feedValue = row.Cells[columnTwoName].Value?.ToString();
-                    var adlValue = row.Cells[columnThreeName].Value?.ToString();
+                    var feedValue = row.Cells[Globals.columnTwoName].Value?.ToString();
+                    var adlValue = row.Cells[Globals.columnThreeName].Value?.ToString();
 
                     if (string.IsNullOrWhiteSpace(feedValue) || string.IsNullOrWhiteSpace(adlValue))
                     {
                         // Reset the checkbox (temporarily disable event to avoid loop)
                         //mainGrid.CellValueChanged -= Form1.mainGrid_CellValueChanged;
-                        row.Cells[columnFourName].Value = false;
+                        row.Cells[Globals.columnFourName].Value = false;
                         //mainGrid.CellValueChanged += Form1.mainGrid_CellValueChanged;
                         MessageBox.Show("Please select both Feed and ADL before activating.", "Validation Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return false;
                     }
 
-                    string serial = row.Cells[columnOneName].Value.ToString();
+                    string serial = row.Cells[Globals.columnOneName].Value.ToString();
                     if (!_helperFunctions.TabExists(serial,MainTab))
                     {
-                        mainGrid.Rows[row.Index].Cells[columnTwoName].ReadOnly = true;
-                        mainGrid.Rows[row.Index].Cells[columnThreeName].ReadOnly = true;
+                        mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].ReadOnly = true;
+                        mainGrid.Rows[row.Index].Cells[Globals.columnThreeName].ReadOnly = true;
                         return true;
                     }
                 }
                 else
                 {
                     //TODO: If tab has adl order delete it
-                    string serial = row.Cells[columnOneName].Value.ToString();
+                    string serial = row.Cells[Globals.columnOneName].Value.ToString();
                     for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
                     {
                         if (MainTab.TabPages[i].Text == serial)
@@ -85,27 +84,24 @@ namespace ADLManagerPro
 
                             MainTab.TabPages.RemoveAt(i);
 
-                            if(tabIndexWithTabInfo.Remove(i.ToString()))
+                            if(Globals.tabIndexWithTabInfo.Remove(i.ToString()))
                             {
 
-                                tabIndexWithTabInfo.Remove(i.ToString());
+                                Globals.tabIndexWithTabInfo.Remove(i.ToString());
                             }
                             
                             break;
                         }
                     }
 
-                    mainGrid.Rows[row.Index].Cells[columnTwoName].ReadOnly = false;
-                    mainGrid.Rows[row.Index].Cells[columnThreeName].ReadOnly = false;
+                    mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].ReadOnly = false;
+                    mainGrid.Rows[row.Index].Cells[Globals.columnThreeName].ReadOnly = false;
                 }
             }
             return false;
         }
 
-        public void CreateTabWithLabels(string serial, string feedValue, string adlValue, Dictionary<string, AdlParameters> algoNameWithParameters,
-            List<string> _accounts, Dictionary<string, Instrument> instrumentNameWithInstrument,Dictionary<string, List<Template>> _algoNameWithTemplateList,
-            Dictionary<string, string> tabIndexWithSiteOrderKey, Dictionary<string, C_AlgoLookup_TradeSubscription> algoNameWithTradeSubscription,
-            Dictionary<string, TabInfo> tabIndexWithTabInfo, TabControl MainTab)
+        public void CreateTabWithLabels(string serial, string feedValue, string adlValue,TabControl MainTab)
         {
             TabPage newTab = new TabPage(serial);
 
@@ -177,9 +173,9 @@ namespace ADLManagerPro
             paramGrid.Columns["ParamName"].DefaultCellStyle.BackColor = Color.LightGray;
             paramGrid.Columns.Add("Value", "Value");
 
-            if (algoNameWithParameters.ContainsKey(adlValue))
+            if (Globals.algoNameWithParameters.ContainsKey(adlValue))
             {
-                foreach (var (paramName, paramType) in algoNameWithParameters[adlValue]._adlOrderProfileParametersWithType)
+                foreach (var (paramName, paramType) in Globals.algoNameWithParameters[adlValue]._adlOrderProfileParametersWithType)
                 {
                     int rowIndex = paramGrid.Rows.Add(paramName, paramType);
 
@@ -188,7 +184,7 @@ namespace ADLManagerPro
                         paramName.Equals("Hedge Instrument Account", StringComparison.OrdinalIgnoreCase))
                     {
                         var combocell = new DataGridViewComboBoxCell();
-                        combocell.Items.AddRange(_accounts.ToArray());
+                        combocell.Items.AddRange(Globals._accounts.ToArray());
                         paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
                         continue;
                     }
@@ -198,7 +194,7 @@ namespace ADLManagerPro
                         paramName.Equals("Hedge Instrument", StringComparison.OrdinalIgnoreCase))
                     {
                         var combocell = new DataGridViewComboBoxCell();
-                        combocell.Items.AddRange(instrumentNameWithInstrument.Keys.ToArray());
+                        combocell.Items.AddRange(Globals.instrumentNameWithInstrument.Keys.ToArray());
                         paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
                         continue;
                     }
@@ -223,7 +219,7 @@ namespace ADLManagerPro
                     }
                 }
 
-                foreach (var (paramName, paramType) in algoNameWithParameters[adlValue]._adlUserParametersWithType)
+                foreach (var (paramName, paramType) in Globals.algoNameWithParameters[adlValue]._adlUserParametersWithType)
                 {
                     int rowIndex = paramGrid.Rows.Add(paramName, paramType);
 
@@ -232,7 +228,7 @@ namespace ADLManagerPro
                         paramName.Equals("Hedge Instrument Account", StringComparison.OrdinalIgnoreCase))
                     {
                         var combocell = new DataGridViewComboBoxCell();
-                        combocell.Items.AddRange(_accounts.ToArray());
+                        combocell.Items.AddRange(Globals._accounts.ToArray());
                         paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
                         continue;
                     }
@@ -242,7 +238,7 @@ namespace ADLManagerPro
                         paramName.Equals("Hedge Instrument", StringComparison.OrdinalIgnoreCase))
                     {
                         var combocell = new DataGridViewComboBoxCell();
-                        combocell.Items.AddRange(instrumentNameWithInstrument.Keys.ToArray());
+                        combocell.Items.AddRange(Globals.instrumentNameWithInstrument.Keys.ToArray());
                         paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
                         continue;
                     }
@@ -302,8 +298,8 @@ namespace ADLManagerPro
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
             //TODO: add functionality and handle edge case
-            if (_algoNameWithTemplateList.ContainsKey(adlValue))
-                savedTemplates.Items.AddRange(_helperFunctions.GetTemplateNames(_algoNameWithTemplateList[adlValue]).ToArray());
+            if (Globals.algoNameWithTemplateList.ContainsKey(adlValue))
+                savedTemplates.Items.AddRange(_helperFunctions.GetTemplateNames(Globals.algoNameWithTemplateList[adlValue]).ToArray());
 
             TextBox txtTemplateName = new TextBox
             {
@@ -327,27 +323,26 @@ namespace ADLManagerPro
             btnStartAlgo.Click += (s, e) =>
             {
 
-                _buttonEvents.OnStartbtnClick(paramGrid, adlValue, _accounts, tabIndexWithSiteOrderKey, MainTab.SelectedTab.Text,
-                    algoNameWithParameters, algoNameWithTradeSubscription, instrumentNameWithInstrument);
+                _buttonEvents.OnStartbtnClick(paramGrid, adlValue, MainTab.SelectedTab.Text);
             };
             newTab.Controls.Add(btnStartAlgo);
 
 
             btnDeleteAlgo.Click += (s, e) =>
             {
-                _buttonEvents.OnDeletebtnClick(paramGrid, adlValue, tabIndexWithSiteOrderKey, MainTab.SelectedTab.Text, algoNameWithTradeSubscription);
+                _buttonEvents.OnDeletebtnClick(paramGrid, adlValue, MainTab.SelectedTab.Text);
             };
 
             newTab.Controls.Add(btnDeleteAlgo);
 
             savedTemplates.SelectedIndexChanged += (s, e) =>
             {
-                _buttonEvents.SavedTemplatesIndexChanged(s, e, savedTemplates, txtTemplateName, _algoNameWithTemplateList, adlValue, paramGrid);
+                _buttonEvents.SavedTemplatesIndexChanged(s, e, savedTemplates, txtTemplateName, adlValue, paramGrid);
             };
 
             btnSaveTemplate.Click += (s, e) =>
             {
-                _buttonEvents.OnSaveOrUpdateTemplateBtnClick(s, e,txtTemplateName,adlValue,_algoNameWithTemplateList,paramGrid,algoNameWithParameters,savedTemplates,MainTab);
+                _buttonEvents.OnSaveOrUpdateTemplateBtnClick(s, e,txtTemplateName,adlValue,paramGrid,savedTemplates,MainTab);
             };
 
             #endregion
@@ -357,14 +352,14 @@ namespace ADLManagerPro
             newTab.Controls.Add(txtTemplateName);
             newTab.Controls.Add(btnSaveTemplate);
             TabInfo tabInfo = new TabInfo(paramGrid, adlValue, feedValue);
-            if(tabIndexWithTabInfo.ContainsKey(serial))
+            if(Globals.tabIndexWithTabInfo.ContainsKey(serial))
             {
-                tabIndexWithTabInfo[serial] = tabInfo;
+                Globals.tabIndexWithTabInfo[serial] = tabInfo;
             }
             else
             {
 
-                tabIndexWithTabInfo.Add(serial, tabInfo);
+                Globals.tabIndexWithTabInfo.Add(serial, tabInfo);
             }
 
             // Add tab to TabControl

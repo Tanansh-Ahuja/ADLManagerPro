@@ -31,8 +31,7 @@ namespace ADLManagerPro
             List<string> templateNames = templateList.Select(t => t.TemplateName).ToList();
         }
 
-        public void UpdateTemplate(Template existingTemplate,string templateName, DataGridView paramGrid, Dictionary<string, 
-            List<Template>> _algoNameWithTemplateList,string adlName, List<Template> templates)
+        public void UpdateTemplate(Template existingTemplate,string templateName, DataGridView paramGrid, string adlName, List<Template> templates)
         {
             if (existingTemplate != null)
             {
@@ -66,11 +65,11 @@ namespace ADLManagerPro
                     }
 
                     // Update dictionary
-                    _algoNameWithTemplateList.Remove(adlName);
-                    _algoNameWithTemplateList.Add(adlName, templates);
+                    Globals.algoNameWithTemplateList.Remove(adlName);
+                    Globals.algoNameWithTemplateList.Add(adlName, templates);
 
                     // Save to file
-                    _fileHandlers.SaveTemplateDictionaryToFile(_algoNameWithTemplateList);
+                    _fileHandlers.SaveTemplateDictionaryToFile(Globals.algoNameWithTemplateList);
 
                     MessageBox.Show("Template updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -79,7 +78,7 @@ namespace ADLManagerPro
             }
         }
 
-        public void PopulateEveryComboBoxInTabs(TabControl MainTab, string adlName, Dictionary<string, List<Template>> _algoNameWithTemplateList, string adlValue)
+        public void PopulateEveryComboBoxInTabs(TabControl MainTab, string adlName, string adlValue)
         {
             //Update the combobox of all other tabs where the same Algo is there
             foreach (TabPage tabPage in MainTab.TabPages)
@@ -115,7 +114,7 @@ namespace ADLManagerPro
                         }
 
                         comboBox.Items.Clear();
-                        comboBox.Items.AddRange(GetTemplateNames(_algoNameWithTemplateList[adlValue]).ToArray());
+                        comboBox.Items.AddRange(GetTemplateNames(Globals.algoNameWithTemplateList[adlValue]).ToArray());
 
                         // Select the desired item
                         if (comboBox.Items.Contains(currentValue))

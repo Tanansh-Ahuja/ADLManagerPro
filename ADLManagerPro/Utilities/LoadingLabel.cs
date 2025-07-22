@@ -16,25 +16,24 @@ namespace ADLManagerPro
         }
 
         
-        public Label InitialiseLoadingLabel(string showThis, Label loadingLabel, Form1 form1, TabControl MainTab)
+        public void InitialiseLoadingLabel(string showThis, Form1 form1, TabControl MainTab)
         {
-            loadingLabel = new Label()
+            Globals.loadingLabel = new Label()
             {
                 Text = "Status: " + showThis + "...",
                 AutoSize = true,
                 Font = new Font("Arial", 11),
                 Location = new Point(5, 5)
             };
-            form1.Controls.Add(loadingLabel);
-            loadingLabel.BringToFront();
+            form1.Controls.Add(Globals.loadingLabel);
+            Globals.loadingLabel.BringToFront();
 
             // Hide the main tab (you can add more components here)
             MainTab.Hide();
-            return loadingLabel;
         }
-        public void ChangeLoadingLabelText(string showThis,Label loadingLabel)
+        public void ChangeLoadingLabelText(string showThis)
         {
-            loadingLabel.Text = "Status: " + showThis + "...";
+            Globals.loadingLabel.Text = "Status: " + showThis + "...";
         }
         
     }

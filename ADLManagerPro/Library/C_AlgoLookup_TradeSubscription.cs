@@ -39,11 +39,13 @@ namespace ADLManagerPro
             if (e.Event == ProductDataEvent.Found)
             {
                 m_algo = e.AlgoLookup.Algo;
-                if(!Form1.algos.Contains(m_algo))
+                if(!Globals.algos.Contains(m_algo))
                 {
-                    Form1.algos.Add(m_algo);
+                    Globals.algos.Add(m_algo);
                     Console.WriteLine("Algo Instrument Found: {0}", e.AlgoLookup.Algo.Alias);
-                    
+                    Globals.loadingLabel.Text = "Status: Algo Instrument Found: " + e.AlgoLookup.Algo.Alias;
+
+
                     Form1.ShowMainGrid();
 
                     string algoName = e.AlgoLookup.Algo.Alias;
@@ -100,9 +102,9 @@ namespace ADLManagerPro
 
                     AdlParameters adlParameters = new AdlParameters(userparamListWithType, orderProfileListWithType, userparamList, orderProfileList);
 
-                    if(!Form1.algoNameWithParameters.ContainsKey(algoName))
+                    if(!Globals.algoNameWithParameters.ContainsKey(algoName))
                     {
-                        Form1.algoNameWithParameters.Add(algoName, adlParameters);
+                        Globals.algoNameWithParameters.Add(algoName, adlParameters);
                     }
 
                     #endregion
@@ -155,7 +157,7 @@ namespace ADLManagerPro
             {
                 Console.WriteLine($"Key: {kvp.Key}, ValueType: {kvp.Value.GetType().Name} ");
             }
-            foreach (var (userParameter, paramType) in Form1.algoNameWithParameters[_algoName]._adlUserParametersWithType)
+            foreach (var (userParameter, paramType) in Globals.algoNameWithParameters[_algoName]._adlUserParametersWithType)
             {
                 
                 object value = algo_userparams[userParameter];
@@ -205,7 +207,7 @@ namespace ADLManagerPro
 
 
             OrderProfile algo_op = m_algo.GetOrderProfile();
-            algo_op.Account = Form1.m_accounts.ElementAt(accountIndex);
+            algo_op.Account = Globals.m_accounts.ElementAt(accountIndex);
             //algo_op.OrderQuantity = Quantity.FromString(m_instrument, "5");
             algo_op.Side = OrderSide.Buy;
             //algo_op.OrderType = OrderType.Limit;
@@ -236,7 +238,8 @@ namespace ADLManagerPro
         void m_algoTradeSubscription_OrderBookDownload(object sender, OrderBookDownloadEventArgs e)
         {
             Console.WriteLine("Orderbook downloaded...");
-            Form1.m_isOrderBookDownloaded = true;
+            Globals.m_isOrderBookDownloaded = true;
+            Globals.loadingLabel.Text = "Status: Orderbook Downloaded...";
             Form1.ShowMainGrid();
 
         }
