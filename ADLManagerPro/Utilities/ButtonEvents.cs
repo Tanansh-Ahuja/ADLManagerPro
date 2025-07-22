@@ -180,6 +180,7 @@ namespace ADLManagerPro
                             if(paramName.Contains("Account"))
                             {
                                 value = Globals.m_accounts.ElementAt(Globals._accounts.IndexOf(value.ToString())).AccountId;
+                                value = 0;
                             }
                             algo_userparams[paramName] = value;
                         }

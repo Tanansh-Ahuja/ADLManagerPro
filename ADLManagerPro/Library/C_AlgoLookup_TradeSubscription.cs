@@ -24,6 +24,7 @@ namespace ADLManagerPro
         //TODO: any work for this here
         private bool orderAdded = false;
         private string _algoName = string.Empty;
+        private bool orderSent = false;
         
         public C_AlgoLookup_TradeSubscription(Dispatcher dispatcher, string algoName) 
         {
@@ -197,6 +198,7 @@ namespace ADLManagerPro
             algo_op.Account = Globals.m_accounts.ElementAt(accountIndex);
             algo_op.UserParameters = algo_userparams;
             m_algoTradeSubscription.SendOrder(algo_op);
+            orderSent = true;
 
             return algo_op.SiteOrderKey;
 
@@ -210,6 +212,7 @@ namespace ADLManagerPro
                 OrderProfile op = m_algoTradeSubscription.Orders[siteOrderKey].GetOrderProfile();
                 op.Action = OrderAction.Delete;
                 m_algoTradeSubscription.SendOrder(op);
+                orderSent = false;
 
             }
             return string.Empty;
@@ -228,7 +231,14 @@ namespace ADLManagerPro
 
         void m_algoTradeSubscription_OrderRejected(object sender, OrderRejectedEventArgs e)
         {
-
+            if(orderSent)
+            {
+                HelperFunctions.OnFromTTAlgoOrderDeletion(_algoName, e.Order.SiteOrderKey);
+            }
+            else
+            {
+                //TODO
+            }
             Console.WriteLine("\nOrderRejected for : [{0}]", e.Order.Message);
         }
 
