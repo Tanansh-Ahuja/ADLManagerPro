@@ -20,7 +20,7 @@ namespace ADLManagerPro
         {
             Globals.loadingLabel = new Label()
             {
-                Text = "Status: " + showThis + "...",
+                Text = "Status: " + showThis + " ...",
                 AutoSize = true,
                 Font = new Font("Arial", 11),
                 Location = new Point(5, 5)
@@ -33,7 +33,7 @@ namespace ADLManagerPro
         }
         public void ChangeLoadingLabelText(string showThis)
         {
-            Globals.loadingLabel.Text = "Status: " + showThis + "...";
+            Globals.loadingLabel.Text = "Status: " + showThis + " ...";
         }
         
     }
