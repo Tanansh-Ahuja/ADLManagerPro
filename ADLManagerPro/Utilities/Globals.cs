@@ -16,6 +16,7 @@ namespace ADLManagerPro
         public static readonly string columnTwoName = "feed";
         public static readonly string columnThreeName = "adl";
         public static readonly string columnFourName = "createTab";
+        public static readonly string columnFiveName = "OrderStatus";
 
         public static Label loadingLabel;
 

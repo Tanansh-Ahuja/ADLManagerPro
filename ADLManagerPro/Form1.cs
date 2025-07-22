@@ -46,7 +46,9 @@ namespace ADLManagerPro
             _buttonEvents = new ButtonEvents();
             _uI = new UI();
             _loadingLabel = new LoadingLabel();
+            
             InitializeComponent();
+            
            
         }
 

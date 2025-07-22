@@ -31,16 +31,17 @@ namespace ADLManagerPro
         private void InitializeComponent()
         {
             mainGrid = new System.Windows.Forms.DataGridView();
-            this.Select = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Sno = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.feed = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.adl = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.createTab = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             MainTab = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.NeonFeedButton = new System.Windows.Forms.Button();
             this.del_btn = new System.Windows.Forms.Button();
             this.add_btn = new System.Windows.Forms.Button();
+            this.Select = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Sno = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.feed = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.adl = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.createTab = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.OrderStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(mainGrid)).BeginInit();
             MainTab.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -58,7 +59,8 @@ namespace ADLManagerPro
             this.Sno,
             this.feed,
             this.adl,
-            this.createTab});
+            this.createTab,
+            this.OrderStatus});
             mainGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             mainGrid.Location = new System.Drawing.Point(3, 2);
             mainGrid.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -66,10 +68,70 @@ namespace ADLManagerPro
             mainGrid.RowHeadersVisible = false;
             mainGrid.RowHeadersWidth = 51;
             mainGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            mainGrid.Size = new System.Drawing.Size(850, 765);
+            mainGrid.Size = new System.Drawing.Size(1028, 765);
             mainGrid.TabIndex = 0;
             mainGrid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.mainGrid_CellValueChanged);
             mainGrid.CurrentCellDirtyStateChanged += new System.EventHandler(this.mainGrid_CurrentCellDirtyStateChanged);
+            // 
+            // MainTab
+            // 
+            MainTab.Controls.Add(this.tabPage1);
+            MainTab.Dock = System.Windows.Forms.DockStyle.Fill;
+            MainTab.Location = new System.Drawing.Point(0, 0);
+            MainTab.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            MainTab.Name = "MainTab";
+            MainTab.SelectedIndex = 0;
+            MainTab.Size = new System.Drawing.Size(1042, 798);
+            MainTab.TabIndex = 1;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.NeonFeedButton);
+            this.tabPage1.Controls.Add(this.del_btn);
+            this.tabPage1.Controls.Add(this.add_btn);
+            this.tabPage1.Controls.Add(mainGrid);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabPage1.Size = new System.Drawing.Size(1034, 769);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Main";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // NeonFeedButton
+            // 
+            this.NeonFeedButton.BackColor = System.Drawing.Color.Transparent;
+            this.NeonFeedButton.Location = new System.Drawing.Point(889, 17);
+            this.NeonFeedButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.NeonFeedButton.Name = "NeonFeedButton";
+            this.NeonFeedButton.Size = new System.Drawing.Size(124, 31);
+            this.NeonFeedButton.TabIndex = 3;
+            this.NeonFeedButton.Text = "Neon Feed";
+            this.NeonFeedButton.UseVisualStyleBackColor = false;
+            this.NeonFeedButton.Click += new System.EventHandler(this.NeonFeedButton_Click);
+            // 
+            // del_btn
+            // 
+            this.del_btn.Location = new System.Drawing.Point(889, 89);
+            this.del_btn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.del_btn.Name = "del_btn";
+            this.del_btn.Size = new System.Drawing.Size(124, 34);
+            this.del_btn.TabIndex = 2;
+            this.del_btn.Text = "Delete Row";
+            this.del_btn.UseVisualStyleBackColor = true;
+            this.del_btn.Click += new System.EventHandler(this.del_btn_Click);
+            // 
+            // add_btn
+            // 
+            this.add_btn.Location = new System.Drawing.Point(889, 52);
+            this.add_btn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.add_btn.Name = "add_btn";
+            this.add_btn.Size = new System.Drawing.Size(124, 31);
+            this.add_btn.TabIndex = 1;
+            this.add_btn.Text = "Add Row";
+            this.add_btn.UseVisualStyleBackColor = true;
+            this.add_btn.Click += new System.EventHandler(this.add_btn_Click);
             // 
             // Select
             // 
@@ -90,6 +152,7 @@ namespace ADLManagerPro
             // 
             // feed
             // 
+            this.feed.Frozen = true;
             this.feed.HeaderText = "Feed";
             this.feed.Items.AddRange(new object[] {
             "EUR/USD",
@@ -105,6 +168,7 @@ namespace ADLManagerPro
             // 
             // adl
             // 
+            this.adl.Frozen = true;
             this.adl.HeaderText = "ADL";
             this.adl.Items.AddRange(new object[] {
             "connecting..."});
@@ -114,76 +178,27 @@ namespace ADLManagerPro
             // 
             // createTab
             // 
+            this.createTab.Frozen = true;
             this.createTab.HeaderText = "Create Tab";
             this.createTab.MinimumWidth = 6;
             this.createTab.Name = "createTab";
             this.createTab.Width = 125;
             // 
-            // MainTab
+            // OrderStatus
             // 
-            MainTab.Controls.Add(this.tabPage1);
-            MainTab.Dock = System.Windows.Forms.DockStyle.Fill;
-            MainTab.Location = new System.Drawing.Point(0, 0);
-            MainTab.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            MainTab.Name = "MainTab";
-            MainTab.SelectedIndex = 0;
-            MainTab.Size = new System.Drawing.Size(864, 798);
-            MainTab.TabIndex = 1;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.NeonFeedButton);
-            this.tabPage1.Controls.Add(this.del_btn);
-            this.tabPage1.Controls.Add(this.add_btn);
-            this.tabPage1.Controls.Add(mainGrid);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabPage1.Size = new System.Drawing.Size(856, 769);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Main";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // NeonFeedButton
-            // 
-            this.NeonFeedButton.BackColor = System.Drawing.Color.Transparent;
-            this.NeonFeedButton.Location = new System.Drawing.Point(721, 17);
-            this.NeonFeedButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.NeonFeedButton.Name = "NeonFeedButton";
-            this.NeonFeedButton.Size = new System.Drawing.Size(124, 31);
-            this.NeonFeedButton.TabIndex = 3;
-            this.NeonFeedButton.Text = "Neon Feed";
-            this.NeonFeedButton.UseVisualStyleBackColor = false;
-            this.NeonFeedButton.Click += new System.EventHandler(this.NeonFeedButton_Click);
-            // 
-            // del_btn
-            // 
-            this.del_btn.Location = new System.Drawing.Point(721, 89);
-            this.del_btn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.del_btn.Name = "del_btn";
-            this.del_btn.Size = new System.Drawing.Size(124, 34);
-            this.del_btn.TabIndex = 2;
-            this.del_btn.Text = "Delete Row";
-            this.del_btn.UseVisualStyleBackColor = true;
-            this.del_btn.Click += new System.EventHandler(this.del_btn_Click);
-            // 
-            // add_btn
-            // 
-            this.add_btn.Location = new System.Drawing.Point(721, 52);
-            this.add_btn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.add_btn.Name = "add_btn";
-            this.add_btn.Size = new System.Drawing.Size(124, 31);
-            this.add_btn.TabIndex = 1;
-            this.add_btn.Text = "Add Row";
-            this.add_btn.UseVisualStyleBackColor = true;
-            this.add_btn.Click += new System.EventHandler(this.add_btn_Click);
+            this.OrderStatus.DataPropertyName = "DEACTIVATED";
+            this.OrderStatus.Frozen = true;
+            this.OrderStatus.HeaderText = "Order Status";
+            this.OrderStatus.MinimumWidth = 6;
+            this.OrderStatus.Name = "OrderStatus";
+            this.OrderStatus.ReadOnly = true;
+            this.OrderStatus.Width = 125;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(864, 798);
+            this.ClientSize = new System.Drawing.Size(1042, 798);
             this.Controls.Add(MainTab);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -202,8 +217,6 @@ namespace ADLManagerPro
 
         #endregion
 
-
-        public static DataGridView mainGrid;
         private TabPage tabPage1;
         private Button add_btn;
         private Button del_btn;
@@ -213,6 +226,8 @@ namespace ADLManagerPro
         private DataGridViewComboBoxColumn feed;
         private DataGridViewComboBoxColumn adl;
         private DataGridViewCheckBoxColumn createTab;
+        private DataGridViewTextBoxColumn OrderStatus;
+        public static DataGridView mainGrid;
         private static TabControl MainTab;
     }
 }

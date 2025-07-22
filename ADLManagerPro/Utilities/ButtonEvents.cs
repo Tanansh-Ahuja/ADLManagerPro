@@ -22,6 +22,7 @@ namespace ADLManagerPro
         {
             int serialNumber = mainGrid.Rows.Count + 1;
             mainGrid.Rows.Add(false, serialNumber);
+            mainGrid.Rows[serialNumber - 1].Cells[Globals.columnFiveName].Value = "DEACTIVATED";
         }
 
         public void DeleteRowsInMainGrid(object sender, EventArgs e, DataGridView mainGrid, TabControl MainTab)
@@ -278,6 +279,7 @@ namespace ADLManagerPro
                 int rowIndex = Convert.ToInt32(currentTabIndex)-1;
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnZeroName].ReadOnly = true;
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFourName].ReadOnly = true;
+                Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFiveName].Value = "ACTIVATED" ;
 
 
             }
@@ -364,6 +366,7 @@ namespace ADLManagerPro
                 int rowIndex = Convert.ToInt32(currentTabIndex) - 1;
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnZeroName].ReadOnly = false;
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFourName].ReadOnly = false;
+                Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFiveName].Value = "DEACTIVATED";
             }
         }
 
