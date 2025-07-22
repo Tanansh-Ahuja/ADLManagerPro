@@ -11,11 +11,11 @@ namespace ADLManagerPro
 {
     public class Globals
     {
-        public static string columnZeroName = "Select";
-        public static string columnOneName = "Sno";
-        public static string columnTwoName = "feed";
-        public static string columnThreeName = "adl";
-        public static string columnFourName = "createTab";
+        public static readonly string columnZeroName = "Select";
+        public static readonly string columnOneName = "Sno";
+        public static readonly string columnTwoName = "feed";
+        public static readonly string columnThreeName = "adl";
+        public static readonly string columnFourName = "createTab";
 
         public static Label loadingLabel;
 
@@ -35,10 +35,12 @@ namespace ADLManagerPro
         public static Dictionary<string, Instrument> instrumentNameWithInstrument = new Dictionary<string, Instrument>();
         public static Dictionary<string, C_AlgoLookup_TradeSubscription> algoNameWithTradeSubscription = new Dictionary<string, C_AlgoLookup_TradeSubscription>();
         public static Dictionary<string, string> tabIndexWithSiteOrderKey = new Dictionary<string, string>();
+        public static Dictionary<string, string> siteOrderKeyWithTabIndex = new Dictionary<string, string>();
         public static Dictionary<string, TabInfo> tabIndexWithTabInfo = new Dictionary<string, TabInfo>();
         public static Dictionary<string, List<Template>> algoNameWithTemplateList = new Dictionary<string, List<Template>>();
         public static Dictionary<string,Dictionary<string,ParameterType>> algoWithParamNameWithParamType = new Dictionary<string, Dictionary<string,ParameterType>>();
-        public static HashSet<string> SkipParamNames = new HashSet<string> { "Quoting Instrument Account", "Hedge Instrument Account", "Fast Mkt Inst" };
+        public static readonly HashSet<string> SkipParamNames = new HashSet<string> { "Quoting Instrument Account", "Hedge Instrument Account", "Fast Mkt Instrument" };
+
 
 
     }

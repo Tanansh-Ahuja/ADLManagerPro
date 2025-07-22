@@ -33,6 +33,7 @@ namespace ADLManagerPro
             m_algoLookupSubscription.OnData += AlgoLookupSubscription_OnData;
             m_algoLookupSubscription.GetAsync();
 
+
         }
         private void AlgoLookupSubscription_OnData(object sender, AlgoLookupEventArgs e)
         {
@@ -190,8 +191,8 @@ namespace ADLManagerPro
             }
             OrderProfile algo_op = m_algo.GetOrderProfile();
             /*   algo_op.LimitPrice = m_price;
-               algo_op.OrderQuantity = Quantity.FromDecimal(m_instrument, 5); ;
-               algo_op.Side = OrderSide.Buy;*/
+               algo_op.OrderQuantity = Quantity.FromDecimal(m_instrument, 5);*/
+            algo_op.Side = OrderSide.Buy;
             algo_op.OrderType = OrderType.Limit;
             algo_op.Account = Globals.m_accounts.ElementAt(accountIndex);
             algo_op.UserParameters = algo_userparams;
@@ -209,6 +210,7 @@ namespace ADLManagerPro
                 OrderProfile op = m_algoTradeSubscription.Orders[siteOrderKey].GetOrderProfile();
                 op.Action = OrderAction.Delete;
                 m_algoTradeSubscription.SendOrder(op);
+
             }
             return string.Empty;
         }
@@ -245,6 +247,7 @@ namespace ADLManagerPro
         void m_algoTradeSubscription_OrderDeleted(object sender, OrderDeletedEventArgs e)
         {
             //TODO: when order is deleted from tt
+            HelperFunctions.OnFromTTAlgoOrderDeletion(_algoName, e.OldOrder.SiteOrderKey);
 
             Console.WriteLine("\nOrderDeleted [{0}] , Message : {1}", e.OldOrder.SiteOrderKey, e.Message);
         }

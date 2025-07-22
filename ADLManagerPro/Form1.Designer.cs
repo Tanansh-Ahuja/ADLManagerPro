@@ -30,7 +30,7 @@ namespace ADLManagerPro
         /// </summary>
         private void InitializeComponent()
         {
-            this.mainGrid = new System.Windows.Forms.DataGridView();
+            mainGrid = new System.Windows.Forms.DataGridView();
             this.Select = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Sno = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.feed = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -41,35 +41,35 @@ namespace ADLManagerPro
             this.NeonFeedButton = new System.Windows.Forms.Button();
             this.del_btn = new System.Windows.Forms.Button();
             this.add_btn = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.mainGrid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(mainGrid)).BeginInit();
             MainTab.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainGrid
             // 
-            this.mainGrid.AllowUserToAddRows = false;
-            this.mainGrid.AllowUserToResizeColumns = false;
-            this.mainGrid.AllowUserToResizeRows = false;
-            this.mainGrid.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.mainGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.mainGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            mainGrid.AllowUserToAddRows = false;
+            mainGrid.AllowUserToResizeColumns = false;
+            mainGrid.AllowUserToResizeRows = false;
+            mainGrid.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            mainGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            mainGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Select,
             this.Sno,
             this.feed,
             this.adl,
             this.createTab});
-            this.mainGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainGrid.Location = new System.Drawing.Point(3, 2);
-            this.mainGrid.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.mainGrid.Name = "mainGrid";
-            this.mainGrid.RowHeadersVisible = false;
-            this.mainGrid.RowHeadersWidth = 51;
-            this.mainGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.mainGrid.Size = new System.Drawing.Size(850, 765);
-            this.mainGrid.TabIndex = 0;
-            this.mainGrid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.mainGrid_CellValueChanged);
-            this.mainGrid.CurrentCellDirtyStateChanged += new System.EventHandler(this.mainGrid_CurrentCellDirtyStateChanged);
+            mainGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            mainGrid.Location = new System.Drawing.Point(3, 2);
+            mainGrid.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            mainGrid.Name = "mainGrid";
+            mainGrid.RowHeadersVisible = false;
+            mainGrid.RowHeadersWidth = 51;
+            mainGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            mainGrid.Size = new System.Drawing.Size(850, 765);
+            mainGrid.TabIndex = 0;
+            mainGrid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.mainGrid_CellValueChanged);
+            mainGrid.CurrentCellDirtyStateChanged += new System.EventHandler(this.mainGrid_CurrentCellDirtyStateChanged);
             // 
             // Select
             // 
@@ -135,7 +135,7 @@ namespace ADLManagerPro
             this.tabPage1.Controls.Add(this.NeonFeedButton);
             this.tabPage1.Controls.Add(this.del_btn);
             this.tabPage1.Controls.Add(this.add_btn);
-            this.tabPage1.Controls.Add(this.mainGrid);
+            this.tabPage1.Controls.Add(mainGrid);
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage1.Name = "tabPage1";
@@ -148,7 +148,7 @@ namespace ADLManagerPro
             // NeonFeedButton
             // 
             this.NeonFeedButton.BackColor = System.Drawing.Color.Transparent;
-            this.NeonFeedButton.Location = new System.Drawing.Point(689, 17);
+            this.NeonFeedButton.Location = new System.Drawing.Point(721, 17);
             this.NeonFeedButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.NeonFeedButton.Name = "NeonFeedButton";
             this.NeonFeedButton.Size = new System.Drawing.Size(124, 31);
@@ -159,7 +159,7 @@ namespace ADLManagerPro
             // 
             // del_btn
             // 
-            this.del_btn.Location = new System.Drawing.Point(689, 89);
+            this.del_btn.Location = new System.Drawing.Point(721, 89);
             this.del_btn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.del_btn.Name = "del_btn";
             this.del_btn.Size = new System.Drawing.Size(124, 34);
@@ -170,7 +170,7 @@ namespace ADLManagerPro
             // 
             // add_btn
             // 
-            this.add_btn.Location = new System.Drawing.Point(689, 52);
+            this.add_btn.Location = new System.Drawing.Point(721, 52);
             this.add_btn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.add_btn.Name = "add_btn";
             this.add_btn.Size = new System.Drawing.Size(124, 31);
@@ -193,7 +193,7 @@ namespace ADLManagerPro
             this.Text = "ADL Manager";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.mainGrid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(mainGrid)).EndInit();
             MainTab.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -203,7 +203,7 @@ namespace ADLManagerPro
         #endregion
 
 
-        private DataGridView mainGrid;
+        public static DataGridView mainGrid;
         private TabPage tabPage1;
         private Button add_btn;
         private Button del_btn;

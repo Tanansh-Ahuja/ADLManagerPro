@@ -13,11 +13,13 @@ namespace ADLManagerPro
         public DataGridView _dataGridView = null;
         public string _adlName = null;
         public string _feedName = null;
-        public TabInfo(DataGridView dataGridView, string adlName , string feedName) 
+        public TabPage _currentTab = null;
+        public TabInfo(DataGridView dataGridView, string adlName , string feedName, TabPage currentTab) 
         {
             _dataGridView = dataGridView;
             _adlName = adlName;
             _feedName = feedName;
+            _currentTab = currentTab;
         }
         
     }

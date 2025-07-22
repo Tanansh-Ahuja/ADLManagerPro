@@ -86,6 +86,13 @@ namespace ADLManagerPro
                                 entry => entry.Value // still shallow copy of value
                             );
             temp_tabIndexWithSiteOrderKey.Clear();
+            
+            
+            Globals.siteOrderKeyWithTabIndex.Clear();
+            Globals.siteOrderKeyWithTabIndex = Globals.tabIndexWithSiteOrderKey.ToDictionary(
+                                entry => entry.Value,
+                                entry => entry.Key);
+
 
 
 
@@ -103,7 +110,7 @@ namespace ADLManagerPro
 
         public void OnStartbtnClick(DataGridView paramGrid, string AlgoName, string currentTabIndex, TabPage currentTab)
         {
-
+            
             if (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex))
             {
                 MessageBox.Show("Order already placed!");
@@ -157,7 +164,7 @@ namespace ADLManagerPro
                                 MessageBox.Show("Error fetching account index from account name");
                                 
                         }
-                        if (paramName == "Quoting Instrument" || paramName == "Fast Mkt Inst" || paramName == "Hedge Instrument")
+                        if (paramName.Contains("Instrument") && !paramName.Contains("Account"))
                         {
                             instrumentName = value.ToString();
                             if(Globals.instrumentNameWithInstrument.ContainsKey(instrumentName))
@@ -169,7 +176,7 @@ namespace ADLManagerPro
 
                         if (Globals.algoNameWithParameters[AlgoName]._adlUserParameters.Contains(paramName))
                         {
-                            if(paramName== "Quoting Instrument Account" || paramName == "Fast Mkt Inst Account" || paramName == "Hedge Instrument Account")
+                            if(paramName.Contains("Account"))
                             {
                                 value = Globals.m_accounts.ElementAt(Globals._accounts.IndexOf(value.ToString())).AccountId;
                             }
@@ -215,6 +222,7 @@ namespace ADLManagerPro
                         Globals.instrumentNameWithInstrument[instrumentName],
                         algo_userparams,
                         algo_orderprofileparams);
+
                 if (!Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex))
                 {
                     Globals.tabIndexWithSiteOrderKey.Add(currentTabIndex, orderKey);
@@ -222,6 +230,15 @@ namespace ADLManagerPro
                 else
                 {
                     Globals.tabIndexWithSiteOrderKey[currentTabIndex] = orderKey;
+                }
+
+                if (!Globals.siteOrderKeyWithTabIndex.ContainsKey(orderKey))
+                {
+                    Globals.siteOrderKeyWithTabIndex.Add(orderKey, currentTabIndex);
+                }
+                else
+                {
+                    Globals.siteOrderKeyWithTabIndex[orderKey] = currentTabIndex;
                 }
                 paramGrid.Columns["Value"].ReadOnly = true;
                 Control[] foundComboBox = currentTab.Controls.Find("TemplateComboBox", true);
@@ -254,6 +271,13 @@ namespace ADLManagerPro
                 {
                     foundStartAlgoButton[0].Hide();
                 }
+
+
+
+                //mainGrid
+                int rowIndex = Convert.ToInt32(currentTabIndex)-1;
+                Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnZeroName].ReadOnly = true;
+                Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFourName].ReadOnly = true;
 
 
             }
@@ -298,6 +322,11 @@ namespace ADLManagerPro
                 string orderKey = Globals.tabIndexWithSiteOrderKey[currentTabIndex];
                 Globals.tabIndexWithSiteOrderKey[currentTabIndex] = Globals.algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
                 Globals.tabIndexWithSiteOrderKey.Remove(currentTabIndex);
+                if(Globals.siteOrderKeyWithTabIndex.ContainsKey(orderKey))
+                {
+                    Globals.siteOrderKeyWithTabIndex.Remove(orderKey);
+                }
+                
                 paramGrid.Columns["Value"].ReadOnly = false;
                 Control[] foundComboBox = currentTab.Controls.Find("TemplateComboBox", true);
                 Control[] foundTextBox = currentTab.Controls.Find("TemplateTextBox", true);
@@ -329,8 +358,16 @@ namespace ADLManagerPro
                 {
                     foundStartAlgoButton[0].Show();
                 }
+
+
+                //mainGrid
+                int rowIndex = Convert.ToInt32(currentTabIndex) - 1;
+                Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnZeroName].ReadOnly = false;
+                Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFourName].ReadOnly = false;
             }
         }
+
+
 
 
 

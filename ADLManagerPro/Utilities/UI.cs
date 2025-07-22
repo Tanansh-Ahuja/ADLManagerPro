@@ -81,7 +81,7 @@ namespace ADLManagerPro
                             Control[] foundStatusLabel = MainTab.TabPages[i].Controls.Find("OrderStatusValueLabel", true);
                             if (foundStatusLabel.Length > 0 && foundStatusLabel[0].Text == "ACTIVATED")
                             {
-                                MessageBox.Show($"Please delete algo order before deleting tab {serial}");
+                                //MessageBox.Show($"Please delete algo order before deleting tab {serial}");
                                 return false;
                             }
                             MainTab.TabPages.RemoveAt(i);
@@ -170,6 +170,7 @@ namespace ADLManagerPro
             // Create DataGridView
             DataGridView paramGrid = new DataGridView
             {
+                Name = "ParamGrid",
                 Left = 20,
                 Top = 80,
                 Width = 400,
@@ -215,7 +216,7 @@ namespace ADLManagerPro
             Button btnDeleteAlgo = new Button
             {
                 Name = "DeleteAlgoButton",
-                Text = "Delete Algo",
+                Text = "Delete Order",
                 Left = 160,
                 Top = paramGrid.Bottom + 10,
                 Width = 120,
@@ -227,7 +228,7 @@ namespace ADLManagerPro
             Button btnStartAlgo = new Button
             {
                 Name = "StartAlgoButton",
-                Text = "Start Algo",
+                Text = "Send Order",
                 Left = 20,
                 Top = paramGrid.Bottom + 10,
                 Width = 120,
@@ -302,7 +303,7 @@ namespace ADLManagerPro
 
 
             
-            TabInfo tabInfo = new TabInfo(paramGrid, adlValue, feedValue);
+            TabInfo tabInfo = new TabInfo(paramGrid, adlValue, feedValue, newTab);
             if(Globals.tabIndexWithTabInfo.ContainsKey(serial))
             {
                 Globals.tabIndexWithTabInfo[serial] = tabInfo;

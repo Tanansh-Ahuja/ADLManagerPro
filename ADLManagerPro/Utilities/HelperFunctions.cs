@@ -118,10 +118,7 @@ namespace ADLManagerPro
             foreach (var (paramName, paramType) in Globals.algoNameWithParameters[adlValue]._adlOrderProfileParametersWithType)
             {
                 int rowIndex = paramGrid.Rows.Add(paramName, paramType);
-
-                if (paramName.Equals("Quoting Instrument Account", StringComparison.OrdinalIgnoreCase) ||
-                    paramName.Equals("Fast Mkt Inst Account", StringComparison.OrdinalIgnoreCase) ||
-                    paramName.Equals("Hedge Instrument Account", StringComparison.OrdinalIgnoreCase))
+                if(paramName.Contains("Account"))
                 {
                     var combocell = new DataGridViewComboBoxCell();
                     combocell.Items.AddRange(Globals._accounts.ToArray());
@@ -129,9 +126,7 @@ namespace ADLManagerPro
                     continue;
                 }
 
-                if (paramName.Equals("Quoting Instrument", StringComparison.OrdinalIgnoreCase) ||
-                    paramName.Equals("Fast Mkt Inst", StringComparison.OrdinalIgnoreCase) ||
-                    paramName.Equals("Hedge Instrument", StringComparison.OrdinalIgnoreCase))
+                if (paramName.Contains("Instrument") && !paramName.Contains("Account"))
                 {
                     var combocell = new DataGridViewComboBoxCell();
                     if(Globals.instrumentNameWithInstrument.Keys.Count > 0)
@@ -171,9 +166,7 @@ namespace ADLManagerPro
             {
                 int rowIndex = paramGrid.Rows.Add(paramName, paramType);
 
-                if (paramName.Equals("Quoting Instrument Account", StringComparison.OrdinalIgnoreCase) ||
-                    paramName.Equals("Fast Mkt Inst Account", StringComparison.OrdinalIgnoreCase) ||
-                    paramName.Equals("Hedge Instrument Account", StringComparison.OrdinalIgnoreCase))
+                if (paramName.Contains("Account"))
                 {
                     var combocell = new DataGridViewComboBoxCell();
                     combocell.Items.AddRange(Globals._accounts.ToArray());
@@ -181,9 +174,7 @@ namespace ADLManagerPro
                     continue;
                 }
 
-                if (paramName.Equals("Quoting Instrument", StringComparison.OrdinalIgnoreCase) ||
-                    paramName.Equals("Fast Mkt Inst", StringComparison.OrdinalIgnoreCase) ||
-                    paramName.Equals("Hedge Instrument", StringComparison.OrdinalIgnoreCase))
+                if (paramName.Contains("Instrument") && !paramName.Contains("Account"))
                 {
                     var combocell = new DataGridViewComboBoxCell();
                     if(Globals.instrumentNameWithInstrument.Keys.Count > 0)
@@ -294,6 +285,63 @@ namespace ADLManagerPro
                 {
                     MessageBox.Show("Only numeric values with at most one decimal point allowed.");
                     e.Cancel = true;
+                }
+            }
+        }
+
+        public static void OnFromTTAlgoOrderDeletion(string AlgoName, string orderKey)
+        {
+            if (!Globals.siteOrderKeyWithTabIndex.ContainsKey(orderKey) || !Globals.tabIndexWithTabInfo.ContainsKey(Globals.siteOrderKeyWithTabIndex[orderKey]))
+            {
+                return;
+            }
+            
+
+            string currentTabIndex = Globals.siteOrderKeyWithTabIndex[orderKey];
+            TabPage currentTab = Globals.tabIndexWithTabInfo[currentTabIndex]._currentTab;
+            if (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex) && Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName))
+            {
+                Globals.tabIndexWithSiteOrderKey[currentTabIndex] = Globals.algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
+                Globals.tabIndexWithSiteOrderKey.Remove(currentTabIndex);
+
+                if(Globals.siteOrderKeyWithTabIndex.ContainsKey(orderKey))
+                {
+                    Globals.siteOrderKeyWithTabIndex.Remove(orderKey);
+                }
+                Control[] foundParamGrid = currentTab.Controls.Find("ParamGrid", true);
+                Control[] foundComboBox = currentTab.Controls.Find("TemplateComboBox", true);
+                Control[] foundTextBox = currentTab.Controls.Find("TemplateTextBox", true);
+                Control[] foundTemplateButton = currentTab.Controls.Find("SaveTemplateButton", true);
+                Control[] foundStatusLabel = currentTab.Controls.Find("OrderStatusValueLabel", true);
+                Control[] foundDeleteAlgoButton = currentTab.Controls.Find("DeleteAlgoButton", true);
+                Control[] foundStartAlgoButton = currentTab.Controls.Find("StartAlgoButton", true);
+                if (foundParamGrid.Length > 0 && foundParamGrid[0] is DataGridView dgv)
+                {
+                    dgv.Columns["Value"].ReadOnly = false;
+                }
+                if (foundComboBox.Length > 0)
+                {
+                    foundComboBox[0].Show();
+                }
+                if (foundTextBox.Length > 0)
+                {
+                    foundTextBox[0].Show();
+                }
+                if (foundTemplateButton.Length > 0)
+                {
+                    foundTemplateButton[0].Show();
+                }
+                if (foundStatusLabel.Length > 0)
+                {
+                    foundStatusLabel[0].Text = "DEACTIVATED";
+                }
+                if (foundDeleteAlgoButton.Length > 0)
+                {
+                    foundDeleteAlgoButton[0].Hide();
+                }
+                if (foundStartAlgoButton.Length > 0)
+                {
+                    foundStartAlgoButton[0].Show();
                 }
             }
         }
