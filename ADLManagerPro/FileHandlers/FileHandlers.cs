@@ -43,6 +43,9 @@ namespace ADLManagerPro
         {
             string jsonContent = File.ReadAllText(jsonPath);
             var algoTemplateRoots = JsonConvert.DeserializeObject<List<AlgoTemplateRoot>>(jsonContent);
+
+            Dictionary<string, List<Template>> algoWithTemplate = new Dictionary<string, List<Template>>();
+
             foreach (var algo in algoTemplateRoots)
             {
                 List<Template> templateList = new List<Template>();
@@ -52,9 +55,7 @@ namespace ADLManagerPro
                     var template = new Template
                     {
                         TemplateName = t.TemplateName,
-                        ParamNameWithTypeAndValue = t.TemplateParameters.ToDictionary(
-                            kvp => kvp.Key,
-                            kvp => (kvp.Value.Type, kvp.Value.Value))
+                        ParamNameWithValue = t.TemplateParameters // Already Dictionary<string, string>
                     };
 
                     templateList.Add(template);
@@ -62,8 +63,10 @@ namespace ADLManagerPro
 
                 algoWithTemplate[algo.AlgoName] = templateList;
             }
+
             return algoWithTemplate;
         }
+
 
 
         public void SaveTemplateDictionaryToFile(Dictionary<string, List<Template>> algoWithTemplate)
@@ -81,13 +84,9 @@ namespace ADLManagerPro
                     Templates = templates.Select(t => new AlgoTemplate
                     {
                         TemplateName = t.TemplateName,
-                        TemplateParameters = t.ParamNameWithTypeAndValue.ToDictionary(
-                            param => param.Key,
-                            param => new ParameterData
-                            {
-                                Type = param.Value.Type,
-                                Value = param.Value.Value
-                            })
+                        TemplateParameters = t.ParamNameWithValue != null
+                            ? new Dictionary<string, string>(t.ParamNameWithValue)
+                            : new Dictionary<string, string>()
                     }).ToList()
                 };
 
@@ -97,6 +96,7 @@ namespace ADLManagerPro
             string jsonContent = JsonConvert.SerializeObject(algoTemplateRoots, Formatting.Indented);
             File.WriteAllText(jsonPath, jsonContent);
         }
+
 
         public List<string> GetInstrumentAliasList()
         {

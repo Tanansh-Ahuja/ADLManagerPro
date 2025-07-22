@@ -57,10 +57,10 @@ namespace ADLManagerPro
 
                         if (!string.IsNullOrEmpty(paramName))
                         {
-                            if (existingTemplate.ParamNameWithTypeAndValue.ContainsKey(paramName))
+                            if (existingTemplate.ParamNameWithValue.ContainsKey(paramName))
                             {
-                                var old = existingTemplate.ParamNameWithTypeAndValue[paramName];
-                                existingTemplate.ParamNameWithTypeAndValue[paramName] = (old.Type, paramValue);
+                                var old = existingTemplate.ParamNameWithValue[paramName];
+                                existingTemplate.ParamNameWithValue[paramName] = paramValue;
                             }
                         }
                     }

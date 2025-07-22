@@ -296,7 +296,7 @@ namespace ADLManagerPro
                 Template newTemplate = new Template
                 {
                     TemplateName = templateName,
-                    ParamNameWithTypeAndValue = new Dictionary<string, (string Type, string Value)>()
+                    ParamNameWithValue = new Dictionary<string, string>()
                 };
                 // Iterate over paramGrid rows to populate parameters
                 foreach (DataGridViewRow row in paramGrid.Rows)
@@ -309,7 +309,7 @@ namespace ADLManagerPro
                     if (!string.IsNullOrEmpty(paramName) && paramTypes.ContainsKey(paramName))
                     {
                         //TODO
-                        newTemplate.ParamNameWithTypeAndValue[paramName] = (row.Cells["Value"].ValueType.Name, paramValue ?? "");
+                        newTemplate.ParamNameWithValue[paramName] = paramValue ?? "";
                     }
                 }
                 // Add or update the template in dictionary
@@ -373,9 +373,9 @@ namespace ADLManagerPro
                 string paramName = row.Cells["ParamName"].Value?.ToString();
 
                 if (!string.IsNullOrEmpty(paramName) &&
-                    selectedTemplate.ParamNameWithTypeAndValue.TryGetValue(paramName, out var paramData))
+                    selectedTemplate.ParamNameWithValue.TryGetValue(paramName, out var value))
                 {
-                    row.Cells["Value"].Value = paramData.Value;  // Only set Value column
+                    row.Cells["Value"].Value = value;  // Only set Value column
                 }
             }
         }
