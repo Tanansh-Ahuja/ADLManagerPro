@@ -36,9 +36,6 @@ namespace ADLManagerPro
         private Dispatcher m_dispatcher = null;
         private object m_Lock = new object();
         private bool m_isDisposed = false;
-
-        
-
         #endregion
 
 
@@ -202,28 +199,6 @@ namespace ADLManagerPro
             mainGrid.Columns[Globals.columnThreeName].ReadOnly = false;
         }
 
-        //private void UpdateInstrumentDropdownSource()
-        //{
-        //    if (mainGrid.InvokeRequired)
-        //    {
-        //        mainGrid.Invoke(new Action(UpdateAdlDropdownSource));
-        //        return;
-        //    }
-
-        //    var adlColumn = mainGrid.Columns[Globals.columnThreeName] as DataGridViewComboBoxColumn;
-        //    if (adlColumn != null)
-        //    {
-        //        adlColumn.Items.Clear();
-        //        foreach (var algo in dummy_algos)
-        //        {
-        //            adlColumn.Items.Add(algo);
-        //        }
-        //    }
-        //    mainGrid.Columns[Globals.columnThreeName].ReadOnly = false;
-        //    add_btn.Enabled = true;
-        //    add_btn.Text = "Add Row";
-        //}
-
         private void NeonFeedButton_Click(object sender, EventArgs e)
         {
             //TODO : Connect Neon Feed
@@ -267,13 +242,6 @@ namespace ADLManagerPro
             }
         }
 
-        
-
-
-        
-        
-        
-        
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             TTAPI.Shutdown();

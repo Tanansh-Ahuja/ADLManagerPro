@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ADLManager;
 
 namespace ADLManagerPro
 {
@@ -122,6 +123,100 @@ namespace ADLManagerPro
                             comboBox.SelectedItem = currentValue;
                         }
                     }
+                }
+            }
+        }
+
+        public void PopulateParamGridWithOrderProfileParameters(DataGridView paramGrid,string adlValue)
+        {
+            foreach (var (paramName, paramType) in Globals.algoNameWithParameters[adlValue]._adlOrderProfileParametersWithType)
+            {
+                int rowIndex = paramGrid.Rows.Add(paramName, paramType);
+
+                if (paramName.Equals("Quoting Instrument Account", StringComparison.OrdinalIgnoreCase) ||
+                    paramName.Equals("Fast Mkt Inst Account", StringComparison.OrdinalIgnoreCase) ||
+                    paramName.Equals("Hedge Instrument Account", StringComparison.OrdinalIgnoreCase))
+                {
+                    var combocell = new DataGridViewComboBoxCell();
+                    combocell.Items.AddRange(Globals._accounts.ToArray());
+                    paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
+                    continue;
+                }
+
+                if (paramName.Equals("Quoting Instrument", StringComparison.OrdinalIgnoreCase) ||
+                    paramName.Equals("Fast Mkt Inst", StringComparison.OrdinalIgnoreCase) ||
+                    paramName.Equals("Hedge Instrument", StringComparison.OrdinalIgnoreCase))
+                {
+                    var combocell = new DataGridViewComboBoxCell();
+                    combocell.Items.AddRange(Globals.instrumentNameWithInstrument.Keys.ToArray());
+                    paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
+                    continue;
+                }
+
+                if (paramType == ParameterType.BuySell)
+                {
+                    var comboCell = new DataGridViewComboBoxCell();
+                    comboCell.Items.AddRange("Buy", "Sell");
+                    paramGrid.Rows[rowIndex].Cells["Value"] = comboCell;
+                }
+                else if (paramType == ParameterType.Bool)
+                {
+                    var comboCell = new DataGridViewComboBoxCell();
+                    comboCell.Items.AddRange("True", "False");
+                    paramGrid.Rows[rowIndex].Cells["Value"] = comboCell;
+                }
+                else
+                {
+                    Console.WriteLine("OrderProfile paramName: " + paramName + " paramType: " + paramType);
+                    var textCell = new DataGridViewTextBoxCell();
+                    paramGrid.Rows[rowIndex].Cells["Value"] = textCell;
+                }
+            }
+        }
+
+        public void PopulateParamGridWithUserParameters(DataGridView paramGrid, string adlValue)
+        {
+            foreach (var (paramName, paramType) in Globals.algoNameWithParameters[adlValue]._adlUserParametersWithType)
+            {
+                int rowIndex = paramGrid.Rows.Add(paramName, paramType);
+
+                if (paramName.Equals("Quoting Instrument Account", StringComparison.OrdinalIgnoreCase) ||
+                    paramName.Equals("Fast Mkt Inst Account", StringComparison.OrdinalIgnoreCase) ||
+                    paramName.Equals("Hedge Instrument Account", StringComparison.OrdinalIgnoreCase))
+                {
+                    var combocell = new DataGridViewComboBoxCell();
+                    combocell.Items.AddRange(Globals._accounts.ToArray());
+                    paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
+                    continue;
+                }
+
+                if (paramName.Equals("Quoting Instrument", StringComparison.OrdinalIgnoreCase) ||
+                    paramName.Equals("Fast Mkt Inst", StringComparison.OrdinalIgnoreCase) ||
+                    paramName.Equals("Hedge Instrument", StringComparison.OrdinalIgnoreCase))
+                {
+                    var combocell = new DataGridViewComboBoxCell();
+                    combocell.Items.AddRange(Globals.instrumentNameWithInstrument.Keys.ToArray());
+                    paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
+                    continue;
+                }
+
+                if (paramType == ParameterType.BuySell)
+                {
+                    var comboCell = new DataGridViewComboBoxCell();
+                    comboCell.Items.AddRange("Buy", "Sell");
+                    paramGrid.Rows[rowIndex].Cells["Value"] = comboCell;
+                }
+                else if (paramType == ParameterType.Bool)
+                {
+                    var comboCell = new DataGridViewComboBoxCell();
+                    comboCell.Items.AddRange("True", "False");
+                    paramGrid.Rows[rowIndex].Cells["Value"] = comboCell;
+                }
+                else
+                {
+                    Console.WriteLine("UserParams paramName: " + paramName + " paramType: " + paramType);
+                    var textCell = new DataGridViewTextBoxCell();
+                    paramGrid.Rows[rowIndex].Cells["Value"] = textCell;
                 }
             }
         }

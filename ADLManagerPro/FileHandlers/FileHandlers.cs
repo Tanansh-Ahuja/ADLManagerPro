@@ -11,7 +11,7 @@ namespace ADLManagerPro
 {
     public class FileHandlers
     {
-        string jsonPath = "algo_templates.json";
+        string jsonPath = "algo_templates2.json";
         string csvPath = "InstrumentsToBeFetched.csv";
         string txtPath = "ADLsToBeFetched.txt";
         Dictionary<string, List<Template>> algoWithTemplate = new Dictionary<string, List<Template>>();

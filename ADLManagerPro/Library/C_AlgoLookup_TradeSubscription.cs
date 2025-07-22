@@ -57,9 +57,10 @@ namespace ADLManagerPro
                     var userparamList = new List<string>();
                     var orderProfileList = new List<string>();
 
-
+                    Dictionary<string,ParameterType> paramNameWithType = new Dictionary<string,ParameterType>();
                     foreach (var item in e.AlgoLookup.Algo.AlgoParameters)
                     {
+
                         Console.WriteLine($"ParameterName: {item.Name}  type: {item.Type} isRequired: {item.IsRequired} field: {item.FieldLocation}");
                         ParameterType type;
 
@@ -84,6 +85,12 @@ namespace ADLManagerPro
                             }
                         }
 
+                        if(!Globals.algoWithParamNameWithParamType.ContainsKey(algoName))
+                        {
+                            //Algo not there, with all params, needs population
+                            paramNameWithType.Add(item.Name, type);
+                        }
+
                         if (item.IsRequired == "true")
                         {
                             if (item.FieldLocation.ToString() == "UserParameters")
@@ -98,6 +105,11 @@ namespace ADLManagerPro
                                 orderProfileList.Add(item.Name);
                             }
                         }
+                    }
+                    if (!Globals.algoWithParamNameWithParamType.ContainsKey(algoName))
+                    {
+                        //Algo not there, with all params, needs population
+                        Globals.algoWithParamNameWithParamType.Add(algoName, paramNameWithType);
                     }
 
                     AdlParameters adlParameters = new AdlParameters(userparamListWithType, orderProfileListWithType, userparamList, orderProfileList);

@@ -22,8 +22,7 @@ namespace ADLManagerPro
             _buttonEvents = new ButtonEvents();
         }
 
-        public bool CellValueChanged(object sender, DataGridViewCellEventArgs e, DataGridView mainGrid, 
-            TabControl MainTab)
+        public bool CellValueChanged(object sender, DataGridViewCellEventArgs e, DataGridView mainGrid,TabControl MainTab)
         {
             if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == Globals.columnZeroName)
             {
@@ -57,10 +56,7 @@ namespace ADLManagerPro
 
                     if (string.IsNullOrWhiteSpace(feedValue) || string.IsNullOrWhiteSpace(adlValue))
                     {
-                        // Reset the checkbox (temporarily disable event to avoid loop)
-                        //mainGrid.CellValueChanged -= Form1.mainGrid_CellValueChanged;
                         row.Cells[Globals.columnFourName].Value = false;
-                        //mainGrid.CellValueChanged += Form1.mainGrid_CellValueChanged;
                         MessageBox.Show("Please select both Feed and ADL before activating.", "Validation Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return false;
                     }
@@ -81,19 +77,14 @@ namespace ADLManagerPro
                     {
                         if (MainTab.TabPages[i].Text == serial)
                         {
-
                             MainTab.TabPages.RemoveAt(i);
-
-                            if(Globals.tabIndexWithTabInfo.Remove(i.ToString()))
+                            if(Globals.tabIndexWithTabInfo.ContainsKey(i.ToString()))
                             {
-
                                 Globals.tabIndexWithTabInfo.Remove(i.ToString());
                             }
-                            
                             break;
                         }
                     }
-
                     mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].ReadOnly = false;
                     mainGrid.Rows[row.Index].Cells[Globals.columnThreeName].ReadOnly = false;
                 }
@@ -173,98 +164,15 @@ namespace ADLManagerPro
             paramGrid.Columns["ParamName"].DefaultCellStyle.BackColor = Color.LightGray;
             paramGrid.Columns.Add("Value", "Value");
 
+
             if (Globals.algoNameWithParameters.ContainsKey(adlValue))
             {
-                foreach (var (paramName, paramType) in Globals.algoNameWithParameters[adlValue]._adlOrderProfileParametersWithType)
-                {
-                    int rowIndex = paramGrid.Rows.Add(paramName, paramType);
-
-                    if (paramName.Equals("Quoting Instrument Account", StringComparison.OrdinalIgnoreCase) ||
-                        paramName.Equals("Fast Mkt Inst Account", StringComparison.OrdinalIgnoreCase) ||
-                        paramName.Equals("Hedge Instrument Account", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var combocell = new DataGridViewComboBoxCell();
-                        combocell.Items.AddRange(Globals._accounts.ToArray());
-                        paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
-                        continue;
-                    }
-
-                    if (paramName.Equals("Quoting Instrument", StringComparison.OrdinalIgnoreCase) ||
-                        paramName.Equals("Fast Mkt Inst", StringComparison.OrdinalIgnoreCase) ||
-                        paramName.Equals("Hedge Instrument", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var combocell = new DataGridViewComboBoxCell();
-                        combocell.Items.AddRange(Globals.instrumentNameWithInstrument.Keys.ToArray());
-                        paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
-                        continue;
-                    }
-
-                    if (paramType == ParameterType.BuySell)
-                    {
-                        var comboCell = new DataGridViewComboBoxCell();
-                        comboCell.Items.AddRange("Buy", "Sell");
-                        paramGrid.Rows[rowIndex].Cells["Value"] = comboCell;
-                    }
-                    else if (paramType == ParameterType.Bool)
-                    {
-                        var comboCell = new DataGridViewComboBoxCell();
-                        comboCell.Items.AddRange("True", "False");
-                        paramGrid.Rows[rowIndex].Cells["Value"] = comboCell;
-                    }
-                    else
-                    {
-                        Console.WriteLine("OrderProfile paramName: " + paramName + " paramType: " + paramType);
-                        var textCell = new DataGridViewTextBoxCell();
-                        paramGrid.Rows[rowIndex].Cells["Value"] = textCell;
-                    }
-                }
-
-                foreach (var (paramName, paramType) in Globals.algoNameWithParameters[adlValue]._adlUserParametersWithType)
-                {
-                    int rowIndex = paramGrid.Rows.Add(paramName, paramType);
-
-                    if (paramName.Equals("Quoting Instrument Account", StringComparison.OrdinalIgnoreCase) ||
-                        paramName.Equals("Fast Mkt Inst Account", StringComparison.OrdinalIgnoreCase) ||
-                        paramName.Equals("Hedge Instrument Account", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var combocell = new DataGridViewComboBoxCell();
-                        combocell.Items.AddRange(Globals._accounts.ToArray());
-                        paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
-                        continue;
-                    }
-
-                    if (paramName.Equals("Quoting Instrument", StringComparison.OrdinalIgnoreCase) ||
-                        paramName.Equals("Fast Mkt Inst", StringComparison.OrdinalIgnoreCase) ||
-                        paramName.Equals("Hedge Instrument", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var combocell = new DataGridViewComboBoxCell();
-                        combocell.Items.AddRange(Globals.instrumentNameWithInstrument.Keys.ToArray());
-                        paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
-                        continue;
-                    }
-
-                    if (paramType == ParameterType.BuySell)
-                    {
-                        var comboCell = new DataGridViewComboBoxCell();
-                        comboCell.Items.AddRange("Buy", "Sell");
-                        paramGrid.Rows[rowIndex].Cells["Value"] = comboCell;
-                    }
-                    else if (paramType == ParameterType.Bool)
-                    {
-                        var comboCell = new DataGridViewComboBoxCell();
-                        comboCell.Items.AddRange("True", "False");
-                        paramGrid.Rows[rowIndex].Cells["Value"] = comboCell;
-                    }
-                    else
-                    {
-                        Console.WriteLine("UserParams paramName: " + paramName + " paramType: " + paramType);
-                        var textCell = new DataGridViewTextBoxCell();
-                        paramGrid.Rows[rowIndex].Cells["Value"] = textCell;
-                    }
-                }
+                _helperFunctions.PopulateParamGridWithOrderProfileParameters(paramGrid, adlValue);
+                _helperFunctions.PopulateParamGridWithUserParameters(paramGrid, adlValue);
             }
 
             newTab.Controls.Add(paramGrid);
+
 
             //TODO: Add delete button and functionality: order remove
             Button btnDeleteAlgo = new Button
@@ -275,10 +183,6 @@ namespace ADLManagerPro
                 Width = 120,
                 Height = 30
             };
-
-
-            //TODO: Template Save Button and name entering box
-
 
             // Add "Start Algo" button
             Button btnStartAlgo = new Button
@@ -351,6 +255,7 @@ namespace ADLManagerPro
             newTab.Controls.Add(savedTemplates);
             newTab.Controls.Add(txtTemplateName);
             newTab.Controls.Add(btnSaveTemplate);
+            
             TabInfo tabInfo = new TabInfo(paramGrid, adlValue, feedValue);
             if(Globals.tabIndexWithTabInfo.ContainsKey(serial))
             {

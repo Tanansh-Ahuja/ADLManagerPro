@@ -244,6 +244,7 @@ namespace ADLManagerPro
 
         public void OnSaveOrUpdateTemplateBtnClick(object s, EventArgs e, TextBox txtTemplateName, string adlValue,DataGridView paramGrid, ComboBox savedTemplates,TabControl MainTab)
         {
+            //check template name is not null
             string templateName = txtTemplateName.Text.Trim();
             if (string.IsNullOrWhiteSpace(templateName))
             {
@@ -251,8 +252,9 @@ namespace ADLManagerPro
                 return;
             }
 
-            string adlName = adlValue; // assuming this holds the currently selected algo name for this tab
-            // Get selected ADL name
+
+            string adlName = adlValue;
+            // Get selected ADL name and check if adl name is not null
             if (string.IsNullOrEmpty(adlName))
             {
                 MessageBox.Show("Invalid ADL selection.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -261,10 +263,12 @@ namespace ADLManagerPro
             
 
             List<Template> templates = Globals.algoNameWithTemplateList[adlName];
-            Template existingTemplate = templates.FirstOrDefault(t => t.TemplateName == templateName);
+
+            Template existingTemplate = templates.FirstOrDefault(t => t.TemplateName == templateName); //try to find template with same name
 
             if (existingTemplate != null)
             {
+                //same name template exists
                 _helperFunctions.UpdateTemplate(existingTemplate, templateName,paramGrid,adlName,templates);
                 return;
             }
@@ -276,7 +280,18 @@ namespace ADLManagerPro
             {
                 //We have the adl name already, so we will add to the given json
                 AdlParameters adlParams = Globals.algoNameWithParameters[adlName];
-                Dictionary<string, ParameterType> paramTypes = adlParams.GetParamNameWithTypeAll();
+                Dictionary<string, ParameterType> paramTypes = null;
+                if (Globals.algoWithParamNameWithParamType.ContainsKey(adlName))
+                {
+                    paramTypes = Globals.algoWithParamNameWithParamType[adlName];
+                }
+                else
+                {
+                    MessageBox.Show("ADL Parameters type not able to fetch", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+
                 // New Template
                 Template newTemplate = new Template
                 {

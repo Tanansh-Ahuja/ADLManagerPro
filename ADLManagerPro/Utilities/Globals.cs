@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ADLManager;
 using tt_net_sdk;
 
 namespace ADLManagerPro
@@ -36,6 +37,7 @@ namespace ADLManagerPro
         public static Dictionary<string, string> tabIndexWithSiteOrderKey = new Dictionary<string, string>();
         public static Dictionary<string, TabInfo> tabIndexWithTabInfo = new Dictionary<string, TabInfo>();
         public static Dictionary<string, List<Template>> algoNameWithTemplateList = new Dictionary<string, List<Template>>();
+        public static Dictionary<string,Dictionary<string,ParameterType>> algoWithParamNameWithParamType = new Dictionary<string, Dictionary<string,ParameterType>>();
 
 
     }
