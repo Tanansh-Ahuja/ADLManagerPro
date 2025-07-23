@@ -393,7 +393,25 @@ namespace ADLManagerPro
                 MessageBox.Show("Invalid ADL selection.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            
+            if(Globals.algoNameWithTemplateList == null)
+            {
+                // Create new template
+                Template newTemplate = _helperFunctions.GenerateANewTemplate(adlName, paramGrid, templateName);
+
+                // Create new list and add to the dictionary
+                var newList = new List<Template> { newTemplate };
+                Globals.algoNameWithTemplateList = new Dictionary<string, List<Template>>();
+                Globals.algoNameWithTemplateList.Add(adlName, newList);
+
+                // Save to file
+                _fileHandlers.SaveTemplateDictionaryToFile(Globals.algoNameWithTemplateList);
+                txtTemplateName.Text = newTemplate.TemplateName;
+                _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, txtTemplateName.Text);
+
+                MessageBox.Show("Template created and saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+
+            }
             if(Globals.algoNameWithTemplateList.ContainsKey(adlName))
             {
                 List<Template> templates = Globals.algoNameWithTemplateList[adlName];
@@ -436,10 +454,11 @@ namespace ADLManagerPro
                 // Save to file
                 _fileHandlers.SaveTemplateDictionaryToFile(Globals.algoNameWithTemplateList);
                 txtTemplateName.Text = newTemplate.TemplateName;
-                _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, adlValue);
+                _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, txtTemplateName.Text);
 
                 MessageBox.Show("Template created and saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
+
             }
 
         }

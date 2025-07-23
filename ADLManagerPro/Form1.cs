@@ -62,6 +62,7 @@ namespace ADLManagerPro
             mainGrid.DefaultCellStyle.SelectionBackColor = mainGrid.DefaultCellStyle.BackColor;
             mainGrid.DefaultCellStyle.SelectionForeColor = mainGrid.DefaultCellStyle.ForeColor;
             
+            // if this is null then file was empty
             Globals.algoNameWithTemplateList = _fileHandlers.FetchJsonFromFile();
         }
 

@@ -244,7 +244,7 @@ namespace ADLManagerPro
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
             //TODO: add functionality and handle edge case
-            if (Globals.algoNameWithTemplateList.ContainsKey(adlValue))
+            if (Globals.algoNameWithTemplateList!=null && Globals.algoNameWithTemplateList.ContainsKey(adlValue))
                 savedTemplates.Items.AddRange(_helperFunctions.GetTemplateNames(Globals.algoNameWithTemplateList[adlValue]).ToArray());
 
             TextBox txtTemplateName = new TextBox

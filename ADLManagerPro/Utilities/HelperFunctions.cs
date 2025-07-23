@@ -92,7 +92,7 @@ namespace ADLManagerPro
             //Update the combobox of all other tabs where the same Algo is there
             foreach (TabPage tabPage in MainTab.TabPages)
             {
-                if(Globals.tabIndexWithTabInfo.ContainsKey(tabPage.Name) && Globals.tabIndexWithTabInfo[tabPage.Name]._adlName == adlName )
+                if(Globals.tabIndexWithTabInfo.ContainsKey(tabPage.Text) && Globals.tabIndexWithTabInfo[tabPage.Text]._adlName == adlName )
                 {
                     Control[] foundControl = tabPage.Controls.Find("TemplateComboBox", true);
                     if (foundControl.Length > 0 && foundControl[0] is ComboBox comboBox)
@@ -259,8 +259,10 @@ namespace ADLManagerPro
 
             // Get corresponding ParamName from the same row
             string paramName = paramGrid.Rows[e.RowIndex].Cells["ParamName"].Value?.ToString() ?? "";
-            if (Globals.SkipParamNames.Contains(paramName))
+            if (paramName.Contains("Instrument"))
                 return;
+            //if (Globals.SkipParamNames.Contains(paramName))
+            //    return;
             // Skip if paramName is not found
             if (string.IsNullOrWhiteSpace(paramName)) return;
 

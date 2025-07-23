@@ -11,7 +11,7 @@ namespace ADLManagerPro
 {
     public class FileHandlers
     {
-        string jsonPath = "algo_templates2.json";
+        string jsonPath = "algo_templates_dummy.json";
         string csvPath = "InstrumentsToBeFetched.csv";
         string txtPath = "ADLsToBeFetched.txt";
         Dictionary<string, List<Template>> algoWithTemplate = new Dictionary<string, List<Template>>();
@@ -41,30 +41,47 @@ namespace ADLManagerPro
 
         public Dictionary<string, List<Template>> FetchJsonFromFile()
         {
-            string jsonContent = File.ReadAllText(jsonPath);
-            var algoTemplateRoots = JsonConvert.DeserializeObject<List<AlgoTemplateRoot>>(jsonContent);
-
-            Dictionary<string, List<Template>> algoWithTemplate = new Dictionary<string, List<Template>>();
-
-            foreach (var algo in algoTemplateRoots)
+            try
             {
-                List<Template> templateList = new List<Template>();
 
-                foreach (var t in algo.Templates)
+                string jsonContent = File.ReadAllText(jsonPath);
+                var algoTemplateRoots = JsonConvert.DeserializeObject<List<AlgoTemplateRoot>>(jsonContent);
+
+                //TODO if we have have null in algoTemplateRoots
+                // then this code shld return null
+                Dictionary<string, List<Template>> algoWithTemplate = new Dictionary<string, List<Template>>();
+                if(algoTemplateRoots == null)
                 {
-                    var template = new Template
-                    {
-                        TemplateName = t.TemplateName,
-                        ParamNameWithValue = t.TemplateParameters // Already Dictionary<string, string>
-                    };
-
-                    templateList.Add(template);
+                    //no data fetched from template
+                    return null;
                 }
 
-                algoWithTemplate[algo.AlgoName] = templateList;
+                foreach (var algo in algoTemplateRoots)
+                {
+                    List<Template> templateList = new List<Template>();
+
+                    foreach (var t in algo.Templates)
+                    {
+                        var template = new Template
+                        {
+                            TemplateName = t.TemplateName,
+                            ParamNameWithValue = t.TemplateParameters // Already Dictionary<string, string>
+                        };
+
+                        templateList.Add(template);
+                    }
+
+                    algoWithTemplate[algo.AlgoName] = templateList;
+                }
+
+                return algoWithTemplate;
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("An Unexpected error occured."+ex.Message);
+                return null;
             }
 
-            return algoWithTemplate;
         }
 
 
