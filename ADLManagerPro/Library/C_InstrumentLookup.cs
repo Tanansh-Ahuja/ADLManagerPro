@@ -29,6 +29,7 @@ namespace ADLManagerPro
         }
         void m_instrLookupRequest_OnData(object sender, InstrumentLookupEventArgs e)
         {
+            Globals.instrumentsLookedUp++ ;
             if (e.Event == ProductDataEvent.Found)
             {
                 // Instrument was found

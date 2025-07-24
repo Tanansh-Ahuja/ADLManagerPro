@@ -72,7 +72,7 @@ namespace ADLManagerPro
                 }
                 else
                 {
-                    //TODO: If tab has adl order delete it
+                   
                     string serial = row.Cells[Globals.columnOneName].Value.ToString();
                     for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
                     {
@@ -212,7 +212,7 @@ namespace ADLManagerPro
             newTab.Controls.Add(paramGrid);
 
 
-            //TODO: Add delete button and functionality: order remove
+           
             Button btnDeleteAlgo = new Button
             {
                 Name = "DeleteAlgoButton",
@@ -243,7 +243,7 @@ namespace ADLManagerPro
                 Width = 150,
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            //TODO: add functionality and handle edge case
+            
             if (Globals.algoNameWithTemplateList!=null && Globals.algoNameWithTemplateList.ContainsKey(adlValue))
                 savedTemplates.Items.AddRange(_helperFunctions.GetTemplateNames(Globals.algoNameWithTemplateList[adlValue]).ToArray());
 

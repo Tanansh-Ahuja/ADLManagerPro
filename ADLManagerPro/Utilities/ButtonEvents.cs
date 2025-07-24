@@ -202,18 +202,7 @@ namespace ADLManagerPro
                 }
             }
 
-            DialogResult result = MessageBox.Show(
-                "Are you sure you want to place this order?",
-                "Confirm sending order",
-                MessageBoxButtons.OKCancel,
-                MessageBoxIcon.Warning
-            );
-
-            if (result != DialogResult.OK)
-            {
-                // User clicked Cancel or closed the dialog — do nothing
-                return;
-            }
+            
 
             if (accountNumber >= 0 &&
                 Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName) &&
@@ -300,25 +289,7 @@ namespace ADLManagerPro
                 MessageBox.Show("Order not found.");
                 return;
             }
-            DialogResult result = MessageBox.Show(
-                "Are you sure you want to delete this order?",
-                "Confirm Deletion",
-                MessageBoxButtons.OKCancel,
-                MessageBoxIcon.Warning
-            );
-
-            if (result != DialogResult.OK)
-            {
-                // User clicked Cancel or closed the dialog — do nothing
-                return;
-            }
-            // TODO: Complete implementation
-
-            //foreach (DataGridViewRow row in mainGrid.Rows)
-            //{
-            //    var cellValue = row.Cells[Globals.columnOneName].Value;
-
-            //}
+            
             if (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex) && Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName))
             {
                 string orderKey = Globals.tabIndexWithSiteOrderKey[currentTabIndex];

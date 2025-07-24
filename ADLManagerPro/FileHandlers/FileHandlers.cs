@@ -11,7 +11,7 @@ namespace ADLManagerPro
 {
     public class FileHandlers
     {
-        string jsonPath = "algo_templates_dummy.json";
+        string jsonPath = "algo_templates.json";
         string csvPath = "InstrumentsToBeFetched.csv";
         string txtPath = "ADLsToBeFetched.txt";
         Dictionary<string, List<Template>> algoWithTemplate = new Dictionary<string, List<Template>>();
@@ -47,8 +47,7 @@ namespace ADLManagerPro
                 string jsonContent = File.ReadAllText(jsonPath);
                 var algoTemplateRoots = JsonConvert.DeserializeObject<List<AlgoTemplateRoot>>(jsonContent);
 
-                //TODO if we have have null in algoTemplateRoots
-                // then this code shld return null
+                
                 Dictionary<string, List<Template>> algoWithTemplate = new Dictionary<string, List<Template>>();
                 if(algoTemplateRoots == null)
                 {

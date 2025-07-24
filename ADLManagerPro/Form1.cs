@@ -172,7 +172,7 @@ namespace ADLManagerPro
 
         public static void ShowMainGrid()
         {
-            if(Globals.m_isOrderBookDownloaded && Globals.instruments.Count() == Globals.instrumentInfoList.Count() && Globals.algos.Count() == Globals.userAlgos.Count() && Globals.instruments.Count() == Globals.instrumentsPriceSubscribed.Count())
+            if(Globals.m_isOrderBookDownloaded && Globals.instrumentInfoList.Count() == Globals.instrumentsLookedUp && Globals.userAlgos.Count() == Globals.ADLsLookedUp)
             {
                 ShowMainTab();  
             }

@@ -17,6 +17,9 @@ namespace ADLManagerPro
         public static readonly string columnThreeName = "adl";
         public static readonly string columnFourName = "createTab";
         public static readonly string columnFiveName = "OrderStatus";
+        
+        public static int instrumentsLookedUp = 0;
+        public static int ADLsLookedUp = 0;
 
         public static Label loadingLabel;
 
@@ -25,7 +28,7 @@ namespace ADLManagerPro
 
         public static List<Instrument> instruments = new List<Instrument>();
         public static List<Algo> algos = new List<Algo>();
-        public static List<int> selectedRowIndexList = new List<int>(); //TODO optimise later
+        public static List<int> selectedRowIndexList = new List<int>(); 
         public static List<string> _accounts = new List<string>();
         public static List<string> userAlgos = null;
         public static List<InstrumentInfo> instrumentInfoList = null;

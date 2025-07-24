@@ -13,7 +13,7 @@ namespace ADLManagerPro
     public class C_AlgoLookup_TradeSubscription
     {
         private Algo m_algo = null;
-        //TODO : does this have any work, i feel it does
+        
         private bool m_isDisposed = false;
         private object m_Lock = new object();
         private AlgoTradeSubscription m_algoTradeSubscription = null;
@@ -21,8 +21,8 @@ namespace ADLManagerPro
         private ManualResetEvent mre = new ManualResetEvent(false);
         private AlgoLookupSubscription m_algoLookupSubscription = null;
         private Dispatcher m_dispatcher = null;
-        //TODO: any work for this here
-        private bool orderAdded = false;
+     
+        
         private string _algoName = string.Empty;
         private bool orderSent = false;
         
@@ -38,6 +38,7 @@ namespace ADLManagerPro
         }
         private void AlgoLookupSubscription_OnData(object sender, AlgoLookupEventArgs e)
         {
+            Globals.ADLsLookedUp++;
             if (e.Event == ProductDataEvent.Found)
             {
                 m_algo = e.AlgoLookup.Algo;
@@ -48,7 +49,7 @@ namespace ADLManagerPro
                     Globals.loadingLabel.Text = "Status: Algo Instrument Found: " + e.AlgoLookup.Algo.Alias;
 
 
-                    Form1.ShowMainGrid();
+                    
 
                     string algoName = e.AlgoLookup.Algo.Alias;
 
@@ -155,6 +156,7 @@ namespace ADLManagerPro
                 Console.WriteLine("Cannot find Algo instrument: {0}", e.Message);
                 Dispose();
             }
+            Form1.ShowMainGrid();
         }
 
         public string StartAlgo(int accountIndex,Instrument m_instrument,Dictionary<string, object> algo_userparams, Dictionary<string, object> algo_orderprofileparams)
@@ -194,6 +196,9 @@ namespace ADLManagerPro
             /*   algo_op.LimitPrice = m_price;
                algo_op.OrderQuantity = Quantity.FromDecimal(m_instrument, 5);*/
             algo_op.Side = OrderSide.Buy;
+            //TODO : put below two parameters as user input for every algo
+            algo_op.UserDisconnectAction = UserDisconnectAction.Leave;
+            algo_op.CoLocation = MarketId.ICE;
             algo_op.OrderType = OrderType.Limit;
             algo_op.Account = Globals.m_accounts.ElementAt(accountIndex);
             algo_op.UserParameters = algo_userparams;
@@ -256,7 +261,7 @@ namespace ADLManagerPro
 
         void m_algoTradeSubscription_OrderDeleted(object sender, OrderDeletedEventArgs e)
         {
-            //TODO: when order is deleted from tt
+            
             HelperFunctions.OnFromTTAlgoOrderDeletion(_algoName, e.OldOrder.SiteOrderKey);
 
             Console.WriteLine("\nOrderDeleted [{0}] , Message : {1}", e.OldOrder.SiteOrderKey, e.Message);
