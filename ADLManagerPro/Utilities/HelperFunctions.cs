@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ADLManager;
+using tt_net_sdk;
 
 namespace ADLManagerPro
 {
@@ -164,13 +165,14 @@ namespace ADLManagerPro
             int rowIndex;
             if(Globals.algoNameWithParameters.ContainsKey(adlValue))
             {
+                var combocell = new DataGridViewComboBoxCell();
                 foreach (var (paramName, paramType) in Globals.algoNameWithParameters[adlValue]._adlUserParametersWithType)
                 {
                     rowIndex = paramGrid.Rows.Add(paramName, paramType);
 
                     if (paramName.Contains("Account"))
                     {
-                        var combocell = new DataGridViewComboBoxCell();
+                        combocell = new DataGridViewComboBoxCell();
                         combocell.Items.AddRange(Globals._accounts.ToArray());
                         paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
                         continue;
@@ -178,7 +180,7 @@ namespace ADLManagerPro
 
                     if (paramName.Contains("Instrument") && !paramName.Contains("Account"))
                     {
-                        var combocell = new DataGridViewComboBoxCell();
+                        combocell = new DataGridViewComboBoxCell();
                         if(Globals.instrumentNameWithInstrument.Keys.Count > 0)
                         {
                             combocell.Items.AddRange(Globals.instrumentNameWithInstrument.Keys.ToArray());
@@ -208,25 +210,25 @@ namespace ADLManagerPro
                     }
                 }
                 //TODO : HARD CODE THE TWO PARAMETERS WE NEED
-                //rowIndex = paramGrid.Rows.Add(paramName, paramType);
+                rowIndex = paramGrid.Rows.Add("CoLocation", ParameterType.String);
+                var coLocation = new DataGridViewComboBoxCell
+                {
+                    DataSource = Enum.GetNames(typeof(MarketId)) // pure strings
+                };
+                paramGrid.Rows[rowIndex].Cells["Value"] = coLocation;
+                paramGrid.Rows[rowIndex].Cells["Value"].Value = Enum.GetNames(typeof(MarketId))[0];
 
-                //if (paramName.Contains("Account"))
-                //{
-                //    var combocell = new DataGridViewComboBoxCell();
-                //    combocell.Items.AddRange(Globals._accounts.ToArray());
-                //    paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
-                //    continue;
-                //}
+                rowIndex = paramGrid.Rows.Add("User Disconnection Action", ParameterType.String);
+                var orderType = new DataGridViewComboBoxCell
+                {
+                    DataSource = Enum.GetNames(typeof(UserDisconnectAction)) // pure strings
+                };
+                paramGrid.Rows[rowIndex].Cells["Value"] = orderType;
+                paramGrid.Rows[rowIndex].Cells["Value"].Value = Enum.GetNames(typeof(UserDisconnectAction))[0];
 
-                //rowIndex = paramGrid.Rows.Add(paramName, paramType);
 
-                //if (paramName.Contains("Account"))
-                //{
-                //    var combocell = new DataGridViewComboBoxCell();
-                //    combocell.Items.AddRange(Globals._accounts.ToArray());
-                //    paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
-                //    continue;
-                //}
+
+
 
             }
 

@@ -31,6 +31,7 @@ namespace ADLManagerPro
         public static List<int> selectedRowIndexList = new List<int>(); 
         public static List<string> _accounts = new List<string>();
         public static List<string> userAlgos = null;
+        public static List<string> algoFound = new List<string>();
         public static List<InstrumentInfo> instrumentInfoList = null;
         public static List<string> instrumentsPriceSubscribed = new List<string>();
 
@@ -44,6 +45,8 @@ namespace ADLManagerPro
         public static Dictionary<string, List<Template>> algoNameWithTemplateList = new Dictionary<string, List<Template>>();
         public static Dictionary<string,Dictionary<string,ParameterType>> algoWithParamNameWithParamType = new Dictionary<string, Dictionary<string,ParameterType>>();
         public static readonly HashSet<string> SkipParamNames = new HashSet<string> { "Quoting Instrument Account", "Hedge Instrument Account", "Fast Mkt Instrument", "Fast Mkt Instrument Account" };
+        public static Dictionary<string,MarketId> marketIdNameWithMarketId = new Dictionary<string,MarketId>();
+        public static Dictionary<string,UserDisconnectAction> userDisconnectActionNameWithUserDisconnectAction = new Dictionary<string,UserDisconnectAction>();
 
 
 

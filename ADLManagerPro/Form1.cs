@@ -58,12 +58,16 @@ namespace ADLManagerPro
             Globals.userAlgos = _fileHandlers.GetADLNameList();
             Globals.instrumentInfoList = _fileHandlers.GetInstrumentInfoList();
             mainGrid.Columns[Globals.columnOneName].ReadOnly = true;
-            UpdateAdlDropdownSource();
             mainGrid.DefaultCellStyle.SelectionBackColor = mainGrid.DefaultCellStyle.BackColor;
             mainGrid.DefaultCellStyle.SelectionForeColor = mainGrid.DefaultCellStyle.ForeColor;
             
             // if this is null then file was empty
             Globals.algoNameWithTemplateList = _fileHandlers.FetchJsonFromFile();
+        }
+
+        public void PopulateMarketIdAndDisconnectActionDictionary()
+        {
+
         }
 
         #region TT API
@@ -174,7 +178,8 @@ namespace ADLManagerPro
         {
             if(Globals.m_isOrderBookDownloaded && Globals.instrumentInfoList.Count() == Globals.instrumentsLookedUp && Globals.userAlgos.Count() == Globals.ADLsLookedUp)
             {
-                ShowMainTab();  
+                ShowMainTab();
+                UpdateAdlDropdownSource();
             }
 
         }
@@ -191,7 +196,7 @@ namespace ADLManagerPro
         }
 
 
-        private void UpdateAdlDropdownSource()
+        private static void UpdateAdlDropdownSource()
         {
             if (mainGrid.InvokeRequired)
             {
@@ -203,7 +208,7 @@ namespace ADLManagerPro
             if (adlColumn != null)
             {
                 adlColumn.Items.Clear();
-                foreach(var algo in Globals.userAlgos)
+                foreach(var algo in Globals.algoFound)
                 { 
                     adlColumn.Items.Add(algo);
                 }

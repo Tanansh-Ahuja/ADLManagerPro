@@ -125,6 +125,8 @@ namespace ADLManagerPro
             string instrumentName = string.Empty;
             string instrumentId = string.Empty;
             int accountNumber = -1;
+            MarketId marketId = MarketId.NotSet;
+            UserDisconnectAction userDisconnectAction = UserDisconnectAction.NotSet;
             foreach (DataGridViewRow row in paramGrid.Rows)
             {
                 if (row.IsNewRow) continue; // skip any placeholder row
@@ -154,6 +156,21 @@ namespace ADLManagerPro
                         value = Convert.ToBoolean(valueCell.Value);
                     }
 
+                    //Hardcoded values in all algos: CoLocation and User Disconnect Action
+                    if(paramName == "CoLocation")
+                    {
+                        var cellVal = row.Cells["Value"].Value?.ToString();
+                        marketId = (MarketId)Enum.Parse(typeof(MarketId), cellVal, ignoreCase: true);
+                    }
+                    else if(paramName == "User Disconnection Action")
+                    {
+                        var cellVal = row.Cells["Value"].Value?.ToString();
+                        userDisconnectAction = (UserDisconnectAction)Enum.Parse(typeof(UserDisconnectAction), cellVal, ignoreCase: true);
+                    }
+
+
+
+
 
                     if (Globals.algoNameWithParameters.ContainsKey(AlgoName))
                     {
@@ -164,12 +181,12 @@ namespace ADLManagerPro
                                 algo_userparams[paramName] = accountNumber;
                             else
                                 MessageBox.Show("Error fetching account index from account name");
-                                
+
                         }
                         if (paramName.Contains("Instrument") && !paramName.Contains("Account"))
                         {
                             instrumentName = value.ToString();
-                            if(Globals.instrumentNameWithInstrument.ContainsKey(instrumentName))
+                            if (Globals.instrumentNameWithInstrument.ContainsKey(instrumentName))
                             {
                                 value = Globals.instrumentNameWithInstrument[instrumentName].InstrumentDetails.Id.ToString();
                             }
@@ -178,7 +195,7 @@ namespace ADLManagerPro
 
                         if (Globals.algoNameWithParameters[AlgoName]._adlUserParameters.Contains(paramName))
                         {
-                            if(paramName.Contains("Account"))
+                            if (paramName.Contains("Account"))
                             {
                                 value = Globals.m_accounts.ElementAt(Globals._accounts.IndexOf(value.ToString())).AccountId;
                             }
@@ -212,7 +229,7 @@ namespace ADLManagerPro
                 string orderKey = Globals.algoNameWithTradeSubscription[AlgoName].StartAlgo(accountNumber,
                         Globals.instrumentNameWithInstrument[instrumentName],
                         algo_userparams,
-                        algo_orderprofileparams);
+                        algo_orderprofileparams,marketId,userDisconnectAction);
 
                 if (!Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex))
                 {

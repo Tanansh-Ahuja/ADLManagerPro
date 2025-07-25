@@ -41,6 +41,9 @@ namespace ADLManagerPro
             Globals.ADLsLookedUp++;
             if (e.Event == ProductDataEvent.Found)
             {
+                if (!Globals.algoFound.Contains(e.AlgoLookup.Algo.Alias))
+                    Globals.algoFound.Add(e.AlgoLookup.Algo.Alias); //only populate those algos that have been found
+
                 m_algo = e.AlgoLookup.Algo;
                 if(!Globals.algos.Contains(m_algo))
                 {
@@ -159,7 +162,9 @@ namespace ADLManagerPro
             Form1.ShowMainGrid();
         }
 
-        public string StartAlgo(int accountIndex,Instrument m_instrument,Dictionary<string, object> algo_userparams, Dictionary<string, object> algo_orderprofileparams)
+        public string StartAlgo(int accountIndex,Instrument m_instrument,
+            Dictionary<string, object> algo_userparams, Dictionary<string, object> algo_orderprofileparams, 
+            MarketId marketId, UserDisconnectAction userDisconnectAction)
         {
             while (m_algo == null)
                 mre.WaitOne();
@@ -197,8 +202,9 @@ namespace ADLManagerPro
                algo_op.OrderQuantity = Quantity.FromDecimal(m_instrument, 5);*/
             algo_op.Side = OrderSide.Buy;
             //TODO : put below two parameters as user input for every algo
-            algo_op.UserDisconnectAction = UserDisconnectAction.Leave;
-            algo_op.CoLocation = MarketId.ICE;
+            algo_op.UserDisconnectAction = userDisconnectAction;
+            algo_op.CoLocation = marketId;
+            
             algo_op.OrderType = OrderType.Limit;
             algo_op.Account = Globals.m_accounts.ElementAt(accountIndex);
             algo_op.UserParameters = algo_userparams;
