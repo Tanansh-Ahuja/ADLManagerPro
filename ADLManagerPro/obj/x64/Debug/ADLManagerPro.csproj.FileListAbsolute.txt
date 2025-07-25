@@ -75,3 +75,4 @@ C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\
 C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\System.Text.Json.xml
 C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\System.Threading.Tasks.Extensions.xml
 C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\bin\x64\Debug\System.ValueTuple.xml
+C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\obj\x64\Debug\ADLManagerPro.exe.config

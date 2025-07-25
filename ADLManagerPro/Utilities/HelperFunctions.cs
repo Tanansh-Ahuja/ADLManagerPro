@@ -161,50 +161,76 @@ namespace ADLManagerPro
 
         public void PopulateParamGridWithUserParameters(DataGridView paramGrid, string adlValue)
         {
+            int rowIndex;
             if(Globals.algoNameWithParameters.ContainsKey(adlValue))
-            foreach (var (paramName, paramType) in Globals.algoNameWithParameters[adlValue]._adlUserParametersWithType)
             {
-                int rowIndex = paramGrid.Rows.Add(paramName, paramType);
-
-                if (paramName.Contains("Account"))
+                foreach (var (paramName, paramType) in Globals.algoNameWithParameters[adlValue]._adlUserParametersWithType)
                 {
-                    var combocell = new DataGridViewComboBoxCell();
-                    combocell.Items.AddRange(Globals._accounts.ToArray());
-                    paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
-                    continue;
-                }
+                    rowIndex = paramGrid.Rows.Add(paramName, paramType);
 
-                if (paramName.Contains("Instrument") && !paramName.Contains("Account"))
-                {
-                    var combocell = new DataGridViewComboBoxCell();
-                    if(Globals.instrumentNameWithInstrument.Keys.Count > 0)
+                    if (paramName.Contains("Account"))
                     {
-                        combocell.Items.AddRange(Globals.instrumentNameWithInstrument.Keys.ToArray());
+                        var combocell = new DataGridViewComboBoxCell();
+                        combocell.Items.AddRange(Globals._accounts.ToArray());
                         paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
-
+                        continue;
                     }
-                    continue;
-                }
 
-                if (paramType == ParameterType.BuySell)
-                {
-                    var comboCell = new DataGridViewComboBoxCell();
-                    comboCell.Items.AddRange("Buy", "Sell");
-                    paramGrid.Rows[rowIndex].Cells["Value"] = comboCell;
+                    if (paramName.Contains("Instrument") && !paramName.Contains("Account"))
+                    {
+                        var combocell = new DataGridViewComboBoxCell();
+                        if(Globals.instrumentNameWithInstrument.Keys.Count > 0)
+                        {
+                            combocell.Items.AddRange(Globals.instrumentNameWithInstrument.Keys.ToArray());
+                            paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
+
+                        }
+                        continue;
+                    }
+
+                    if (paramType == ParameterType.BuySell)
+                    {
+                        var comboCell = new DataGridViewComboBoxCell();
+                        comboCell.Items.AddRange("Buy", "Sell");
+                        paramGrid.Rows[rowIndex].Cells["Value"] = comboCell;
+                    }
+                    else if (paramType == ParameterType.Bool)
+                    {
+                        var comboCell = new DataGridViewComboBoxCell();
+                        comboCell.Items.AddRange("True", "False");
+                        paramGrid.Rows[rowIndex].Cells["Value"] = comboCell;
+                    }
+                    else
+                    {
+                        Console.WriteLine("UserParams paramName: " + paramName + " paramType: " + paramType);
+                        var textCell = new DataGridViewTextBoxCell();
+                        paramGrid.Rows[rowIndex].Cells["Value"] = textCell;
+                    }
                 }
-                else if (paramType == ParameterType.Bool)
-                {
-                    var comboCell = new DataGridViewComboBoxCell();
-                    comboCell.Items.AddRange("True", "False");
-                    paramGrid.Rows[rowIndex].Cells["Value"] = comboCell;
-                }
-                else
-                {
-                    Console.WriteLine("UserParams paramName: " + paramName + " paramType: " + paramType);
-                    var textCell = new DataGridViewTextBoxCell();
-                    paramGrid.Rows[rowIndex].Cells["Value"] = textCell;
-                }
+                //TODO : HARD CODE THE TWO PARAMETERS WE NEED
+                //rowIndex = paramGrid.Rows.Add(paramName, paramType);
+
+                //if (paramName.Contains("Account"))
+                //{
+                //    var combocell = new DataGridViewComboBoxCell();
+                //    combocell.Items.AddRange(Globals._accounts.ToArray());
+                //    paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
+                //    continue;
+                //}
+
+                //rowIndex = paramGrid.Rows.Add(paramName, paramType);
+
+                //if (paramName.Contains("Account"))
+                //{
+                //    var combocell = new DataGridViewComboBoxCell();
+                //    combocell.Items.AddRange(Globals._accounts.ToArray());
+                //    paramGrid.Rows[rowIndex].Cells["Value"] = combocell;
+                //    continue;
+                //}
+
             }
+
+
         }
 
         public Template GenerateANewTemplate(string adlName, DataGridView paramGrid, string templateName)

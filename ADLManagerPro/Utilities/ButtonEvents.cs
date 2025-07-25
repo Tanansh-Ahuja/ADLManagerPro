@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -269,6 +270,12 @@ namespace ADLManagerPro
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnZeroName].ReadOnly = true;
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFourName].ReadOnly = true;
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFiveName].Value = "ACTIVATED" ;
+                var row = Form1.mainGrid.Rows[rowIndex];
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    cell.Style.BackColor = Color.Gray;
+                    cell.Style.ForeColor = Color.White;
+                }
 
 
             }
@@ -338,6 +345,12 @@ namespace ADLManagerPro
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnZeroName].ReadOnly = false;
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFourName].ReadOnly = false;
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFiveName].Value = "DEACTIVATED";
+                var row = Form1.mainGrid.Rows[rowIndex];
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    cell.Style.BackColor = Color.Empty;
+                    cell.Style.ForeColor = Color.Empty;
+                }
             }
         }
 
