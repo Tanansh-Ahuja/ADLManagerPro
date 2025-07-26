@@ -1,11 +1,12 @@
-﻿using System;
+﻿using ADLManager;
+using Google.Protobuf.WellKnownTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ADLManager;
 using tt_net_sdk;
 
 namespace ADLManagerPro
@@ -24,7 +25,7 @@ namespace ADLManagerPro
      
         
         private string _algoName = string.Empty;
-        private bool orderSent = false;
+        //private bool orderSent = false;
         
         public C_AlgoLookup_TradeSubscription(Dispatcher dispatcher, string algoName) 
         {
@@ -208,12 +209,39 @@ namespace ADLManagerPro
             algo_op.OrderType = OrderType.Limit;
             algo_op.Account = Globals.m_accounts.ElementAt(accountIndex);
             algo_op.UserParameters = algo_userparams;
+
+            
+
+            
             m_algoTradeSubscription.SendOrder(algo_op);
-            orderSent = true;
+            //orderSent = true;
+
+            if(Globals.siteOrderKeyWithTabIndex.ContainsKey(algo_op.SiteOrderKey) &&
+                Globals.tabIndexWithTabInfo.ContainsKey(Globals.siteOrderKeyWithTabIndex[algo_op.SiteOrderKey]))
+            {
+                TabInfo tabInfo = Globals.tabIndexWithTabInfo[Globals.siteOrderKeyWithTabIndex[algo_op.SiteOrderKey]];
+                //tabInfo._laggedPrice = Convert.ToDouble(algo_userparams["Pricing_Feed"]);
+                tabInfo._lag = true;
+                tabInfo._laggedPrice = double.NaN;
+            }
+
 
             return algo_op.SiteOrderKey;
 
 
+        }
+
+        public void UpdateAlgoOrderPrice(string siteOrderKey , double price)
+        {
+            if (siteOrderKey != null && m_algoTradeSubscription.Orders.ContainsKey(siteOrderKey))
+            {
+                OrderProfile op = m_algoTradeSubscription.Orders[siteOrderKey].GetOrderProfile();
+                Dictionary<string, object> temp = (Dictionary<string, object>)op.UserParameters;
+                temp["Pricing_Feed"] = price;
+                op.UserParameters = temp;
+                op.Action = OrderAction.Change;
+                m_algoTradeSubscription.SendOrder(op);
+            }
         }
 
         public string DeleteAlgoOrder(string siteOrderKey)
@@ -223,7 +251,7 @@ namespace ADLManagerPro
                 OrderProfile op = m_algoTradeSubscription.Orders[siteOrderKey].GetOrderProfile();
                 op.Action = OrderAction.Delete;
                 m_algoTradeSubscription.SendOrder(op);
-                orderSent = false;
+                //orderSent = false;
 
             }
             return string.Empty;
@@ -242,14 +270,10 @@ namespace ADLManagerPro
 
         void m_algoTradeSubscription_OrderRejected(object sender, OrderRejectedEventArgs e)
         {
-            if(orderSent)
-            {
-                HelperFunctions.OnFromTTAlgoOrderDeletion(_algoName, e.Order.SiteOrderKey);
-            }
-            else
-            {
-                //TODO
-            }
+           //TODO: ye order delete ke time aaya hai ya order added ke time
+            HelperFunctions.OnFromTTAlgoOrderDeletion(_algoName, e.Order.SiteOrderKey);
+            
+            
             Console.WriteLine("\nOrderRejected for : [{0}]", e.Order.Message);
         }
 
@@ -275,6 +299,23 @@ namespace ADLManagerPro
 
         void m_algoTradeSubscription_OrderAdded(object sender, OrderAddedEventArgs e)
         {
+            string orderKey = e.Order.SiteOrderKey;
+            if (Globals.siteOrderKeyWithTabIndex.ContainsKey(orderKey) &&
+                Globals.tabIndexWithTabInfo.ContainsKey(Globals.siteOrderKeyWithTabIndex[orderKey]))
+            {
+                TabInfo tabInfo = Globals.tabIndexWithTabInfo[Globals.siteOrderKeyWithTabIndex[orderKey]];
+                //tabInfo._laggedPrice = Convert.ToDouble(algo_userparams["Pricing_Feed"]);
+                if(!double.IsNaN(tabInfo._laggedPrice))
+                {
+                    UpdateAlgoOrderPrice(orderKey, tabInfo._laggedPrice);
+                    tabInfo._laggedPrice = double.NaN;
+                }
+                else
+                {
+                    tabInfo._lag = false;
+                }
+
+            }
             if (e.Order.IsSynthetic)
                 Console.WriteLine("\nPARENT Algo OrderAdded [{0}] for Algo : {1} with Synthetic Status : {2} ", e.Order.SiteOrderKey, e.Order.Algo.Alias, e.Order.SyntheticStatus.ToString());
             else

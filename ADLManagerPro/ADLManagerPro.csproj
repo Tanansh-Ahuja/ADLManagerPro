@@ -138,6 +138,8 @@
     <Compile Include="ApiKeyForm.Designer.cs">
       <DependentUpon>ApiKeyForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Extra\PriceConsumer.cs" />
+    <Compile Include="Extra\PriceSimulator.cs" />
     <Compile Include="FileHandlers\FileHandlers.cs" />
     <Compile Include="Library\AdlParameters.cs" />
     <Compile Include="Library\C_AlgoLookup_TradeSubscription.cs" />

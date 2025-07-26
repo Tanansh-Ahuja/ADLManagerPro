@@ -1,11 +1,12 @@
-﻿using System;
+﻿using ADLManager;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.PeerToPeer;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ADLManager;
 using tt_net_sdk;
 
 namespace ADLManagerPro
@@ -47,10 +48,32 @@ namespace ADLManagerPro
 
             for (int i = mainGrid.Rows.Count - 1; i >= 0; i--)
             {
-                int x = i + 1;
-                map[mainGrid.Rows[i].Cells[Globals.columnOneName].Value.ToString()] = x.ToString();
-                mainGrid.Rows[i].Cells[Globals.columnOneName].Value = x.ToString();
+                int newIndex = i + 1;
+                
+
+                
+                map[mainGrid.Rows[i].Cells[Globals.columnOneName].Value.ToString()] = newIndex.ToString();
+                mainGrid.Rows[i].Cells[Globals.columnOneName].Value = newIndex.ToString();
             }
+
+            foreach(string feedName in Globals.feedNames)
+            {
+                if (Globals.feedNameWithRowIndex.ContainsKey(feedName))
+                {
+                    List<string> temp = Globals.feedNameWithRowIndex[feedName];
+                    List<string> new_indexes = new List<string>();
+                    foreach(string old_index in temp)
+                    {
+                        if(map.ContainsKey(old_index))
+                        {
+                            string new_index = map[old_index];
+                            new_indexes.Add(new_index);
+                        }
+                    }
+                    Globals.feedNameWithRowIndex[feedName] = new_indexes;
+                }
+            }
+            
 
 
             Dictionary<string, TabInfo> temp_tabIndexWithTabInfo = new Dictionary<string, TabInfo>();
@@ -248,6 +271,16 @@ namespace ADLManagerPro
                 {
                     Globals.siteOrderKeyWithTabIndex[orderKey] = currentTabIndex;
                 }
+
+                if (Globals.siteOrderKeyWithTabIndex.ContainsKey(orderKey) &&
+                Globals.tabIndexWithTabInfo.ContainsKey(Globals.siteOrderKeyWithTabIndex[orderKey]))
+                {
+                    TabInfo tabInfo = Globals.tabIndexWithTabInfo[Globals.siteOrderKeyWithTabIndex[orderKey]];
+                    
+                    tabInfo._lag = true;
+                    tabInfo._laggedPrice = double.NaN;
+                }
+
                 paramGrid.Columns["Value"].ReadOnly = true;
                 Control[] foundComboBox = currentTab.Controls.Find("TemplateComboBox", true);
                 Control[] foundTextBox = currentTab.Controls.Find("TemplateTextBox", true);
