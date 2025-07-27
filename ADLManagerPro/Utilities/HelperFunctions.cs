@@ -63,6 +63,10 @@ namespace ADLManagerPro
                                 var old = existingTemplate.ParamNameWithValue[paramName];
                                 existingTemplate.ParamNameWithValue[paramName] = paramValue;
                             }
+                            else
+                            {
+                                existingTemplate.ParamNameWithValue.Add(paramName,paramValue);
+                            }
                         }
                     }
 
@@ -268,7 +272,7 @@ namespace ADLManagerPro
                 string paramName = row.Cells["ParamName"].Value?.ToString();
                 string paramValue = row.Cells["Value"].Value?.ToString();
 
-                if (!string.IsNullOrEmpty(paramName) && paramTypes.ContainsKey(paramName))
+                if (!string.IsNullOrEmpty(paramName))
                 {
                     newTemplate.ParamNameWithValue[paramName] = paramValue ?? "";
                 }
