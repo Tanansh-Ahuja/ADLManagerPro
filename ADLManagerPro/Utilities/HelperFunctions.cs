@@ -97,7 +97,7 @@ namespace ADLManagerPro
             //Update the combobox of all other tabs where the same Algo is there
             foreach (TabPage tabPage in MainTab.TabPages)
             {
-                if(Globals.tabIndexWithTabInfo.ContainsKey(tabPage.Text) && Globals.tabIndexWithTabInfo[tabPage.Text]._adlName == adlName )
+                if(Globals.tabNameWithTabInfo.ContainsKey(tabPage.Text) && Globals.tabNameWithTabInfo[tabPage.Text]._adlName == adlName )
                 {
                     Control[] foundControl = tabPage.Controls.Find("TemplateComboBox", true);
                     if (foundControl.Length > 0 && foundControl[0] is ComboBox comboBox)
@@ -325,22 +325,22 @@ namespace ADLManagerPro
 
         public static void OnFromTTAlgoOrderDeletion(string AlgoName, string orderKey)
         {
-            if (!Globals.siteOrderKeyWithTabIndex.ContainsKey(orderKey) || !Globals.tabIndexWithTabInfo.ContainsKey(Globals.siteOrderKeyWithTabIndex[orderKey]))
+            if (!Globals.siteOrderKeyWithTabName.ContainsKey(orderKey) || !Globals.tabNameWithTabInfo.ContainsKey(Globals.siteOrderKeyWithTabName[orderKey]))
             {
                 return;
             }
             
 
-            string currentTabIndex = Globals.siteOrderKeyWithTabIndex[orderKey];
-            TabPage currentTab = Globals.tabIndexWithTabInfo[currentTabIndex]._currentTab;
-            if (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex) && Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName))
+            string currentTabName = Globals.siteOrderKeyWithTabName[orderKey];
+            TabPage currentTab = Globals.tabNameWithTabInfo[currentTabName]._currentTab;
+            if (Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName) && Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName))
             {
-                Globals.tabIndexWithSiteOrderKey[currentTabIndex] = Globals.algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
-                Globals.tabIndexWithSiteOrderKey.Remove(currentTabIndex);
+                Globals.tabNameWithSiteOrderKey[currentTabName] = Globals.algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
+                Globals.tabNameWithSiteOrderKey.Remove(currentTabName);
 
-                if(Globals.siteOrderKeyWithTabIndex.ContainsKey(orderKey))
+                if(Globals.siteOrderKeyWithTabName.ContainsKey(orderKey))
                 {
-                    Globals.siteOrderKeyWithTabIndex.Remove(orderKey);
+                    Globals.siteOrderKeyWithTabName.Remove(orderKey);
                 }
                 Control[] foundParamGrid = currentTab.Controls.Find("ParamGrid", true);
                 Control[] foundComboBox = currentTab.Controls.Find("TemplateComboBox", true);
@@ -378,6 +378,7 @@ namespace ADLManagerPro
                     foundStartAlgoButton[0].Show();
                 }
                 //mainGrid
+                string currentTabIndex = currentTabName.Split('-')[0];
                 int rowIndex = Convert.ToInt32(currentTabIndex) - 1;
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnZeroName].ReadOnly = false;
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFourName].ReadOnly = false;

@@ -9,7 +9,7 @@ namespace ADLManagerPro
 {
     public class TabInfo
     {
-
+        
         public DataGridView _dataGridView = null;
         public string _adlName = null;
         public string _feedName = null;
@@ -20,6 +20,7 @@ namespace ADLManagerPro
             _adlName = adlName;
             _feedName = feedName;
             _currentTab = currentTab;
+            
         }
         
     }

@@ -261,7 +261,7 @@ namespace ADLManagerPro
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(Globals.tabIndexWithSiteOrderKey.Keys.Count>0)
+            if(Globals.tabNameWithSiteOrderKey.Keys.Count>0)
             {
                 MessageBox.Show("Remove all orders before closing the app.");
                 e.Cancel = true;

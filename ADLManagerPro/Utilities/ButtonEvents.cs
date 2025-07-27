@@ -36,7 +36,11 @@ namespace ADLManagerPro
             {
                 int index_to_delete = Globals.selectedRowIndexList[i];
                 DataGridViewRow rowToRemove = mainGrid.Rows[index_to_delete - i];
-                mainGrid.Rows[index_to_delete - i].Cells[Globals.columnFourName].Value = false;
+                bool tabCreated = Convert.ToBoolean(mainGrid.Rows[index_to_delete - i].Cells[Globals.columnFourName].Value);
+                if(tabCreated)
+                {
+                    mainGrid.Rows[index_to_delete - i].Cells[Globals.columnFourName].Value = false;
+                }
                 mainGrid.Rows.Remove(rowToRemove);
             }
             Globals.selectedRowIndexList.Clear();
@@ -53,45 +57,55 @@ namespace ADLManagerPro
             }
 
 
-            Dictionary<string, TabInfo> temp_tabIndexWithTabInfo = new Dictionary<string, TabInfo>();
-            foreach (KeyValuePair<string, TabInfo> entry in Globals.tabIndexWithTabInfo)
+            Dictionary<string, TabInfo> temp_tabNameWithTabInfo = new Dictionary<string, TabInfo>();
+            foreach (KeyValuePair<string, TabInfo> entry in Globals.tabNameWithTabInfo)
             {
+                TabInfo currentTabInfo = entry.Value;
                 string old_key = entry.Key;
-                if (map.ContainsKey(old_key))
+                string old_key_num = old_key.Split('-')[0];
+                string old_key_feed = old_key.Split('-')[1];
+
+                if (map.ContainsKey(old_key_num))
                 {
-                    string new_key = map[old_key];
-                    temp_tabIndexWithTabInfo[new_key] = entry.Value;
+                    string new_key_num = map[old_key_num];
+                    string new_tab_name = new_key_num + "-" + old_key_feed;
+                    temp_tabNameWithTabInfo.Add(new_tab_name, entry.Value);
+                    currentTabInfo._currentTab.Text = new_tab_name;
+
                 }
 
             }
-            Globals.tabIndexWithTabInfo.Clear();
-            Globals.tabIndexWithTabInfo = temp_tabIndexWithTabInfo.ToDictionary(
+            Globals.tabNameWithTabInfo.Clear();
+            Globals.tabNameWithTabInfo = temp_tabNameWithTabInfo.ToDictionary(
                                 entry => entry.Key,
                                 entry => entry.Value // still shallow copy of value
                             );
-            temp_tabIndexWithTabInfo.Clear();
+            temp_tabNameWithTabInfo.Clear();
 
-            Dictionary<string, string> temp_tabIndexWithSiteOrderKey = new Dictionary<string, string>();
-            foreach (KeyValuePair<string, string> entry in Globals.tabIndexWithSiteOrderKey)
+            Dictionary<string, string> temp_tabNameWithSiteOrderKey = new Dictionary<string, string>();
+            foreach (KeyValuePair<string, string> entry in Globals.tabNameWithSiteOrderKey)
             {
                 string old_key = entry.Key;
+                string old_key_num = old_key.Split('-')[0];
+                string old_key_feed = old_key.Split('-')[1];
                 if (map.ContainsKey(old_key))
                 {
-                    string new_key = map[old_key];
-                    temp_tabIndexWithSiteOrderKey[new_key] = entry.Value;
+                    string new_key_num = map[old_key_num];
+                    string new_tab_name = new_key_num + "-" + old_key_feed;
+                    temp_tabNameWithSiteOrderKey.Add(new_tab_name, entry.Value);
                 }
 
             }
-            Globals.tabIndexWithSiteOrderKey.Clear();
-            Globals.tabIndexWithSiteOrderKey = temp_tabIndexWithSiteOrderKey.ToDictionary(
+            Globals.tabNameWithSiteOrderKey.Clear();
+            Globals.tabNameWithSiteOrderKey = temp_tabNameWithSiteOrderKey.ToDictionary(
                                 entry => entry.Key,
                                 entry => entry.Value // still shallow copy of value
                             );
-            temp_tabIndexWithSiteOrderKey.Clear();
+            temp_tabNameWithSiteOrderKey.Clear();
             
             
-            Globals.siteOrderKeyWithTabIndex.Clear();
-            Globals.siteOrderKeyWithTabIndex = Globals.tabIndexWithSiteOrderKey.ToDictionary(
+            Globals.siteOrderKeyWithTabName.Clear();
+            Globals.siteOrderKeyWithTabName = Globals.tabNameWithSiteOrderKey.ToDictionary(
                                 entry => entry.Value,
                                 entry => entry.Key);
 
@@ -110,10 +124,11 @@ namespace ADLManagerPro
 
         }
 
-        public void OnStartbtnClick(DataGridView paramGrid, string AlgoName, string currentTabIndex, TabPage currentTab)
+        public void OnStartbtnClick(DataGridView paramGrid, string AlgoName, TabPage currentTab)
         {
+            string currentTabName = currentTab.Text;
             
-            if (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex))
+            if (Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName))
             {
                 MessageBox.Show("Order already placed!");
                 return;
@@ -231,22 +246,22 @@ namespace ADLManagerPro
                         algo_userparams,
                         algo_orderprofileparams,marketId,userDisconnectAction);
 
-                if (!Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex))
+                if (!Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName))
                 {
-                    Globals.tabIndexWithSiteOrderKey.Add(currentTabIndex, orderKey);
+                    Globals.tabNameWithSiteOrderKey.Add(currentTabName, orderKey);
                 }
                 else
                 {
-                    Globals.tabIndexWithSiteOrderKey[currentTabIndex] = orderKey;
+                    Globals.tabNameWithSiteOrderKey[currentTabName] = orderKey;
                 }
 
-                if (!Globals.siteOrderKeyWithTabIndex.ContainsKey(orderKey))
+                if (!Globals.siteOrderKeyWithTabName.ContainsKey(orderKey))
                 {
-                    Globals.siteOrderKeyWithTabIndex.Add(orderKey, currentTabIndex);
+                    Globals.siteOrderKeyWithTabName.Add(orderKey, currentTabName);
                 }
                 else
                 {
-                    Globals.siteOrderKeyWithTabIndex[orderKey] = currentTabIndex;
+                    Globals.siteOrderKeyWithTabName[orderKey] = currentTabName;
                 }
                 paramGrid.Columns["Value"].ReadOnly = true;
                 Control[] foundComboBox = currentTab.Controls.Find("TemplateComboBox", true);
@@ -283,6 +298,7 @@ namespace ADLManagerPro
 
 
                 //mainGrid
+                string currentTabIndex = currentTabName.Split('-')[0];
                 int rowIndex = Convert.ToInt32(currentTabIndex)-1;
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnZeroName].ReadOnly = true;
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFourName].ReadOnly = true;
@@ -305,23 +321,24 @@ namespace ADLManagerPro
         }
 
 
-        public void OnDeletebtnClick(DataGridView paramGrid, string AlgoName, string currentTabIndex, TabPage currentTab)
+        public void OnDeletebtnClick(DataGridView paramGrid, string AlgoName, TabPage currentTab)
         {
-            if (!Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex)
-                || (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex) && Globals.tabIndexWithSiteOrderKey[currentTabIndex] == string.Empty))
+            string currentTabName = currentTab.Text;
+            if (!Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName)
+                || (Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName) && Globals.tabNameWithSiteOrderKey[currentTabName] == string.Empty))
             {
                 MessageBox.Show("Order not found.");
                 return;
             }
             
-            if (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex) && Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName))
+            if (Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName) && Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName))
             {
-                string orderKey = Globals.tabIndexWithSiteOrderKey[currentTabIndex];
-                Globals.tabIndexWithSiteOrderKey[currentTabIndex] = Globals.algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
-                Globals.tabIndexWithSiteOrderKey.Remove(currentTabIndex);
-                if(Globals.siteOrderKeyWithTabIndex.ContainsKey(orderKey))
+                string orderKey = Globals.tabNameWithSiteOrderKey[currentTabName];
+                Globals.tabNameWithSiteOrderKey[currentTabName] = Globals.algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
+                Globals.tabNameWithSiteOrderKey.Remove(currentTabName);
+                if(Globals.siteOrderKeyWithTabName.ContainsKey(orderKey))
                 {
-                    Globals.siteOrderKeyWithTabIndex.Remove(orderKey);
+                    Globals.siteOrderKeyWithTabName.Remove(orderKey);
                 }
                 
                 paramGrid.Columns["Value"].ReadOnly = false;
@@ -358,6 +375,7 @@ namespace ADLManagerPro
 
 
                 //mainGrid
+                string currentTabIndex = currentTabName.Split('-')[0];
                 int rowIndex = Convert.ToInt32(currentTabIndex) - 1;
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnZeroName].ReadOnly = false;
                 Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFourName].ReadOnly = false;

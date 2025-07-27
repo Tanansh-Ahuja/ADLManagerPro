@@ -63,7 +63,9 @@ namespace ADLManagerPro
                     }
 
                     string serial = row.Cells[Globals.columnOneName].Value.ToString();
-                    if (!_helperFunctions.TabExists(serial,MainTab))
+                    string feedName = row.Cells[Globals.columnTwoName].Value.ToString();
+                    string tabName = serial + "-" + feedName;
+                    if (!_helperFunctions.TabExists(tabName,MainTab))
                     {
                         mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].ReadOnly = true;
                         mainGrid.Rows[row.Index].Cells[Globals.columnThreeName].ReadOnly = true;
@@ -74,9 +76,11 @@ namespace ADLManagerPro
                 {
                    
                     string serial = row.Cells[Globals.columnOneName].Value.ToString();
+                    string feedName = row.Cells[Globals.columnTwoName].Value.ToString();
+                    string tabName = serial + "-" + feedName;
                     for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
                     {
-                        if (MainTab.TabPages[i].Text == serial)
+                        if (MainTab.TabPages[i].Text == tabName)
                         {
                             Control[] foundStatusLabel = MainTab.TabPages[i].Controls.Find("OrderStatusValueLabel", true);
                             if (foundStatusLabel.Length > 0 && foundStatusLabel[0].Text == "ACTIVATED")
@@ -85,9 +89,9 @@ namespace ADLManagerPro
                                 return false;
                             }
                             MainTab.TabPages.RemoveAt(i);
-                            if(Globals.tabIndexWithTabInfo.ContainsKey(i.ToString()))
+                            if(Globals.tabNameWithTabInfo.ContainsKey(tabName))
                             {
-                                Globals.tabIndexWithTabInfo.Remove(i.ToString());
+                                Globals.tabNameWithTabInfo.Remove(tabName);
                             }
                             break;
                         }
@@ -101,7 +105,8 @@ namespace ADLManagerPro
 
         public void CreateTabWithLabels(string serial, string feedValue, string adlValue,TabControl MainTab)
         {
-            TabPage newTab = new TabPage(serial);
+            string tabName = serial + "-" + feedValue;
+            TabPage newTab = new TabPage(tabName);
 
             // Static label: "Feed Name"
             Label lblFeedTitle = new Label
@@ -274,7 +279,7 @@ namespace ADLManagerPro
             btnStartAlgo.Click += (s, e) =>
             {
                 
-                _buttonEvents.OnStartbtnClick(paramGrid, adlValue, MainTab.SelectedTab.Text, newTab);
+                _buttonEvents.OnStartbtnClick(paramGrid, adlValue, newTab);
                 
             };
             newTab.Controls.Add(btnStartAlgo);
@@ -283,7 +288,7 @@ namespace ADLManagerPro
             btnDeleteAlgo.Click += (s, e) =>
             {
                 
-                _buttonEvents.OnDeletebtnClick(paramGrid, adlValue, MainTab.SelectedTab.Text, newTab);
+                _buttonEvents.OnDeletebtnClick(paramGrid, adlValue, newTab);
                 
             };
 
@@ -304,14 +309,14 @@ namespace ADLManagerPro
 
             
             TabInfo tabInfo = new TabInfo(paramGrid, adlValue, feedValue, newTab);
-            if(Globals.tabIndexWithTabInfo.ContainsKey(serial))
+            if(Globals.tabNameWithTabInfo.ContainsKey(tabName))
             {
-                Globals.tabIndexWithTabInfo[serial] = tabInfo;
+                Globals.tabNameWithTabInfo[tabName] = tabInfo;
             }
             else
             {
 
-                Globals.tabIndexWithTabInfo.Add(serial, tabInfo);
+                Globals.tabNameWithTabInfo.Add(tabName, tabInfo);
             }
 
             // Add tab to TabControl
