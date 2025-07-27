@@ -41,28 +41,47 @@ namespace ADLManagerPro
 
         public Form1(string appSecretKey)
         {
-            _appSecretKey = appSecretKey;
-            _fileHandlers = new FileHandlers();
-            _buttonEvents = new ButtonEvents();
-            _uI = new UI();
-            _loadingLabel = new LoadingLabel();
+            try
+            {
+
+                _appSecretKey = appSecretKey;
+                _fileHandlers = new FileHandlers();
+                _buttonEvents = new ButtonEvents();
+                _uI = new UI();
+                _loadingLabel = new LoadingLabel();
             
-            InitializeComponent();
+                InitializeComponent();
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while initialising form. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
             
            
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            _loadingLabel.InitialiseLoadingLabel("Initialising TT",this,MainTab);
-            Globals.userAlgos = _fileHandlers.GetADLNameList();
-            Globals.instrumentInfoList = _fileHandlers.GetInstrumentInfoList();
-            mainGrid.Columns[Globals.columnOneName].ReadOnly = true;
-            mainGrid.DefaultCellStyle.SelectionBackColor = mainGrid.DefaultCellStyle.BackColor;
-            mainGrid.DefaultCellStyle.SelectionForeColor = mainGrid.DefaultCellStyle.ForeColor;
+
+            try
+            {
+                _loadingLabel.InitialiseLoadingLabel("Initialising TT",this,MainTab);
+                Globals.userAlgos = _fileHandlers.GetADLNameList();
+                Globals.instrumentInfoList = _fileHandlers.GetInstrumentInfoList();
+                mainGrid.Columns[Globals.columnOneName].ReadOnly = true;
+                mainGrid.DefaultCellStyle.SelectionBackColor = mainGrid.DefaultCellStyle.BackColor;
+                mainGrid.DefaultCellStyle.SelectionForeColor = mainGrid.DefaultCellStyle.ForeColor;
             
-            // if this is null then file was empty
-            Globals.algoNameWithTemplateList = _fileHandlers.FetchJsonFromFile();
+                // if this is null then file was empty
+                Globals.algoNameWithTemplateList = _fileHandlers.FetchJsonFromFile();
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while loading form. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
         }
 
         public void PopulateMarketIdAndDisconnectActionDictionary()
@@ -74,99 +93,145 @@ namespace ADLManagerPro
 
         public void Start(tt_net_sdk.TTAPIOptions apiConfig)
         {
-            m_disp = tt_net_sdk.Dispatcher.AttachWorkerDispatcher();
-            m_disp.DispatchAction(() =>
-            {
-                Init(apiConfig);
-            });
 
-            m_disp.Run();
+            try
+            {
+                m_disp = tt_net_sdk.Dispatcher.AttachWorkerDispatcher();
+                m_disp.DispatchAction(() =>
+                {
+                    Init(apiConfig);
+                });
+
+                m_disp.Run();
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while starting TT connection. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
         }
 
         
         public void Init(tt_net_sdk.TTAPIOptions apiConfig)
         {
-            ApiInitializeHandler apiInitializeHandler = new ApiInitializeHandler(ttNetApiInitHandler);
-            TTAPI.ShutdownCompleted += TTAPI_ShutdownCompleted;
-            TTAPI.CreateTTAPI(tt_net_sdk.Dispatcher.Current, apiConfig, apiInitializeHandler);
+            try
+            {
+
+                ApiInitializeHandler apiInitializeHandler = new ApiInitializeHandler(ttNetApiInitHandler);
+                TTAPI.ShutdownCompleted += TTAPI_ShutdownCompleted;
+                TTAPI.CreateTTAPI(tt_net_sdk.Dispatcher.Current, apiConfig, apiInitializeHandler);
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while initialising TT. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
         }
 
         public void ttNetApiInitHandler(TTAPI api, ApiCreationException ex)
         {
-            if (ex == null)
+            try
             {
-                Console.WriteLine("TT.NET SDK INITIALIZED");
-                _loadingLabel.ChangeLoadingLabelText("TT.NET SDK INITIALIZED");
-                _fileHandlers.SaveApiKey("Key.txt", _appSecretKey);
 
-                // Authenticate your credentials
-                m_api = api;
-                m_api.TTAPIStatusUpdate += new EventHandler<TTAPIStatusUpdateEventArgs>(m_api_TTAPIStatusUpdate);
-                m_api.Start();
+                if (ex == null)
+                {
+                    Console.WriteLine("TT.NET SDK INITIALIZED");
+                    _loadingLabel.ChangeLoadingLabelText("TT.NET SDK INITIALIZED");
+                    _fileHandlers.SaveApiKey("Key.txt", _appSecretKey);
+
+                    // Authenticate your credentials
+                    m_api = api;
+                    m_api.TTAPIStatusUpdate += new EventHandler<TTAPIStatusUpdateEventArgs>(m_api_TTAPIStatusUpdate);
+                    m_api.Start();
+                }
+                else if (ex.IsRecoverable)
+                {
+                    MessageBox.Show("TT.NET SDK Initialization Failed");
+                    DisposeEverything();
+                }
+                else
+                {
+                    Console.WriteLine("TT.NET SDK Initialization Failed: {0}", ex.Message);
+                    MessageBox.Show(ex.Message);
+                    DisposeEverything();
+                }
             }
-            else if (ex.IsRecoverable)
+            catch
             {
-                MessageBox.Show("TT.NET SDK Initialization Failed");
-                DisposeEverything();
-            }
-            else
-            {
-                Console.WriteLine("TT.NET SDK Initialization Failed: {0}", ex.Message);
-                MessageBox.Show(ex.Message);
-                DisposeEverything();
+                MessageBox.Show("Error occured while initialising TT. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
             }
         }
 
         public void m_api_TTAPIStatusUpdate(object sender, TTAPIStatusUpdateEventArgs e)
         {
-            Console.WriteLine("TTAPIStatusUpdate: {0}", e);
-            _loadingLabel.ChangeLoadingLabelText("TTAPIStatusUpdate: " + e.ToString());
-            if (e.IsReady == false)
+            try
             {
-                // TODO: Do any connection lost processing here
-                return;
-            }
-            m_dispatcher = tt_net_sdk.Dispatcher.Current;
-            if(Globals.instrumentInfoList == null)
-            {
-                Globals.loadingLabel.Text = "Status: One or more required columns of instruments in \"InstrumentsToBeFetched.csv\" are empty or null.";
-                return;
-            }
-            if(Globals.userAlgos.Count == 0)
-            {
-                Globals.loadingLabel.Text = "Status: No Algos in \"ADLsToBeFetched.txt\" found.";
-                return;
-            }
-            foreach(var instrumentInfo in Globals.instrumentInfoList)
-            {
-                C_InstrumentLookup c_InstrumentLookup = new C_InstrumentLookup(m_dispatcher,instrumentInfo);
-            }
+                Console.WriteLine("TTAPIStatusUpdate: {0}", e);
+                _loadingLabel.ChangeLoadingLabelText("TTAPIStatusUpdate: " + e.ToString());
+                if (e.IsReady == false)
+                {
+                    // TODO: Do any connection lost processing here
+                    return;
+                }
+                m_dispatcher = tt_net_sdk.Dispatcher.Current;
+                if(Globals.instrumentInfoList == null)
+                {
+                    Globals.loadingLabel.Text = "Status: One or more required columns of instruments in \"InstrumentsToBeFetched.csv\" are empty or null.";
+                    return;
+                }
+                if(Globals.userAlgos.Count == 0)
+                {
+                    Globals.loadingLabel.Text = "Status: No Algos in \"ADLsToBeFetched.txt\" found.";
+                    return;
+                }
+                foreach(var instrumentInfo in Globals.instrumentInfoList)
+                {
+                    C_InstrumentLookup c_InstrumentLookup = new C_InstrumentLookup(m_dispatcher,instrumentInfo);
+                }
             
             
 
-            foreach(var adlName in Globals.userAlgos)
-            {
-                algoLookup(adlName);
+                foreach(var adlName in Globals.userAlgos)
+                {
+                    algoLookup(adlName);
+                }
+                // Get the accounts
+                Globals.m_accounts = m_api.Accounts;
+                foreach(var account in Globals.m_accounts)
+                {
+                    Globals._accounts.Add(account.AccountName);
+                }
+
             }
-            // Get the accounts
-            Globals.m_accounts = m_api.Accounts;
-            foreach(var account in Globals.m_accounts)
+            catch
             {
-                Globals._accounts.Add(account.AccountName);
+                MessageBox.Show("Error occured while updating the API status. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
             }
-            
-            
+
+
 
         }
 
         void algoLookup(string algoName)
         {
-            C_AlgoLookup_TradeSubscription c_AlgoLookup_TradeSubscription = new C_AlgoLookup_TradeSubscription(m_dispatcher, algoName);
-
-            if (!Globals.algoNameWithTradeSubscription.ContainsKey(algoName))
+            try
             {
-                Globals.algoNameWithTradeSubscription.Add(algoName, c_AlgoLookup_TradeSubscription);
+                C_AlgoLookup_TradeSubscription c_AlgoLookup_TradeSubscription = new C_AlgoLookup_TradeSubscription(m_dispatcher, algoName);
 
+                if (!Globals.algoNameWithTradeSubscription.ContainsKey(algoName))
+                {
+                    Globals.algoNameWithTradeSubscription.Add(algoName, c_AlgoLookup_TradeSubscription);
+
+                }
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while looking for Algos in TT. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
             }
 
         }
@@ -176,10 +241,20 @@ namespace ADLManagerPro
 
         public static void ShowMainGrid()
         {
-            if(Globals.m_isOrderBookDownloaded && Globals.instrumentInfoList.Count() == Globals.instrumentsLookedUp && Globals.userAlgos.Count() == Globals.ADLsLookedUp)
+            try
             {
-                ShowMainTab();
-                UpdateAdlDropdownSource();
+                if(Globals.m_isOrderBookDownloaded && Globals.instrumentInfoList.Count() == Globals.instrumentsLookedUp && Globals.userAlgos.Count() == Globals.ADLsLookedUp)
+                {
+                    Globals.loadingLabel.Hide();
+                    MainTab.Show();
+                    UpdateAdlDropdownSource();
+                }
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while showing the form. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
             }
 
         }
@@ -189,31 +264,36 @@ namespace ADLManagerPro
         #region UI
 
 
-        private static void ShowMainTab()
-        {
-            Globals.loadingLabel.Hide();
-            MainTab.Show();
-        }
+        
 
 
         private static void UpdateAdlDropdownSource()
         {
-            if (mainGrid.InvokeRequired)
+            try
             {
-                mainGrid.Invoke(new Action(UpdateAdlDropdownSource));
-                return;
-            }
-
-            var adlColumn = mainGrid.Columns[Globals.columnThreeName] as DataGridViewComboBoxColumn;
-            if (adlColumn != null)
-            {
-                adlColumn.Items.Clear();
-                foreach(var algo in Globals.algoFound)
-                { 
-                    adlColumn.Items.Add(algo);
+                if (mainGrid.InvokeRequired)
+                {
+                    mainGrid.Invoke(new Action(UpdateAdlDropdownSource));
+                    return;
                 }
+
+                var adlColumn = mainGrid.Columns[Globals.columnThreeName] as DataGridViewComboBoxColumn;
+                if (adlColumn != null)
+                {
+                    adlColumn.Items.Clear();
+                    foreach(var algo in Globals.algoFound)
+                    { 
+                        adlColumn.Items.Add(algo);
+                    }
+                }
+                mainGrid.Columns[Globals.columnThreeName].ReadOnly = false;
+
             }
-            mainGrid.Columns[Globals.columnThreeName].ReadOnly = false;
+            catch
+            {
+                MessageBox.Show("Error occured while populating the ADL dropdown. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
         }
 
         private void NeonFeedButton_Click(object sender, EventArgs e)
@@ -235,39 +315,67 @@ namespace ADLManagerPro
 
         private void mainGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            bool createParamGrid = _uI.CellValueChanged(sender, e,mainGrid,MainTab);
-            if(createParamGrid)
+
+            try
             {
-                var row = mainGrid.Rows[e.RowIndex];
-                string serial = row.Cells[Globals.columnOneName].Value.ToString();
-                var feedValue = row.Cells[Globals.columnTwoName].Value?.ToString();
-                var adlName = row.Cells[Globals.columnThreeName].Value?.ToString();
-                _uI.CreateTabWithLabels(serial, feedValue, adlName,MainTab);
+                bool createParamGrid = _uI.CellValueChanged(sender, e,mainGrid,MainTab);
+                if(createParamGrid)
+                {
+                    var row = mainGrid.Rows[e.RowIndex];
+                    string serial = row.Cells[Globals.columnOneName].Value.ToString();
+                    var feedValue = row.Cells[Globals.columnTwoName].Value?.ToString();
+                    var adlName = row.Cells[Globals.columnThreeName].Value?.ToString();
+                    _uI.CreateTabWithLabels(serial, feedValue, adlName,MainTab);
+                }
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while changing cell value. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
             }
         }
 
         private void mainGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e)
         {
-            if (mainGrid.IsCurrentCellDirty)
+            try
             {
-                // Get current column
-                int colIndex = mainGrid.CurrentCell.ColumnIndex;
-                if (mainGrid.Columns[colIndex].Name == Globals.columnFourName || mainGrid.Columns[colIndex].Name == Globals.columnZeroName)
+                if (mainGrid.IsCurrentCellDirty)
                 {
-                    mainGrid.CommitEdit(DataGridViewDataErrorContexts.Commit);
+                    // Get current column
+                    int colIndex = mainGrid.CurrentCell.ColumnIndex;
+                    if (mainGrid.Columns[colIndex].Name == Globals.columnFourName || mainGrid.Columns[colIndex].Name == Globals.columnZeroName)
+                    {
+                        mainGrid.CommitEdit(DataGridViewDataErrorContexts.Commit);
+                    }
                 }
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while saving the changed cell value. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
             }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(Globals.tabNameWithSiteOrderKey.Keys.Count>0)
+            try
             {
-                MessageBox.Show("Remove all orders before closing the app.");
-                e.Cancel = true;
-                return;
+                if(Globals.tabNameWithSiteOrderKey.Keys.Count>0)
+                {
+                    MessageBox.Show("Remove all orders before closing the app.");
+                    e.Cancel = true;
+                    return;
+                }
+                TTAPI.Shutdown();
+
             }
-            TTAPI.Shutdown();
+            catch
+            {
+                MessageBox.Show("Error occured while closing form. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
         }
 
 

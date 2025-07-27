@@ -28,205 +28,243 @@ namespace ADLManagerPro
         
         public C_AlgoLookup_TradeSubscription(Dispatcher dispatcher, string algoName) 
         {
-            m_dispatcher = dispatcher;
-            _algoName = algoName;
-            m_algoLookupSubscription = new AlgoLookupSubscription(m_dispatcher, algoName);
-            m_algoLookupSubscription.OnData += AlgoLookupSubscription_OnData;
-            m_algoLookupSubscription.GetAsync();
+            try
+            {
+                m_dispatcher = dispatcher;
+                _algoName = algoName;
+                m_algoLookupSubscription = new AlgoLookupSubscription(m_dispatcher, algoName);
+                m_algoLookupSubscription.OnData += AlgoLookupSubscription_OnData;
+                m_algoLookupSubscription.GetAsync();
+
+            }
+            catch
+            {
+                MessageBox.Show($"Error occured while initialising algo: {algoName}. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
 
 
         }
         private void AlgoLookupSubscription_OnData(object sender, AlgoLookupEventArgs e)
         {
-            Globals.ADLsLookedUp++;
-            if (e.Event == ProductDataEvent.Found)
+            try
             {
-                if (!Globals.algoFound.Contains(e.AlgoLookup.Algo.Alias))
-                    Globals.algoFound.Add(e.AlgoLookup.Algo.Alias); //only populate those algos that have been found
-
-                m_algo = e.AlgoLookup.Algo;
-                if(!Globals.algos.Contains(m_algo))
+                Globals.ADLsLookedUp++;
+                if (e.Event == ProductDataEvent.Found)
                 {
-                    Globals.algos.Add(m_algo);
-                    Console.WriteLine("Algo Instrument Found: {0}", e.AlgoLookup.Algo.Alias);
-                    Globals.loadingLabel.Text = "Status: Algo Instrument Found: " + e.AlgoLookup.Algo.Alias;
+                    if (!Globals.algoFound.Contains(e.AlgoLookup.Algo.Alias))
+                        Globals.algoFound.Add(e.AlgoLookup.Algo.Alias); //only populate those algos that have been found
+
+                    m_algo = e.AlgoLookup.Algo;
+                    if(!Globals.algos.Contains(m_algo))
+                    {
+                        Globals.algos.Add(m_algo);
+                        Console.WriteLine("Algo Instrument Found: {0}", e.AlgoLookup.Algo.Alias);
+                        Globals.loadingLabel.Text = "Status: Algo Instrument Found: " + e.AlgoLookup.Algo.Alias;
 
 
                     
 
-                    string algoName = e.AlgoLookup.Algo.Alias;
+                        string algoName = e.AlgoLookup.Algo.Alias;
 
-                    #region Populate dictionaries
-                    var userparamListWithType = new List<(string paramName, ParameterType)>();
-                    var orderProfileListWithType = new List<(string paramName, ParameterType)>();
+                        #region Populate dictionaries
+                        var userparamListWithType = new List<(string paramName, ParameterType)>();
+                        var orderProfileListWithType = new List<(string paramName, ParameterType)>();
 
-                    var userparamList = new List<string>();
-                    var orderProfileList = new List<string>();
+                        var userparamList = new List<string>();
+                        var orderProfileList = new List<string>();
 
-                    Dictionary<string,ParameterType> paramNameWithType = new Dictionary<string,ParameterType>();
-                    foreach (var item in e.AlgoLookup.Algo.AlgoParameters)
-                    {
-
-                        Console.WriteLine($"ParameterName: {item.Name}  type: {item.Type} isRequired: {item.IsRequired} field: {item.FieldLocation}");
-                        ParameterType type;
-
-                        if (item.Type == "Int_t")
-                            type = ParameterType.Int;
-                        else if (item.Type == "Float_t")
-                            type = ParameterType.Float;
-                        else if (item.Type == "String_t")
-                            type = ParameterType.String;
-                        else if (item.Type == "Boolean_t")
-                            type = ParameterType.Bool;
-                        else
+                        Dictionary<string,ParameterType> paramNameWithType = new Dictionary<string,ParameterType>();
+                        foreach (var item in e.AlgoLookup.Algo.AlgoParameters)
                         {
-                            if (item.EnumClass == "tt_net_sdk.OrderSide")
-                            {
-                                type = ParameterType.BuySell;
-                            }
+
+                            Console.WriteLine($"ParameterName: {item.Name}  type: {item.Type} isRequired: {item.IsRequired} field: {item.FieldLocation}");
+                            ParameterType type;
+
+                            if (item.Type == "Int_t")
+                                type = ParameterType.Int;
+                            else if (item.Type == "Float_t")
+                                type = ParameterType.Float;
+                            else if (item.Type == "String_t")
+                                type = ParameterType.String;
+                            else if (item.Type == "Boolean_t")
+                                type = ParameterType.Bool;
                             else
                             {
-                                Console.WriteLine("Converted " + item.Type + " to string.");
-                                type = ParameterType.String;
+                                if (item.EnumClass == "tt_net_sdk.OrderSide")
+                                {
+                                    type = ParameterType.BuySell;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Converted " + item.Type + " to string.");
+                                    type = ParameterType.String;
+                                }
+                            }
+
+                            if(!Globals.algoWithParamNameWithParamType.ContainsKey(algoName))
+                            {
+                                //Algo not there, with all params, needs population
+                                paramNameWithType.Add(item.Name, type);
+                            }
+
+                            if (item.IsRequired == "true")
+                            {
+                                if (item.FieldLocation.ToString() == "UserParameters")
+                                {
+                                    userparamListWithType.Add((item.Name, type));
+                                    userparamList.Add(item.Name);
+
+                                }
+                                else if (item.FieldLocation.ToString() == "OrderProfile")
+                                {
+                                    orderProfileListWithType.Add((item.Name, type));
+                                    orderProfileList.Add(item.Name);
+                                }
                             }
                         }
-
-                        if(!Globals.algoWithParamNameWithParamType.ContainsKey(algoName))
+                        if (!Globals.algoWithParamNameWithParamType.ContainsKey(algoName))
                         {
                             //Algo not there, with all params, needs population
-                            paramNameWithType.Add(item.Name, type);
+                            Globals.algoWithParamNameWithParamType.Add(algoName, paramNameWithType);
                         }
 
-                        if (item.IsRequired == "true")
+                        AdlParameters adlParameters = new AdlParameters(userparamListWithType, orderProfileListWithType, userparamList, orderProfileList);
+
+                        if(!Globals.algoNameWithParameters.ContainsKey(algoName))
                         {
-                            if (item.FieldLocation.ToString() == "UserParameters")
-                            {
-                                userparamListWithType.Add((item.Name, type));
-                                userparamList.Add(item.Name);
-
-                            }
-                            else if (item.FieldLocation.ToString() == "OrderProfile")
-                            {
-                                orderProfileListWithType.Add((item.Name, type));
-                                orderProfileList.Add(item.Name);
-                            }
+                            Globals.algoNameWithParameters.Add(algoName, adlParameters);
                         }
-                    }
-                    if (!Globals.algoWithParamNameWithParamType.ContainsKey(algoName))
-                    {
-                        //Algo not there, with all params, needs population
-                        Globals.algoWithParamNameWithParamType.Add(algoName, paramNameWithType);
-                    }
 
-                    AdlParameters adlParameters = new AdlParameters(userparamListWithType, orderProfileListWithType, userparamList, orderProfileList);
+                        #endregion
 
-                    if(!Globals.algoNameWithParameters.ContainsKey(algoName))
-                    {
-                        Globals.algoNameWithParameters.Add(algoName, adlParameters);
-                    }
+                        // Create an Algo TradeSubscription to listen for order / fill events only for orders submitted through it
+                        m_algoTradeSubscription = new AlgoTradeSubscription(m_dispatcher, m_algo);
 
-                    #endregion
-
-                    // Create an Algo TradeSubscription to listen for order / fill events only for orders submitted through it
-                    m_algoTradeSubscription = new AlgoTradeSubscription(m_dispatcher, m_algo);
-
-                    m_algoTradeSubscription.OrderUpdated += new EventHandler<OrderUpdatedEventArgs>(m_algoTradeSubscription_OrderUpdated);
-                    m_algoTradeSubscription.OrderAdded += new EventHandler<OrderAddedEventArgs>(m_algoTradeSubscription_OrderAdded);
-                    m_algoTradeSubscription.OrderDeleted += new EventHandler<OrderDeletedEventArgs>(m_algoTradeSubscription_OrderDeleted);
-                    m_algoTradeSubscription.OrderFilled += new EventHandler<OrderFilledEventArgs>(m_algoTradeSubscription_OrderFilled);
-                    m_algoTradeSubscription.OrderRejected += new EventHandler<OrderRejectedEventArgs>(m_algoTradeSubscription_OrderRejected);
+                        m_algoTradeSubscription.OrderUpdated += new EventHandler<OrderUpdatedEventArgs>(m_algoTradeSubscription_OrderUpdated);
+                        m_algoTradeSubscription.OrderAdded += new EventHandler<OrderAddedEventArgs>(m_algoTradeSubscription_OrderAdded);
+                        m_algoTradeSubscription.OrderDeleted += new EventHandler<OrderDeletedEventArgs>(m_algoTradeSubscription_OrderDeleted);
+                        m_algoTradeSubscription.OrderFilled += new EventHandler<OrderFilledEventArgs>(m_algoTradeSubscription_OrderFilled);
+                        m_algoTradeSubscription.OrderRejected += new EventHandler<OrderRejectedEventArgs>(m_algoTradeSubscription_OrderRejected);
                 
-                    if(!orderBookDownloadRequested)
-                    {
-                        m_algoTradeSubscription.OrderBookDownload += new EventHandler<OrderBookDownloadEventArgs>(m_algoTradeSubscription_OrderBookDownload);
-                        orderBookDownloadRequested = true;
-                    }
+                        if(!orderBookDownloadRequested)
+                        {
+                            m_algoTradeSubscription.OrderBookDownload += new EventHandler<OrderBookDownloadEventArgs>(m_algoTradeSubscription_OrderBookDownload);
+                            orderBookDownloadRequested = true;
+                        }
                 
-                    m_algoTradeSubscription.Start();
+                        m_algoTradeSubscription.Start();
                     
 
+                    }
+                    mre.Set();
+
                 }
-                mre.Set();
+                else if (e.Event == ProductDataEvent.NotAllowed)
+                {
+                    Console.WriteLine("Not Allowed : Please check your Token access");
+                }
+                else
+                {
+                    // Algo Instrument was not found and TT API has given up looking for it
+                    Console.WriteLine("Cannot find Algo instrument: {0}", e.Message);
+                    Dispose();
+                }
+                Form1.ShowMainGrid();
 
             }
-            else if (e.Event == ProductDataEvent.NotAllowed)
+            catch
             {
-                Console.WriteLine("Not Allowed : Please check your Token access");
+                MessageBox.Show($"Error occured while getting data for algo. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
             }
-            else
-            {
-                // Algo Instrument was not found and TT API has given up looking for it
-                Console.WriteLine("Cannot find Algo instrument: {0}", e.Message);
-                Dispose();
-            }
-            Form1.ShowMainGrid();
         }
 
         public string StartAlgo(int accountIndex,Instrument m_instrument,
             Dictionary<string, object> algo_userparams, Dictionary<string, object> algo_orderprofileparams, 
             MarketId marketId, UserDisconnectAction userDisconnectAction)
         {
-            while (m_algo == null)
-                mre.WaitOne();
-            if(!Globals.algoNameWithParameters.ContainsKey(_algoName))
+            try
             {
-                return string.Empty;
-            }
-            foreach (var (userParameter, paramType) in Globals.algoNameWithParameters[_algoName]._adlUserParametersWithType)
-            {
+                while (m_algo == null)
+                    mre.WaitOne();
+                if(!Globals.algoNameWithParameters.ContainsKey(_algoName))
+                {
+                    return string.Empty;
+                }
+                foreach (var (userParameter, paramType) in Globals.algoNameWithParameters[_algoName]._adlUserParametersWithType)
+                {
                 
-                object value = algo_userparams[userParameter];
-                string svalue = value.ToString();
-                object result;
-                if(paramType == ParameterType.Int)
-                {
-                    result = int.Parse(svalue);
+                    object value = algo_userparams[userParameter];
+                    string svalue = value.ToString();
+                    object result;
+                    if(paramType == ParameterType.Int)
+                    {
+                        result = int.Parse(svalue);
       
+                    }
+                    else if(paramType == ParameterType.Float)
+                    {
+                        result = Double.Parse(svalue);
+                    }
+                    else if (paramType == ParameterType.Bool)
+                    {
+                        result = bool.Parse(svalue);
+                    }
+                    else
+                    {
+                        result = svalue;
+                    }
+                    algo_userparams[userParameter] = result;
                 }
-                else if(paramType == ParameterType.Float)
-                {
-                    result = Double.Parse(svalue);
-                }
-                else if (paramType == ParameterType.Bool)
-                {
-                    result = bool.Parse(svalue);
-                }
-                else
-                {
-                    result = svalue;
-                }
-                algo_userparams[userParameter] = result;
-            }
-            OrderProfile algo_op = m_algo.GetOrderProfile();
-            /*   algo_op.LimitPrice = m_price;
-               algo_op.OrderQuantity = Quantity.FromDecimal(m_instrument, 5);*/
-            algo_op.Side = OrderSide.Buy;
-            //TODO : put below two parameters as user input for every algo
-            algo_op.UserDisconnectAction = userDisconnectAction;
-            algo_op.CoLocation = marketId;
+                OrderProfile algo_op = m_algo.GetOrderProfile();
+                /*   algo_op.LimitPrice = m_price;
+                   algo_op.OrderQuantity = Quantity.FromDecimal(m_instrument, 5);*/
+                algo_op.Side = OrderSide.Buy;
+                //TODO : put below two parameters as user input for every algo
+                algo_op.UserDisconnectAction = userDisconnectAction;
+                algo_op.CoLocation = marketId;
             
-            algo_op.OrderType = OrderType.Limit;
-            algo_op.Account = Globals.m_accounts.ElementAt(accountIndex);
-            algo_op.UserParameters = algo_userparams;
-            m_algoTradeSubscription.SendOrder(algo_op);
-            orderSent = true;
+                algo_op.OrderType = OrderType.Limit;
+                algo_op.Account = Globals.m_accounts.ElementAt(accountIndex);
+                algo_op.UserParameters = algo_userparams;
+                m_algoTradeSubscription.SendOrder(algo_op);
+                orderSent = true;
 
-            return algo_op.SiteOrderKey;
+                return algo_op.SiteOrderKey;
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while sending order. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+                return null;
+            }
 
 
         }
 
         public string DeleteAlgoOrder(string siteOrderKey)
         {
-            if(siteOrderKey != null && m_algoTradeSubscription.Orders.ContainsKey(siteOrderKey))
+            try
             {
-                OrderProfile op = m_algoTradeSubscription.Orders[siteOrderKey].GetOrderProfile();
-                op.Action = OrderAction.Delete;
-                m_algoTradeSubscription.SendOrder(op);
-                orderSent = false;
+                if(siteOrderKey != null && m_algoTradeSubscription.Orders.ContainsKey(siteOrderKey))
+                {
+                    OrderProfile op = m_algoTradeSubscription.Orders[siteOrderKey].GetOrderProfile();
+                    op.Action = OrderAction.Delete;
+                    m_algoTradeSubscription.SendOrder(op);
+                    orderSent = false;
+
+                }
+                return string.Empty;
 
             }
-            return string.Empty;
+            catch
+            {
+                MessageBox.Show("Error occured while deleting order. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+                return null;
+            }
         }
 
         #region ADL events

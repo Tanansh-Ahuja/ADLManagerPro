@@ -12,28 +12,46 @@ namespace ADLManagerPro
     {
         public LoadingLabel() 
         {
- 
+            
         }
 
         
         public void InitialiseLoadingLabel(string showThis, Form1 form1, TabControl MainTab)
         {
-            Globals.loadingLabel = new Label()
+            try
             {
-                Text = "Status: " + showThis + " ...",
-                AutoSize = true,
-                Font = new Font("Arial", 11),
-                Location = new Point(5, 5)
-            };
-            form1.Controls.Add(Globals.loadingLabel);
-            Globals.loadingLabel.BringToFront();
+                Globals.loadingLabel = new Label()
+                {
+                    Text = "Status: " + showThis + " ...",
+                    AutoSize = true,
+                    Font = new Font("Arial", 11),
+                    Location = new Point(5, 5)
+                };
+                form1.Controls.Add(Globals.loadingLabel);
+                Globals.loadingLabel.BringToFront();
 
-            // Hide the main tab (you can add more components here)
-            MainTab.Hide();
+                // Hide the main tab (you can add more components here)
+                MainTab.Hide();
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while initialising loading page. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
         }
         public void ChangeLoadingLabelText(string showThis)
         {
-            Globals.loadingLabel.Text = "Status: " + showThis + " ...";
+            try
+            {
+                Globals.loadingLabel.Text = "Status: " + showThis + " ...";
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while showing latest update. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
         }
         
     }

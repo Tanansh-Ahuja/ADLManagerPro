@@ -38,17 +38,26 @@ namespace ADLManagerPro
         }
         private void btnSubmit_Click(object sender, EventArgs e)
         {
-            string enteredKey = txtKey.Text.Trim();
-            if (string.IsNullOrEmpty(enteredKey))
+            try
             {
-                MessageBox.Show("Please enter a valid key.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                string enteredKey = txtKey.Text.Trim();
+                if (string.IsNullOrEmpty(enteredKey))
+                {
+                    MessageBox.Show("Please enter a valid key.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                SecretKey = enteredKey;
+
+                DialogResult = DialogResult.OK;
+                Close();
+
             }
-
-            SecretKey = enteredKey;
-
-            DialogResult = DialogResult.OK;
-            Close();
+            catch
+            {
+                MessageBox.Show("Error occured while reading the key. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
         }
     }
 }

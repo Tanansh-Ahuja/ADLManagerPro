@@ -24,303 +24,323 @@ namespace ADLManagerPro
 
         public bool CellValueChanged(object sender, DataGridViewCellEventArgs e, DataGridView mainGrid,TabControl MainTab)
         {
-            if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == Globals.columnZeroName)
+            try
             {
-                //e.RowIndex
-                var row = mainGrid.Rows[e.RowIndex];
-                bool isChecked = Convert.ToBoolean(row.Cells[Globals.columnZeroName].Value);
-
-                string serial_no = row.Cells[Globals.columnOneName].Value.ToString();
-                if (isChecked)
+                if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == Globals.columnZeroName)
                 {
-                    if (!Globals.selectedRowIndexList.Contains(int.Parse(serial_no)-1))
-                        Globals.selectedRowIndexList.Add(int.Parse(serial_no)-1);
-                }
-                else
-                {
-                    Globals.selectedRowIndexList.Remove(int.Parse(serial_no) - 1);
-                }
-            }
+                    //e.RowIndex
+                    var row = mainGrid.Rows[e.RowIndex];
+                    bool isChecked = Convert.ToBoolean(row.Cells[Globals.columnZeroName].Value);
 
-            if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == Globals.columnFourName) // "createTab"
-            {
-                var row = mainGrid.Rows[e.RowIndex];
-                var activateCell = row.Cells[Globals.columnFourName];
-                bool isChecked = Convert.ToBoolean(activateCell.Value);
-                int sno = Convert.ToInt32(mainGrid.Rows[e.RowIndex].Cells[Globals.columnOneName].Value);
-
-                // Only validate if user is trying to activate
-                if (isChecked)
-                {
-                    var feedValue = row.Cells[Globals.columnTwoName].Value?.ToString();
-                    var adlValue = row.Cells[Globals.columnThreeName].Value?.ToString();
-
-                    if (string.IsNullOrWhiteSpace(feedValue) || string.IsNullOrWhiteSpace(adlValue))
+                    string serial_no = row.Cells[Globals.columnOneName].Value.ToString();
+                    if (isChecked)
                     {
-                        row.Cells[Globals.columnFourName].Value = false;
-                        MessageBox.Show("Please select both Feed and ADL before activating.", "Validation Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return false;
+                        if (!Globals.selectedRowIndexList.Contains(int.Parse(serial_no)-1))
+                            Globals.selectedRowIndexList.Add(int.Parse(serial_no)-1);
                     }
-
-                    string serial = row.Cells[Globals.columnOneName].Value.ToString();
-                    string feedName = row.Cells[Globals.columnTwoName].Value.ToString();
-                    string tabName = serial + "-" + feedName;
-                    if (!_helperFunctions.TabExists(tabName,MainTab))
+                    else
                     {
-                        mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].ReadOnly = true;
-                        mainGrid.Rows[row.Index].Cells[Globals.columnThreeName].ReadOnly = true;
-                        return true;
+                        Globals.selectedRowIndexList.Remove(int.Parse(serial_no) - 1);
                     }
                 }
-                else
+
+                if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == Globals.columnFourName) // "createTab"
                 {
-                   
-                    string serial = row.Cells[Globals.columnOneName].Value.ToString();
-                    string feedName = row.Cells[Globals.columnTwoName].Value.ToString();
-                    string tabName = serial + "-" + feedName;
-                    for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
+                    var row = mainGrid.Rows[e.RowIndex];
+                    var activateCell = row.Cells[Globals.columnFourName];
+                    bool isChecked = Convert.ToBoolean(activateCell.Value);
+                    int sno = Convert.ToInt32(mainGrid.Rows[e.RowIndex].Cells[Globals.columnOneName].Value);
+
+                    // Only validate if user is trying to activate
+                    if (isChecked)
                     {
-                        if (MainTab.TabPages[i].Text == tabName)
+                        var feedValue = row.Cells[Globals.columnTwoName].Value?.ToString();
+                        var adlValue = row.Cells[Globals.columnThreeName].Value?.ToString();
+
+                        if (string.IsNullOrWhiteSpace(feedValue) || string.IsNullOrWhiteSpace(adlValue))
                         {
-                            Control[] foundStatusLabel = MainTab.TabPages[i].Controls.Find("OrderStatusValueLabel", true);
-                            if (foundStatusLabel.Length > 0 && foundStatusLabel[0].Text == "ACTIVATED")
-                            {
-                                //MessageBox.Show($"Please delete algo order before deleting tab {serial}");
-                                return false;
-                            }
-                            MainTab.TabPages.RemoveAt(i);
-                            if(Globals.tabNameWithTabInfo.ContainsKey(tabName))
-                            {
-                                Globals.tabNameWithTabInfo.Remove(tabName);
-                            }
-                            break;
+                            row.Cells[Globals.columnFourName].Value = false;
+                            MessageBox.Show("Please select both Feed and ADL before activating.", "Validation Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return false;
+                        }
+
+                        string serial = row.Cells[Globals.columnOneName].Value.ToString();
+                        string feedName = row.Cells[Globals.columnTwoName].Value.ToString();
+                        string tabName = serial + "-" + feedName;
+                        if (!_helperFunctions.TabExists(tabName,MainTab))
+                        {
+                            mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].ReadOnly = true;
+                            mainGrid.Rows[row.Index].Cells[Globals.columnThreeName].ReadOnly = true;
+                            return true;
                         }
                     }
-                    mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].ReadOnly = false;
-                    mainGrid.Rows[row.Index].Cells[Globals.columnThreeName].ReadOnly = false;
+                    else
+                    {
+                   
+                        string serial = row.Cells[Globals.columnOneName].Value.ToString();
+                        string feedName = row.Cells[Globals.columnTwoName].Value.ToString();
+                        string tabName = serial + "-" + feedName;
+                        for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
+                        {
+                            if (MainTab.TabPages[i].Text == tabName)
+                            {
+                                Control[] foundStatusLabel = MainTab.TabPages[i].Controls.Find("OrderStatusValueLabel", true);
+                                if (foundStatusLabel.Length > 0 && foundStatusLabel[0].Text == "ACTIVATED")
+                                {
+                                    //MessageBox.Show($"Please delete algo order before deleting tab {serial}");
+                                    return false;
+                                }
+                                MainTab.TabPages.RemoveAt(i);
+                                if(Globals.tabNameWithTabInfo.ContainsKey(tabName))
+                                {
+                                    Globals.tabNameWithTabInfo.Remove(tabName);
+                                }
+                                break;
+                            }
+                        }
+                        mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].ReadOnly = false;
+                        mainGrid.Rows[row.Index].Cells[Globals.columnThreeName].ReadOnly = false;
+                    }
                 }
+                return false;
+
             }
-            return false;
+            catch
+            {
+                MessageBox.Show("Error occured while checking the cell value change. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+                return false;
+            }
         }
 
         public void CreateTabWithLabels(string serial, string feedValue, string adlValue,TabControl MainTab)
         {
-            string tabName = serial + "-" + feedValue;
-            TabPage newTab = new TabPage(tabName);
 
-            // Static label: "Feed Name"
-            Label lblFeedTitle = new Label
+            try
             {
-                Text = "Feed Name:",
-                Left = 20,
-                Top = 10,
-                AutoSize = true
-            };
+                string tabName = serial + "-" + feedValue;
+                TabPage newTab = new TabPage(tabName);
 
-            // Dynamic label: actual feed value
-            Label lblFeedValue = new Label
-            {
-                Text = feedValue,
-                Left = 150,
-                Top = 10,
-                AutoSize = true
-            };
+                // Static label: "Feed Name"
+                Label lblFeedTitle = new Label
+                {
+                    Text = "Feed Name:",
+                    Left = 20,
+                    Top = 10,
+                    AutoSize = true
+                };
 
-            // Static label: "Algorithm Name"
-            Label lblAdlTitle = new Label
-            {
-                Text = "Algorithm Name:",
-                Left = 20,
-                Top = 30,
-                AutoSize = true
-            };
+                // Dynamic label: actual feed value
+                Label lblFeedValue = new Label
+                {
+                    Text = feedValue,
+                    Left = 150,
+                    Top = 10,
+                    AutoSize = true
+                };
 
-            // Dynamic label: actual adl value
-            Label lblAdlValue = new Label
-            {
-                Name = "Adl Value",
-                Text = adlValue,
-                Left = 150,
-                Top = 30,
-                AutoSize = true
-            };
+                // Static label: "Algorithm Name"
+                Label lblAdlTitle = new Label
+                {
+                    Text = "Algorithm Name:",
+                    Left = 20,
+                    Top = 30,
+                    AutoSize = true
+                };
 
-            Label lblOrderStatus = new Label
-            {
-                Name="OrderStatusLabel",
-                Text = "Order Status:",
-                Left = 20,
-                Top = 50,
-                AutoSize = true
-            };
+                // Dynamic label: actual adl value
+                Label lblAdlValue = new Label
+                {
+                    Name = "Adl Value",
+                    Text = adlValue,
+                    Left = 150,
+                    Top = 30,
+                    AutoSize = true
+                };
+
+                Label lblOrderStatus = new Label
+                {
+                    Name="OrderStatusLabel",
+                    Text = "Order Status:",
+                    Left = 20,
+                    Top = 50,
+                    AutoSize = true
+                };
 
             
-            Label lblOrderStatusValue = new Label
-            {
-                Name = "OrderStatusValueLabel",
-                Text = "DEACTIVATED",
-                Left = 150,
-                Top = 50,
-                AutoSize = true
-            };
-            lblOrderStatusValue.Font = new Font(lblOrderStatusValue.Font, FontStyle.Bold);
+                Label lblOrderStatusValue = new Label
+                {
+                    Name = "OrderStatusValueLabel",
+                    Text = "DEACTIVATED",
+                    Left = 150,
+                    Top = 50,
+                    AutoSize = true
+                };
+                lblOrderStatusValue.Font = new Font(lblOrderStatusValue.Font, FontStyle.Bold);
 
-            newTab.Controls.Add(lblFeedTitle);
-            newTab.Controls.Add(lblFeedValue);
-            newTab.Controls.Add(lblAdlTitle);
-            newTab.Controls.Add(lblAdlValue);
-            newTab.Controls.Add(lblOrderStatus);
-            newTab.Controls.Add(lblOrderStatusValue);
+                newTab.Controls.Add(lblFeedTitle);
+                newTab.Controls.Add(lblFeedValue);
+                newTab.Controls.Add(lblAdlTitle);
+                newTab.Controls.Add(lblAdlValue);
+                newTab.Controls.Add(lblOrderStatus);
+                newTab.Controls.Add(lblOrderStatusValue);
 
-            // Create DataGridView
-            DataGridView paramGrid = new DataGridView
-            {
-                Name = "ParamGrid",
-                Left = 20,
-                Top = 80,
-                Width = 400,
-                Height = 500,
-                AllowUserToAddRows = false,
-                RowHeadersVisible = false,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                AllowUserToResizeRows = false,
-                AllowUserToResizeColumns = false
+                // Create DataGridView
+                DataGridView paramGrid = new DataGridView
+                {
+                    Name = "ParamGrid",
+                    Left = 20,
+                    Top = 80,
+                    Width = 400,
+                    Height = 500,
+                    AllowUserToAddRows = false,
+                    RowHeadersVisible = false,
+                    AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                    AllowUserToResizeRows = false,
+                    AllowUserToResizeColumns = false
                 
-            };
+                };
 
 
-            paramGrid.DefaultCellStyle.SelectionBackColor = paramGrid.DefaultCellStyle.BackColor;
-            paramGrid.DefaultCellStyle.SelectionForeColor = paramGrid.DefaultCellStyle.ForeColor;
+                paramGrid.DefaultCellStyle.SelectionBackColor = paramGrid.DefaultCellStyle.BackColor;
+                paramGrid.DefaultCellStyle.SelectionForeColor = paramGrid.DefaultCellStyle.ForeColor;
 
-            paramGrid.Columns.Add("ParamName", "Parameter Name");
-            paramGrid.Columns["ParamName"].ReadOnly = true; // Make ParamName column read-only
-            paramGrid.Columns["ParamName"].DefaultCellStyle.BackColor = Color.LightGray;
-            paramGrid.Columns.Add("Value", "Value");
+                paramGrid.Columns.Add("ParamName", "Parameter Name");
+                paramGrid.Columns["ParamName"].ReadOnly = true; // Make ParamName column read-only
+                paramGrid.Columns["ParamName"].DefaultCellStyle.BackColor = Color.LightGray;
+                paramGrid.Columns.Add("Value", "Value");
 
-            paramGrid.DataError += (s, e) =>
-            {
-                e.ThrowException = false;
-            };
+                paramGrid.DataError += (s, e) =>
+                {
+                    e.ThrowException = false;
+                };
 
 
-            paramGrid.CellValidating += (s, e) =>
-            {
-                _helperFunctions.ParamgridCellValueValidate(s, e, paramGrid, adlValue);
-            };
+                paramGrid.CellValidating += (s, e) =>
+                {
+                    _helperFunctions.ParamgridCellValueValidate(s, e, paramGrid, adlValue);
+                };
 
-            if (Globals.algoNameWithParameters.ContainsKey(adlValue))
-            {
-                _helperFunctions.PopulateParamGridWithOrderProfileParameters(paramGrid, adlValue);
-                _helperFunctions.PopulateParamGridWithUserParameters(paramGrid, adlValue);
-            }
+                if (Globals.algoNameWithParameters.ContainsKey(adlValue))
+                {
+                    _helperFunctions.PopulateParamGridWithOrderProfileParameters(paramGrid, adlValue);
+                    _helperFunctions.PopulateParamGridWithUserParameters(paramGrid, adlValue);
+                }
 
-            newTab.Controls.Add(paramGrid);
+                newTab.Controls.Add(paramGrid);
 
 
            
-            Button btnDeleteAlgo = new Button
-            {
-                Name = "DeleteAlgoButton",
-                Text = "Delete Order",
-                Left = 160,
-                Top = paramGrid.Bottom + 10,
-                Width = 120,
-                Height = 30
-            };
-            btnDeleteAlgo.Hide();
+                Button btnDeleteAlgo = new Button
+                {
+                    Name = "DeleteAlgoButton",
+                    Text = "Delete Order",
+                    Left = 160,
+                    Top = paramGrid.Bottom + 10,
+                    Width = 120,
+                    Height = 30
+                };
+                btnDeleteAlgo.Hide();
             
-            // Add "Start Algo" button
-            Button btnStartAlgo = new Button
-            {
-                Name = "StartAlgoButton",
-                Text = "Send Order",
-                Left = 20,
-                Top = paramGrid.Bottom + 10,
-                Width = 120,
-                Height = 30
-            };
+                // Add "Start Algo" button
+                Button btnStartAlgo = new Button
+                {
+                    Name = "StartAlgoButton",
+                    Text = "Send Order",
+                    Left = 20,
+                    Top = paramGrid.Bottom + 10,
+                    Width = 120,
+                    Height = 30
+                };
 
-            ComboBox savedTemplates = new ComboBox
-            {
-                Name = "TemplateComboBox",
-                Left = 450,
-                Top = paramGrid.Top,
-                Width = 150,
-                DropDownStyle = ComboBoxStyle.DropDownList
-            };
+                ComboBox savedTemplates = new ComboBox
+                {
+                    Name = "TemplateComboBox",
+                    Left = 450,
+                    Top = paramGrid.Top,
+                    Width = 150,
+                    DropDownStyle = ComboBoxStyle.DropDownList
+                };
             
-            if (Globals.algoNameWithTemplateList!=null && Globals.algoNameWithTemplateList.ContainsKey(adlValue))
-                savedTemplates.Items.AddRange(_helperFunctions.GetTemplateNames(Globals.algoNameWithTemplateList[adlValue]).ToArray());
+                if (Globals.algoNameWithTemplateList!=null && Globals.algoNameWithTemplateList.ContainsKey(adlValue))
+                    savedTemplates.Items.AddRange(_helperFunctions.GetTemplateNames(Globals.algoNameWithTemplateList[adlValue]).ToArray());
 
-            TextBox txtTemplateName = new TextBox
-            {
-                Name = "TemplateTextBox",
-                Left = 450,
-                Top = savedTemplates.Bottom + 10,
-                Width = 150
-            };
+                TextBox txtTemplateName = new TextBox
+                {
+                    Name = "TemplateTextBox",
+                    Left = 450,
+                    Top = savedTemplates.Bottom + 10,
+                    Width = 150
+                };
 
-            Button btnSaveTemplate = new Button
-            {
-                Name = "SaveTemplateButton",
-                Text = "Save Template",
-                Left = 450,
-                Top = txtTemplateName.Bottom + 10,
-                Width = 120,
-                Height = 30
-            };
-            newTab.Controls.Add(savedTemplates);
-            newTab.Controls.Add(txtTemplateName);
-            newTab.Controls.Add(btnSaveTemplate);
+                Button btnSaveTemplate = new Button
+                {
+                    Name = "SaveTemplateButton",
+                    Text = "Save Template",
+                    Left = 450,
+                    Top = txtTemplateName.Bottom + 10,
+                    Width = 120,
+                    Height = 30
+                };
+                newTab.Controls.Add(savedTemplates);
+                newTab.Controls.Add(txtTemplateName);
+                newTab.Controls.Add(btnSaveTemplate);
 
 
-            #region Events for UI objects
+                #region Events for UI objects
 
-            btnStartAlgo.Click += (s, e) =>
-            {
+                btnStartAlgo.Click += (s, e) =>
+                {
                 
-                _buttonEvents.OnStartbtnClick(paramGrid, adlValue, newTab);
+                    _buttonEvents.OnStartbtnClick(paramGrid, adlValue, newTab);
                 
-            };
-            newTab.Controls.Add(btnStartAlgo);
+                };
+                newTab.Controls.Add(btnStartAlgo);
 
 
-            btnDeleteAlgo.Click += (s, e) =>
-            {
+                btnDeleteAlgo.Click += (s, e) =>
+                {
                 
-                _buttonEvents.OnDeletebtnClick(paramGrid, adlValue, newTab);
+                    _buttonEvents.OnDeletebtnClick(paramGrid, adlValue, newTab);
                 
-            };
+                };
 
-            newTab.Controls.Add(btnDeleteAlgo);
+                newTab.Controls.Add(btnDeleteAlgo);
 
-            savedTemplates.SelectedIndexChanged += (s, e) =>
-            {
-                _buttonEvents.SavedTemplatesIndexChanged(s, e, savedTemplates, txtTemplateName, adlValue, paramGrid);
-            };
+                savedTemplates.SelectedIndexChanged += (s, e) =>
+                {
+                    _buttonEvents.SavedTemplatesIndexChanged(s, e, savedTemplates, txtTemplateName, adlValue, paramGrid);
+                };
 
-            btnSaveTemplate.Click += (s, e) =>
-            {
-                _buttonEvents.OnSaveOrUpdateTemplateBtnClick(s, e,txtTemplateName,adlValue,paramGrid,savedTemplates,MainTab);
-            };
+                btnSaveTemplate.Click += (s, e) =>
+                {
+                    _buttonEvents.OnSaveOrUpdateTemplateBtnClick(s, e,txtTemplateName,adlValue,paramGrid,savedTemplates,MainTab);
+                };
 
-            #endregion
+                #endregion
 
 
             
-            TabInfo tabInfo = new TabInfo(paramGrid, adlValue, feedValue, newTab);
-            if(Globals.tabNameWithTabInfo.ContainsKey(tabName))
-            {
-                Globals.tabNameWithTabInfo[tabName] = tabInfo;
+                TabInfo tabInfo = new TabInfo(paramGrid, adlValue, feedValue, newTab);
+                if(Globals.tabNameWithTabInfo.ContainsKey(tabName))
+                {
+                    Globals.tabNameWithTabInfo[tabName] = tabInfo;
+                }
+                else
+                {
+
+                    Globals.tabNameWithTabInfo.Add(tabName, tabInfo);
+                }
+
+                // Add tab to TabControl
+                MainTab.TabPages.Add(newTab);
+
             }
-            else
+            catch
             {
-
-                Globals.tabNameWithTabInfo.Add(tabName, tabInfo);
+                MessageBox.Show("Error occured while creating a new Tab. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
             }
-
-            // Add tab to TabControl
-            MainTab.TabPages.Add(newTab);
         }
 
 

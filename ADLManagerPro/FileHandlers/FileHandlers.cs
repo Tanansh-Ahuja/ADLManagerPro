@@ -30,11 +30,21 @@ namespace ADLManagerPro
 
         public string FetchApiKey(string keyFilePath)
         {
-            if (File.Exists(keyFilePath))
+            try
             {
-                return File.ReadAllText(keyFilePath);
+                if (File.Exists(keyFilePath))
+                {
+                    return File.ReadAllText(keyFilePath);
+                }
+                return null;
+
             }
-            return null;
+            catch
+            {
+                MessageBox.Show("Error occured while fetching API key. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+                return String.Empty;
+            }
 
         }
 
@@ -75,9 +85,9 @@ namespace ADLManagerPro
 
                 return algoWithTemplate;
             }
-            catch(Exception ex)
+            catch
             {
-                MessageBox.Show("An Unexpected error occured."+ex.Message);
+                MessageBox.Show("Error occured while reading pre-saved templates from file. Shutting down.");
                 return null;
             }
 
@@ -87,137 +97,176 @@ namespace ADLManagerPro
 
         public void SaveTemplateDictionaryToFile(Dictionary<string, List<Template>> algoWithTemplate)
         {
-            var algoTemplateRoots = new List<AlgoTemplateRoot>();
-
-            foreach (var kvp in algoWithTemplate)
+            try
             {
-                var algoName = kvp.Key;
-                var templates = kvp.Value;
+                var algoTemplateRoots = new List<AlgoTemplateRoot>();
 
-                var algoTemplateRoot = new AlgoTemplateRoot
+                foreach (var kvp in algoWithTemplate)
                 {
-                    AlgoName = algoName,
-                    Templates = templates.Select(t => new AlgoTemplate
+                    var algoName = kvp.Key;
+                    var templates = kvp.Value;
+
+                    var algoTemplateRoot = new AlgoTemplateRoot
                     {
-                        TemplateName = t.TemplateName,
-                        TemplateParameters = t.ParamNameWithValue != null
-                            ? new Dictionary<string, string>(t.ParamNameWithValue)
-                            : new Dictionary<string, string>()
-                    }).ToList()
-                };
+                        AlgoName = algoName,
+                        Templates = templates.Select(t => new AlgoTemplate
+                        {
+                            TemplateName = t.TemplateName,
+                            TemplateParameters = t.ParamNameWithValue != null
+                                ? new Dictionary<string, string>(t.ParamNameWithValue)
+                                : new Dictionary<string, string>()
+                        }).ToList()
+                    };
 
-                algoTemplateRoots.Add(algoTemplateRoot);
+                    algoTemplateRoots.Add(algoTemplateRoot);
+                }
+
+                string jsonContent = JsonConvert.SerializeObject(algoTemplateRoots, Formatting.Indented);
+                File.WriteAllText(jsonPath, jsonContent);
+
             }
-
-            string jsonContent = JsonConvert.SerializeObject(algoTemplateRoots, Formatting.Indented);
-            File.WriteAllText(jsonPath, jsonContent);
+            catch
+            {
+                MessageBox.Show("Error occured while saving templates to the file. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
         }
 
 
         public List<string> GetInstrumentAliasList()
         {
-            var result = new List<string>();
-
-            using (var reader = new StreamReader(instrumentFilePath))
+            try
             {
-                int lineNumber = 0;
+                var result = new List<string>();
 
-                while (!reader.EndOfStream)
+                using (var reader = new StreamReader(instrumentFilePath))
                 {
-                    var line = reader.ReadLine();
-                    lineNumber++;
+                    int lineNumber = 0;
 
-                    // Skip header
-                    if (lineNumber == 1)
-                        continue;
-
-                    var columns = line.Split(',');
-
-                    // Ensure there are at least 4 columns
-                    if (columns.Length >= 4)
+                    while (!reader.EndOfStream)
                     {
-                        result.Add(columns[3]); // 0-based index
+                        var line = reader.ReadLine();
+                        lineNumber++;
+
+                        // Skip header
+                        if (lineNumber == 1)
+                            continue;
+
+                        var columns = line.Split(',');
+
+                        // Ensure there are at least 4 columns
+                        if (columns.Length >= 4)
+                        {
+                            result.Add(columns[3]); // 0-based index
+                        }
                     }
                 }
-            }
 
-            return result;
+                return result;
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while fetching instruments names from file. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+                return null;
+            }
         }
         public List<InstrumentInfo> GetInstrumentInfoList()
         {
-            var result = new List<InstrumentInfo>();
-
-            using (var reader = new StreamReader(instrumentFilePath))
+            try
             {
-                int lineNumber = 0;
+                var result = new List<InstrumentInfo>();
 
-                while (!reader.EndOfStream)
+                using (var reader = new StreamReader(instrumentFilePath))
                 {
-                    var line = reader.ReadLine();
-                    lineNumber++;
+                    int lineNumber = 0;
 
-                    // Skip header
-                    if (lineNumber == 1)
-                        continue;
-
-                    var columns = line.Split(',');
-
-                    // Ensure there are at least 4 columns
-                    if (columns.Length >= 4)
+                    while (!reader.EndOfStream)
                     {
-                        if (string.IsNullOrWhiteSpace(columns[0]) ||
-                            string.IsNullOrWhiteSpace(columns[1]) ||
-                            string.IsNullOrWhiteSpace(columns[2]) ||
-                            string.IsNullOrWhiteSpace(columns[3]))
-                            {
+                        var line = reader.ReadLine();
+                        lineNumber++;
+
+                        // Skip header
+                        if (lineNumber == 1)
+                            continue;
+
+                        var columns = line.Split(',');
+
+                        // Ensure there are at least 4 columns
+                        if (columns.Length >= 4)
+                        {
+                            if (string.IsNullOrWhiteSpace(columns[0]) ||
+                                string.IsNullOrWhiteSpace(columns[1]) ||
+                                string.IsNullOrWhiteSpace(columns[2]) ||
+                                string.IsNullOrWhiteSpace(columns[3]))
+                                {
                                
-                                return null;
-                                //throw new InvalidDataException($"Line {lineNumber}: One or more required columns are empty or null.");
-                            }
-                        InstrumentInfo instrumentInfo = new InstrumentInfo(columns[0], columns[1], columns[2], columns[3]);
-                        result.Add(instrumentInfo); // 0-based index
+                                    return null;
+                                    //throw new InvalidDataException($"Line {lineNumber}: One or more required columns are empty or null.");
+                                }
+                            InstrumentInfo instrumentInfo = new InstrumentInfo(columns[0], columns[1], columns[2], columns[3]);
+                            result.Add(instrumentInfo); // 0-based index
+                        }
                     }
                 }
-            }
 
-            return result;
+                return result;
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while fetching instruments list from file. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+                return null;
+            }
         }
 
         public List<string> GetADLNameList()
         {
-            var result = new List<string>();
-
-            using (var reader = new StreamReader(ADLsFilePath))
+            try
             {
-                int lineNumber = 0;
+                var result = new List<string>();
 
-                while (!reader.EndOfStream)
+                using (var reader = new StreamReader(ADLsFilePath))
                 {
-                    var line = reader.ReadLine();
-                    lineNumber++;
+                    int lineNumber = 0;
 
-                    // Skip header
-                    if (lineNumber == 1)
-                        continue;
-
-                    var columns = line.Split(',');
-
-                    // Ensure there are at least 4 columns
-                    if (columns.Length >= 1)
+                    while (!reader.EndOfStream)
                     {
-                        if (string.IsNullOrWhiteSpace(columns[0]))
+                        var line = reader.ReadLine();
+                        lineNumber++;
+
+                        // Skip header
+                        if (lineNumber == 1)
+                            continue;
+
+                        var columns = line.Split(',');
+
+                        // Ensure there are at least 4 columns
+                        if (columns.Length >= 1)
                         {
+                            if (string.IsNullOrWhiteSpace(columns[0]))
+                            {
 
-                            return null;
-                            //throw new InvalidDataException($"Line {lineNumber}: One or more required columns are empty or null.");
+                                return null;
+                                //throw new InvalidDataException($"Line {lineNumber}: One or more required columns are empty or null.");
+                            }
+
+                            result.Add(columns[0]); // 0-based index
                         }
-
-                        result.Add(columns[0]); // 0-based index
                     }
                 }
-            }
 
-            return result;
+                return result;
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while fetching ADLs names from file. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+                return null;
+            }
         }
 
         
