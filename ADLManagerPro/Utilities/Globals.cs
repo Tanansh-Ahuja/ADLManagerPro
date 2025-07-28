@@ -1,10 +1,11 @@
-﻿using System;
+﻿using ADLManager;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ADLManager;
 using tt_net_sdk;
 
 namespace ADLManagerPro
@@ -34,6 +35,7 @@ namespace ADLManagerPro
         public static List<string> algoFound = new List<string>();
         public static List<InstrumentInfo> instrumentInfoList = null;
         public static List<string> instrumentsPriceSubscribed = new List<string>();
+        public static List<string> feedNames = new List<string>();
 
 
         public static Dictionary<string, AdlParameters> algoNameWithParameters = new Dictionary<string, AdlParameters>();
@@ -45,10 +47,8 @@ namespace ADLManagerPro
         public static Dictionary<string, List<Template>> algoNameWithTemplateList = new Dictionary<string, List<Template>>();
         public static Dictionary<string,Dictionary<string,ParameterType>> algoWithParamNameWithParamType = new Dictionary<string, Dictionary<string,ParameterType>>();
         public static readonly HashSet<string> SkipParamNames = new HashSet<string> { "Quoting Instrument Account", "Hedge Instrument Account", "Fast Mkt Instrument", "Fast Mkt Instrument Account" };
-        public static Dictionary<string,MarketId> marketIdNameWithMarketId = new Dictionary<string,MarketId>();
-        public static Dictionary<string,UserDisconnectAction> userDisconnectActionNameWithUserDisconnectAction = new Dictionary<string,UserDisconnectAction>();
-
-
-
+        //public static Dictionary<string, PriceConsumer> feedNameWithPriceConsumer = new Dictionary<string, PriceConsumer>();
+        public static ConcurrentDictionary<string, double> feedNameWithLatestPrice = new ConcurrentDictionary<string, double>();
+        public static Dictionary<string, List<string>> feedNameWithRowIndex = new Dictionary<string, List<string>>();
     }
 }

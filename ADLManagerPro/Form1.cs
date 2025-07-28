@@ -69,10 +69,11 @@ namespace ADLManagerPro
                 _loadingLabel.InitialiseLoadingLabel("Initialising TT",this,MainTab);
                 Globals.userAlgos = _fileHandlers.GetADLNameList();
                 Globals.instrumentInfoList = _fileHandlers.GetInstrumentInfoList();
-                mainGrid.Columns[Globals.columnOneName].ReadOnly = true;
+    
+            mainGrid.Columns[Globals.columnOneName].ReadOnly = true;
                 mainGrid.DefaultCellStyle.SelectionBackColor = mainGrid.DefaultCellStyle.BackColor;
                 mainGrid.DefaultCellStyle.SelectionForeColor = mainGrid.DefaultCellStyle.ForeColor;
-            
+            populateFeedNamesList();
                 // if this is null then file was empty
                 Globals.algoNameWithTemplateList = _fileHandlers.FetchJsonFromFile();
 
@@ -84,10 +85,13 @@ namespace ADLManagerPro
             }
         }
 
-        public void PopulateMarketIdAndDisconnectActionDictionary()
+        private void populateFeedNamesList()
         {
-
+            var comboColumn = (DataGridViewComboBoxColumn)mainGrid.Columns[Globals.columnTwoName];
+            Globals.feedNames = comboColumn.Items.Cast<string>().ToList();
         }
+
+        
 
         #region TT API
 
@@ -299,6 +303,14 @@ namespace ADLManagerPro
         private void NeonFeedButton_Click(object sender, EventArgs e)
         {
             //TODO : Connect Neon Feed
+            PriceSimulator.Start(Globals.feedNames);
+            //TODO : consuming price
+            foreach(var feedName in Globals.feedNames)
+            {
+                PriceConsumer priceConsumer = new PriceConsumer(feedName);
+
+                //Globals.feedNameWithPriceConsumer.Add(feedName, priceConsumer);
+            }
         }
 
 
@@ -315,24 +327,14 @@ namespace ADLManagerPro
 
         private void mainGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-
-            try
+            bool createParamGrid = _uI.CellValueChanged(sender, e,mainGrid,MainTab);
+            if(createParamGrid)
             {
-                bool createParamGrid = _uI.CellValueChanged(sender, e,mainGrid,MainTab);
-                if(createParamGrid)
-                {
-                    var row = mainGrid.Rows[e.RowIndex];
-                    string serial = row.Cells[Globals.columnOneName].Value.ToString();
-                    var feedValue = row.Cells[Globals.columnTwoName].Value?.ToString();
-                    var adlName = row.Cells[Globals.columnThreeName].Value?.ToString();
-                    _uI.CreateTabWithLabels(serial, feedValue, adlName,MainTab);
-                }
-
-            }
-            catch
-            {
-                MessageBox.Show("Error occured while changing cell value. Shutting down.");
-                HelperFunctions.ShutEverythingDown();
+                var row = mainGrid.Rows[e.RowIndex];
+                string serial = row.Cells[Globals.columnOneName].Value.ToString();
+                var feedValue = row.Cells[Globals.columnTwoName].Value?.ToString();
+                var adlName = row.Cells[Globals.columnThreeName].Value?.ToString();
+                _uI.CreateTabWithLabels(serial, feedValue, adlName,MainTab);
             }
         }
 

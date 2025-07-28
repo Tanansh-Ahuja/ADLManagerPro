@@ -14,13 +14,18 @@ namespace ADLManagerPro
         public string _adlName = null;
         public string _feedName = null;
         public TabPage _currentTab = null;
-        public TabInfo(DataGridView dataGridView, string adlName , string feedName, TabPage currentTab) 
+        public double _laggedPrice = double.NaN;
+        public bool _lag = false;
+        public TabInfo(DataGridView dataGridView, string adlName , string feedName, TabPage currentTab,double laggedPrice, bool lag) 
         {
             _dataGridView = dataGridView;
             _adlName = adlName;
             _feedName = feedName;
             _currentTab = currentTab;
             
+            _laggedPrice = laggedPrice;
+            _lag = lag;
+
         }
         
     }

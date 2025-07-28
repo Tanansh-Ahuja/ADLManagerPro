@@ -41,6 +41,22 @@ namespace ADLManagerPro
                     else
                     {
                         Globals.selectedRowIndexList.Remove(int.Parse(serial_no) - 1);
+                        mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].ReadOnly = true;
+                        mainGrid.Rows[row.Index].Cells[Globals.columnThreeName].ReadOnly = true;
+                        string feedName = mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].Value.ToString();
+                        if (Globals.feedNameWithRowIndex.ContainsKey(feedName))
+                        {
+                            List<string> temp = Globals.feedNameWithRowIndex[feedName];
+                            temp.Add((row.Index+1).ToString());
+                            Globals.feedNameWithRowIndex[feedName] = temp;
+
+                        }
+                        else
+                        {
+                            Globals.feedNameWithRowIndex.Add(feedName,new List<string>{ (row.Index+1).ToString()});
+                        }
+                            
+                        return true;
                     }
                 }
 
@@ -53,6 +69,17 @@ namespace ADLManagerPro
 
                     // Only validate if user is trying to activate
                     if (isChecked)
+                   
+                    string serial = row.Cells[Globals.columnOneName].Value.ToString();
+                    string feedName = mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].Value.ToString();
+                    if(feedName != null)
+                    {
+                        if (Globals.feedNameWithRowIndex.ContainsKey(feedName) && Globals.feedNameWithRowIndex[feedName].Contains(serial))
+                        {
+                            Globals.feedNameWithRowIndex[feedName].Remove(serial);
+                        }
+                    }
+                    for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
                     {
                         var feedValue = row.Cells[Globals.columnTwoName].Value?.ToString();
                         var adlValue = row.Cells[Globals.columnThreeName].Value?.ToString();
@@ -335,6 +362,10 @@ namespace ADLManagerPro
                 // Add tab to TabControl
                 MainTab.TabPages.Add(newTab);
 
+            TabInfo tabInfo = new TabInfo(paramGrid, adlValue, feedValue, newTab,double.NaN,false);
+            if(Globals.tabIndexWithTabInfo.ContainsKey(serial))
+            {
+                Globals.tabIndexWithTabInfo[serial] = tabInfo;
             }
             catch
             {

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using ADLManager;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.PeerToPeer;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ADLManager;
 using tt_net_sdk;
 
 namespace ADLManagerPro
@@ -21,18 +22,9 @@ namespace ADLManagerPro
         }
         public void AddRowInMainGrid(DataGridView mainGrid)
         {
-            try
-            {
-                int serialNumber = mainGrid.Rows.Count + 1;
-                mainGrid.Rows.Add(false, serialNumber);
-                mainGrid.Rows[serialNumber - 1].Cells[Globals.columnFiveName].Value = "DEACTIVATED";
-
-            }
-            catch
-            {
-                MessageBox.Show("Error occured while adding row in main table. Shutting down.");
-                HelperFunctions.ShutEverythingDown();
-            }
+            int serialNumber = mainGrid.Rows.Count + 1;
+            mainGrid.Rows.Add(false, serialNumber);
+            mainGrid.Rows[serialNumber - 1].Cells[Globals.columnFiveName].Value = "DEACTIVATED";
         }
 
         public void DeleteRowsInMainGrid(object sender, EventArgs e, DataGridView mainGrid, TabControl MainTab)
@@ -60,30 +52,45 @@ namespace ADLManagerPro
                 Dictionary<string, string> map = new Dictionary<string, string>();
                 //         old,new
 
-                for (int i = mainGrid.Rows.Count - 1; i >= 0; i--)
+            for (int i = mainGrid.Rows.Count - 1; i >= 0; i--)
+            {
+                int newIndex = i + 1;
+                
+
+                
+                map[mainGrid.Rows[i].Cells[Globals.columnOneName].Value.ToString()] = newIndex.ToString();
+                mainGrid.Rows[i].Cells[Globals.columnOneName].Value = newIndex.ToString();
+            }
+
+            foreach(string feedName in Globals.feedNames)
+            {
+                if (Globals.feedNameWithRowIndex.ContainsKey(feedName))
                 {
-                    int x = i + 1;
-                    map[mainGrid.Rows[i].Cells[Globals.columnOneName].Value.ToString()] = x.ToString();
-                    mainGrid.Rows[i].Cells[Globals.columnOneName].Value = x.ToString();
-                }
-
-
-                Dictionary<string, TabInfo> temp_tabNameWithTabInfo = new Dictionary<string, TabInfo>();
-                foreach (KeyValuePair<string, TabInfo> entry in Globals.tabNameWithTabInfo)
-                {
-                    TabInfo currentTabInfo = entry.Value;
-                    string old_key = entry.Key;
-                    string old_key_num = old_key.Split('-')[0];
-                    string old_key_feed = old_key.Split('-')[1];
-
-                    if (map.ContainsKey(old_key_num))
+                    List<string> temp = Globals.feedNameWithRowIndex[feedName];
+                    List<string> new_indexes = new List<string>();
+                    foreach(string old_index in temp)
                     {
-                        string new_key_num = map[old_key_num];
-                        string new_tab_name = new_key_num + "-" + old_key_feed;
-                        temp_tabNameWithTabInfo.Add(new_tab_name, entry.Value);
-                        currentTabInfo._currentTab.Text = new_tab_name;
-
+                        if(map.ContainsKey(old_index))
+                        {
+                            string new_index = map[old_index];
+                            new_indexes.Add(new_index);
+                        }
                     }
+                    Globals.feedNameWithRowIndex[feedName] = new_indexes;
+                }
+            }
+            
+
+
+            Dictionary<string, TabInfo> temp_tabIndexWithTabInfo = new Dictionary<string, TabInfo>();
+            foreach (KeyValuePair<string, TabInfo> entry in Globals.tabIndexWithTabInfo)
+            {
+                string old_key = entry.Key;
+                if (map.ContainsKey(old_key))
+                {
+                    string new_key = map[old_key];
+                    temp_tabIndexWithTabInfo[new_key] = entry.Value;
+                }
 
                 }
                 Globals.tabNameWithTabInfo.Clear();
@@ -262,99 +269,98 @@ namespace ADLManagerPro
                             algo_userparams,
                             algo_orderprofileparams,marketId,userDisconnectAction);
 
-                    if (!Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName))
-                    {
-                        Globals.tabNameWithSiteOrderKey.Add(currentTabName, orderKey);
-                    }
-                    else
-                    {
-                        Globals.tabNameWithSiteOrderKey[currentTabName] = orderKey;
-                    }
-
-                    if (!Globals.siteOrderKeyWithTabName.ContainsKey(orderKey))
-                    {
-                        Globals.siteOrderKeyWithTabName.Add(orderKey, currentTabName);
-                    }
-                    else
-                    {
-                        Globals.siteOrderKeyWithTabName[orderKey] = currentTabName;
-                    }
-                    paramGrid.Columns["Value"].ReadOnly = true;
-                    Control[] foundComboBox = currentTab.Controls.Find("TemplateComboBox", true);
-                    Control[] foundTextBox = currentTab.Controls.Find("TemplateTextBox", true);
-                    Control[] foundTemplateButton = currentTab.Controls.Find("SaveTemplateButton", true);
-                    Control[] foundStatusLabel = currentTab.Controls.Find("OrderStatusValueLabel", true);
-                    Control[] foundDeleteAlgoButton = currentTab.Controls.Find("DeleteAlgoButton", true);
-                    Control[] foundStartAlgoButton = currentTab.Controls.Find("StartAlgoButton", true);
-                    if (foundComboBox.Length > 0)
-                    {
-                        foundComboBox[0].Hide();
-                    }
-                    if (foundTextBox.Length > 0)
-                    {
-                        foundTextBox[0].Hide();
-                    }
-                    if (foundTemplateButton.Length > 0)
-                    {
-                        foundTemplateButton[0].Hide();
-                    }
-                    if (foundStatusLabel.Length > 0)
-                    {
-                        foundStatusLabel[0].Text = "ACTIVATED";
-                    }
-                    if (foundDeleteAlgoButton.Length > 0)
-                    {
-                        foundDeleteAlgoButton[0].Show();
-                    }
-                    if (foundStartAlgoButton.Length > 0)
-                    {
-                        foundStartAlgoButton[0].Hide();
-                    }
-
-
-
-                    //mainGrid
-                    string currentTabIndex = currentTabName.Split('-')[0];
-                    int rowIndex = Convert.ToInt32(currentTabIndex)-1;
-                    Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnZeroName].ReadOnly = true;
-                    Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFourName].ReadOnly = true;
-                    Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFiveName].Value = "ACTIVATED" ;
-                    var row = Form1.mainGrid.Rows[rowIndex];
-                    foreach (DataGridViewCell cell in row.Cells)
-                    {
-                        cell.Style.BackColor = Color.Gray;
-                        cell.Style.ForeColor = Color.White;
-                    }
-
-
+                if (!Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex))
+                {
+                    Globals.tabIndexWithSiteOrderKey.Add(currentTabIndex, orderKey);
                 }
                 else
                 {
-                    MessageBox.Show("Please check the parameters.");
-                    return;
+                    Globals.tabIndexWithSiteOrderKey[currentTabIndex] = orderKey;
                 }
 
+                if (!Globals.siteOrderKeyWithTabIndex.ContainsKey(orderKey))
+                {
+                    Globals.siteOrderKeyWithTabIndex.Add(orderKey, currentTabIndex);
+                }
+                else
+                {
+                    Globals.siteOrderKeyWithTabIndex[orderKey] = currentTabIndex;
+                }
+
+                if (Globals.siteOrderKeyWithTabIndex.ContainsKey(orderKey) &&
+                Globals.tabIndexWithTabInfo.ContainsKey(Globals.siteOrderKeyWithTabIndex[orderKey]))
+                {
+                    TabInfo tabInfo = Globals.tabIndexWithTabInfo[Globals.siteOrderKeyWithTabIndex[orderKey]];
+                    
+                    tabInfo._lag = true;
+                    tabInfo._laggedPrice = double.NaN;
+                }
+
+                paramGrid.Columns["Value"].ReadOnly = true;
+                Control[] foundComboBox = currentTab.Controls.Find("TemplateComboBox", true);
+                Control[] foundTextBox = currentTab.Controls.Find("TemplateTextBox", true);
+                Control[] foundTemplateButton = currentTab.Controls.Find("SaveTemplateButton", true);
+                Control[] foundStatusLabel = currentTab.Controls.Find("OrderStatusValueLabel", true);
+                Control[] foundDeleteAlgoButton = currentTab.Controls.Find("DeleteAlgoButton", true);
+                Control[] foundStartAlgoButton = currentTab.Controls.Find("StartAlgoButton", true);
+                if (foundComboBox.Length > 0)
+                {
+                    foundComboBox[0].Hide();
+                }
+                if (foundTextBox.Length > 0)
+                {
+                    foundTextBox[0].Hide();
+                }
+                if (foundTemplateButton.Length > 0)
+                {
+                    foundTemplateButton[0].Hide();
+                }
+                if (foundStatusLabel.Length > 0)
+                {
+                    foundStatusLabel[0].Text = "ACTIVATED";
+                }
+                if (foundDeleteAlgoButton.Length > 0)
+                {
+                    foundDeleteAlgoButton[0].Show();
+                }
+                if (foundStartAlgoButton.Length > 0)
+                {
+                    foundStartAlgoButton[0].Hide();
+                }
+
+
+
+                //mainGrid
+                int rowIndex = Convert.ToInt32(currentTabIndex)-1;
+                Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnZeroName].ReadOnly = true;
+                Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFourName].ReadOnly = true;
+                Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFiveName].Value = "ACTIVATED" ;
+                var row = Form1.mainGrid.Rows[rowIndex];
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    cell.Style.BackColor = Color.Gray;
+                    cell.Style.ForeColor = Color.White;
+                }
+
+
             }
-            catch
+            else
             {
-                MessageBox.Show("Error occured while starting the Algo. Shutting down.");
-                HelperFunctions.ShutEverythingDown();
+                MessageBox.Show("Please check the parameters.");
+                return;
             }
 
         }
 
 
-        public void OnDeletebtnClick(DataGridView paramGrid, string AlgoName, TabPage currentTab)
+        public void OnDeletebtnClick(DataGridView paramGrid, string AlgoName, string currentTabIndex, TabPage currentTab)
         {
-            try
+            if (!Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex)
+                || (Globals.tabIndexWithSiteOrderKey.ContainsKey(currentTabIndex) && Globals.tabIndexWithSiteOrderKey[currentTabIndex] == string.Empty))
             {
-                string currentTabName = currentTab.Text;
-                if (!Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName)
-                    || (Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName) && Globals.tabNameWithSiteOrderKey[currentTabName] == string.Empty))
-                {
-                    MessageBox.Show("Order not found.");
-                    return;
-                }
+                MessageBox.Show("Order not found.");
+                return;
+            }
             
                 if (Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName) && Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName))
                 {

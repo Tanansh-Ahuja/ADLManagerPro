@@ -1,51 +1,46 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ADLManagerPro
 {
+
     public static class PriceSimulator
     {
-        public static CancellationTokenSource _cts;
-        public static double _latestValue; // holds the latest generated value
-        public static readonly object _lock = new object();
+        private static CancellationTokenSource _cts;
+        private static readonly ConcurrentDictionary<string, double> _latest = new ConcurrentDictionary<string, double>();
 
-        //Neon feed connected
-        public static void StartPriceGenerator()
+        // (contractId, price)
+        public static event Action<string, double> PriceChanged;
+
+        public static void Start(List<string> feedNames, double min = 67.6, double max = 69.7, int intervalMs = 10)
         {
             _cts = new CancellationTokenSource();
 
-            Task.Run(async () =>
+            foreach (var feedName in feedNames)
             {
-                var rnd = new Random();
-                const double min = 67.6, max = 69.7;
-                double range = max - min;
-
-                while (!_cts.Token.IsCancellationRequested)
-                {
-                    double val = min + rnd.NextDouble() * range;
-                    lock (_lock)
-                    {
-                        _latestValue = val;
-                    }
-                    await Task.Delay(10, _cts.Token); // Generate every 10ms
-                }
-            }, _cts.Token);
+                _ = Task.Run(() => Produce(feedName, min, max, intervalMs, _cts.Token));
+            }
         }
 
-        public static void StopPriceGenerator()
-        {
-            _cts?.Cancel();
-        }
+        public static void Stop() => _cts?.Cancel();
 
-        public static double GetLatestValue()
+        public static double GetLatest(string feedName) =>
+            _latest.TryGetValue(feedName, out var v) ? v : double.NaN;
+
+        private static async Task Produce(string feedName, double min, double max, int intervalMs, CancellationToken token)
         {
-            lock (_lock)
+            var rnd = new Random();
+            double range = max - min;
+
+            while (!token.IsCancellationRequested)
             {
-                return _latestValue;
+                double v = min + rnd.NextDouble() * range;
+                _latest[feedName] = v;
+                PriceChanged?.Invoke(feedName, v);
+                await Task.Delay(intervalMs, token);
             }
         }
     }
