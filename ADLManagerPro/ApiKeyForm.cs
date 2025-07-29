@@ -24,17 +24,35 @@ namespace ADLManagerPro
 
         public ApiKeyForm()
         {
-            InitializeComponent();
-            Load += ApiKeyForm_Load;
-            _fileHandlers = new FileHandlers();
+            try
+            {
+                InitializeComponent();
+                Load += ApiKeyForm_Load;
+                _fileHandlers = new FileHandlers();
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while initialising key entering form. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
         }
 
         private void ApiKeyForm_Load(object sender, EventArgs e)
         {
-            EnvComboBox.SelectedItem = "UatCert";
-            string existingKey = _fileHandlers.FetchApiKey(keyFilePath);
-            if (existingKey != null)
-                txtKey.Text = existingKey;
+            try
+            {
+                EnvComboBox.SelectedItem = "UatCert";
+                string existingKey = _fileHandlers.FetchApiKey(keyFilePath);
+                if (existingKey != null)
+                    txtKey.Text = existingKey;
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while API key form load. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
         }
         private void btnSubmit_Click(object sender, EventArgs e)
         {
@@ -55,7 +73,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while reading the key. Shutting down.");
+                MessageBox.Show("Error occured while fetching key from form. Shutting down.");
                 HelperFunctions.ShutEverythingDown();
             }
         }

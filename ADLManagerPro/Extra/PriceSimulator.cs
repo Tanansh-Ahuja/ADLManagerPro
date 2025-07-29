@@ -15,7 +15,7 @@ namespace ADLManagerPro
         // (contractId, price)
         public static event Action<string, double> PriceChanged;
 
-        public static void Start(List<string> feedNames, double min = 67.6, double max = 69.7, int intervalMs = 10)
+        public static void Start(List<string> feedNames, double min = 67.6, double max = 69.7, int intervalMs = 500)
         {
             _cts = new CancellationTokenSource();
 
@@ -35,9 +35,9 @@ namespace ADLManagerPro
             var rnd = new Random();
             double range = max - min;
 
-            while (!token.IsCancellationRequested)
+            while (true)
             {
-                double v = min + rnd.NextDouble() * range;
+                double v = Math.Round(min + rnd.NextDouble() * range,2);
                 _latest[feedName] = v;
                 PriceChanged?.Invoke(feedName, v);
                 await Task.Delay(intervalMs, token);

@@ -32,7 +32,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show($"Error occured while initialising instrument: {instrumentInfo._m_alias}. Shutting down.");
+                MessageBox.Show("Error occured while initialising instrument. Shutting down.");
                 HelperFunctions.ShutEverythingDown();
             }
 
@@ -80,7 +80,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while getting data for instrument. Shutting down.");
+                MessageBox.Show("Error occured while data look up of instrument. Shutting down.");
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -111,7 +111,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while subscribing instrument and price. Shutting down.");
+                MessageBox.Show("Error occured while updating price subscription fields. Shutting down.");
                 HelperFunctions.ShutEverythingDown();
             }
 
@@ -119,20 +119,29 @@ namespace ADLManagerPro
 
         private void Dispose()
         {
-            lock(m_Lock)
+            try
             {
-
-                if (!m_isDisposed)
+                lock(m_Lock)
                 {
-                    if (m_instrLookupRequest != null)
+
+                    if (!m_isDisposed)
                     {
-                        m_instrLookupRequest.OnData -= m_instrLookupRequest_OnData;
-                        m_instrLookupRequest.Dispose();
-                        m_instrLookupRequest = null;
+                        if (m_instrLookupRequest != null)
+                        {
+                            m_instrLookupRequest.OnData -= m_instrLookupRequest_OnData;
+                            m_instrLookupRequest.Dispose();
+                            m_instrLookupRequest = null;
+                        }
+                        m_isDisposed = true;
                     }
-                    m_isDisposed = true;
+
                 }
 
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while disposing instrument. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
             }
         }
     }

@@ -15,6 +15,7 @@ namespace ADLManagerPro
         {
             try
             {
+
                 using (ApiKeyForm keyForm = new ApiKeyForm())
                 {
                     if (keyForm.ShowDialog() != DialogResult.OK)
@@ -54,7 +55,6 @@ namespace ADLManagerPro
                     }
 
                 }
-
             }
             catch
             {

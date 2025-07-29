@@ -85,9 +85,9 @@ namespace ADLManagerPro
 
                 return algoWithTemplate;
             }
-            catch
+            catch(Exception ex)
             {
-                MessageBox.Show("Error occured while reading pre-saved templates from file. Shutting down.");
+                MessageBox.Show("An Unexpected error occured."+ex.Message);
                 return null;
             }
 

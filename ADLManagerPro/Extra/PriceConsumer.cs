@@ -14,7 +14,8 @@ namespace ADLManagerPro
         public PriceConsumer(string feedName)
         {
             _feedName = feedName;
-            Subscribe(feedName);
+            _ = Task.Run(() => Subscribe(feedName));
+            //Subscribe(feedName);
         }
         public void Subscribe(string feedName)
         {
@@ -24,30 +25,31 @@ namespace ADLManagerPro
 
                 Globals.feedNameWithLatestPrice[id] = price;
                 //price change
-                
 
+                //Console.WriteLine($"{feedName}-{price}");
                 if(_previousPrice == double.NaN || _previousPrice != price)
                 {
                     _previousPrice = price;
                     if(Globals.feedNameWithRowIndex.ContainsKey(feedName))
                     {
                         List<string> rowIndexes = Globals.feedNameWithRowIndex[feedName];
+
                         if(rowIndexes != null && rowIndexes.Count > 0)
                         {
                             foreach (string rowIndex in rowIndexes)
                             {
 
 
-                                if(Globals.tabIndexWithSiteOrderKey.ContainsKey(rowIndex) && Globals.tabIndexWithTabInfo.ContainsKey(rowIndex))
+                                if(Globals.tabNameWithSiteOrderKey.ContainsKey(rowIndex) && Globals.tabNameWithTabInfo.ContainsKey(rowIndex))
                                 {
 
 
-                                    string siteOrderKey = Globals.tabIndexWithSiteOrderKey[rowIndex];
-                                    TabInfo tabInfo = Globals.tabIndexWithTabInfo[rowIndex];
-                                    string adlName = Globals.tabIndexWithTabInfo[rowIndex]._adlName;
-
+                                    string siteOrderKey = Globals.tabNameWithSiteOrderKey[rowIndex];
+                                    TabInfo tabInfo = Globals.tabNameWithTabInfo[rowIndex];
+                                    string adlName = Globals.tabNameWithTabInfo[rowIndex]._adlName;
                                     if(!tabInfo._lag)
                                     {
+                                        Console.WriteLine("No lag");
                                         if(Globals.algoNameWithTradeSubscription.ContainsKey(adlName))
                                         {
                                             Globals.algoNameWithTradeSubscription[adlName].UpdateAlgoOrderPrice(siteOrderKey,price);
@@ -55,8 +57,10 @@ namespace ADLManagerPro
                                     }
                                     else
                                     {
-                                        
                                         tabInfo._laggedPrice = price;
+                                        DateTime now = DateTime.Now;
+                                        string timeWithMilliseconds = now.ToString("HH:mm:ss.fff");
+                                        Console.WriteLine($"lag : {tabInfo._laggedPrice} {timeWithMilliseconds}");
                                     }
 
                                 }
@@ -68,10 +72,10 @@ namespace ADLManagerPro
 
 
                 // start a processor for this contract if not already running
-                if (_processingFlag.TryAdd(id, 1))
-                {
-                    _ = Task.Run(() => ProcessLoop(id));
-                }
+                //if (_processingFlag.TryAdd(id, 1))
+                //{
+                //    _ = Task.Run(() => ProcessLoop(id));
+                //}
 
             };
         }
@@ -102,7 +106,7 @@ namespace ADLManagerPro
         {
             //Yaha pe karo tab ke ander param grid ko change
             
-            Console.WriteLine($"[{feedName}] Processing {price:F2}");
+            //Console.WriteLine($"[{feedName}] Processing {price:F2}");
             return Task.Delay(50); // simulate heavy work
         }
     }

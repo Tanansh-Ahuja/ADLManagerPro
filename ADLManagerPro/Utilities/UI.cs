@@ -35,28 +35,12 @@ namespace ADLManagerPro
                     string serial_no = row.Cells[Globals.columnOneName].Value.ToString();
                     if (isChecked)
                     {
-                        if (!Globals.selectedRowIndexList.Contains(int.Parse(serial_no)-1))
-                            Globals.selectedRowIndexList.Add(int.Parse(serial_no)-1);
+                        if (!Globals.selectedRowIndexList.Contains(int.Parse(serial_no) - 1))
+                            Globals.selectedRowIndexList.Add(int.Parse(serial_no) - 1);
                     }
                     else
                     {
                         Globals.selectedRowIndexList.Remove(int.Parse(serial_no) - 1);
-                        mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].ReadOnly = true;
-                        mainGrid.Rows[row.Index].Cells[Globals.columnThreeName].ReadOnly = true;
-                        string feedName = mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].Value.ToString();
-                        if (Globals.feedNameWithRowIndex.ContainsKey(feedName))
-                        {
-                            List<string> temp = Globals.feedNameWithRowIndex[feedName];
-                            temp.Add((row.Index+1).ToString());
-                            Globals.feedNameWithRowIndex[feedName] = temp;
-
-                        }
-                        else
-                        {
-                            Globals.feedNameWithRowIndex.Add(feedName,new List<string>{ (row.Index+1).ToString()});
-                        }
-                            
-                        return true;
                     }
                 }
 
@@ -69,17 +53,6 @@ namespace ADLManagerPro
 
                     // Only validate if user is trying to activate
                     if (isChecked)
-                   
-                    string serial = row.Cells[Globals.columnOneName].Value.ToString();
-                    string feedName = mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].Value.ToString();
-                    if(feedName != null)
-                    {
-                        if (Globals.feedNameWithRowIndex.ContainsKey(feedName) && Globals.feedNameWithRowIndex[feedName].Contains(serial))
-                        {
-                            Globals.feedNameWithRowIndex[feedName].Remove(serial);
-                        }
-                    }
-                    for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
                     {
                         var feedValue = row.Cells[Globals.columnTwoName].Value?.ToString();
                         var adlValue = row.Cells[Globals.columnThreeName].Value?.ToString();
@@ -94,7 +67,7 @@ namespace ADLManagerPro
                         string serial = row.Cells[Globals.columnOneName].Value.ToString();
                         string feedName = row.Cells[Globals.columnTwoName].Value.ToString();
                         string tabName = serial + "-" + feedName;
-                        if (!_helperFunctions.TabExists(tabName,MainTab))
+                        if (!_helperFunctions.TabExists(tabName, MainTab))
                         {
                             mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].ReadOnly = true;
                             mainGrid.Rows[row.Index].Cells[Globals.columnThreeName].ReadOnly = true;
@@ -103,7 +76,7 @@ namespace ADLManagerPro
                     }
                     else
                     {
-                   
+
                         string serial = row.Cells[Globals.columnOneName].Value.ToString();
                         string feedName = row.Cells[Globals.columnTwoName].Value.ToString();
                         string tabName = serial + "-" + feedName;
@@ -118,7 +91,7 @@ namespace ADLManagerPro
                                     return false;
                                 }
                                 MainTab.TabPages.RemoveAt(i);
-                                if(Globals.tabNameWithTabInfo.ContainsKey(tabName))
+                                if (Globals.tabNameWithTabInfo.ContainsKey(tabName))
                                 {
                                     Globals.tabNameWithTabInfo.Remove(tabName);
                                 }
@@ -142,11 +115,11 @@ namespace ADLManagerPro
 
         public void CreateTabWithLabels(string serial, string feedValue, string adlValue,TabControl MainTab)
         {
-
             try
             {
                 string tabName = serial + "-" + feedValue;
                 TabPage newTab = new TabPage(tabName);
+                
 
                 // Static label: "Feed Name"
                 Label lblFeedTitle = new Label
@@ -187,14 +160,14 @@ namespace ADLManagerPro
 
                 Label lblOrderStatus = new Label
                 {
-                    Name="OrderStatusLabel",
+                    Name = "OrderStatusLabel",
                     Text = "Order Status:",
                     Left = 20,
                     Top = 50,
                     AutoSize = true
                 };
 
-            
+
                 Label lblOrderStatusValue = new Label
                 {
                     Name = "OrderStatusValueLabel",
@@ -225,7 +198,7 @@ namespace ADLManagerPro
                     AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                     AllowUserToResizeRows = false,
                     AllowUserToResizeColumns = false
-                
+
                 };
 
 
@@ -257,7 +230,7 @@ namespace ADLManagerPro
                 newTab.Controls.Add(paramGrid);
 
 
-           
+
                 Button btnDeleteAlgo = new Button
                 {
                     Name = "DeleteAlgoButton",
@@ -268,7 +241,7 @@ namespace ADLManagerPro
                     Height = 30
                 };
                 btnDeleteAlgo.Hide();
-            
+
                 // Add "Start Algo" button
                 Button btnStartAlgo = new Button
                 {
@@ -288,8 +261,8 @@ namespace ADLManagerPro
                     Width = 150,
                     DropDownStyle = ComboBoxStyle.DropDownList
                 };
-            
-                if (Globals.algoNameWithTemplateList!=null && Globals.algoNameWithTemplateList.ContainsKey(adlValue))
+
+                if (Globals.algoNameWithTemplateList != null && Globals.algoNameWithTemplateList.ContainsKey(adlValue))
                     savedTemplates.Items.AddRange(_helperFunctions.GetTemplateNames(Globals.algoNameWithTemplateList[adlValue]).ToArray());
 
                 TextBox txtTemplateName = new TextBox
@@ -318,18 +291,18 @@ namespace ADLManagerPro
 
                 btnStartAlgo.Click += (s, e) =>
                 {
-                
+
                     _buttonEvents.OnStartbtnClick(paramGrid, adlValue, newTab);
-                
+
                 };
                 newTab.Controls.Add(btnStartAlgo);
 
 
                 btnDeleteAlgo.Click += (s, e) =>
                 {
-                
+
                     _buttonEvents.OnDeletebtnClick(paramGrid, adlValue, newTab);
-                
+
                 };
 
                 newTab.Controls.Add(btnDeleteAlgo);
@@ -341,15 +314,15 @@ namespace ADLManagerPro
 
                 btnSaveTemplate.Click += (s, e) =>
                 {
-                    _buttonEvents.OnSaveOrUpdateTemplateBtnClick(s, e,txtTemplateName,adlValue,paramGrid,savedTemplates,MainTab);
+                    _buttonEvents.OnSaveOrUpdateTemplateBtnClick(s, e, txtTemplateName, adlValue, paramGrid, savedTemplates, MainTab);
                 };
 
                 #endregion
 
 
-            
-                TabInfo tabInfo = new TabInfo(paramGrid, adlValue, feedValue, newTab);
-                if(Globals.tabNameWithTabInfo.ContainsKey(tabName))
+
+                TabInfo tabInfo = new TabInfo(paramGrid, adlValue, feedValue, newTab, double.NaN, false);
+                if (Globals.tabNameWithTabInfo.ContainsKey(tabName))
                 {
                     Globals.tabNameWithTabInfo[tabName] = tabInfo;
                 }
@@ -361,11 +334,6 @@ namespace ADLManagerPro
 
                 // Add tab to TabControl
                 MainTab.TabPages.Add(newTab);
-
-            TabInfo tabInfo = new TabInfo(paramGrid, adlValue, feedValue, newTab,double.NaN,false);
-            if(Globals.tabIndexWithTabInfo.ContainsKey(serial))
-            {
-                Globals.tabIndexWithTabInfo[serial] = tabInfo;
             }
             catch
             {

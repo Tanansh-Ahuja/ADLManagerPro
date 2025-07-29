@@ -1,10 +1,6 @@
-﻿using ADLManager;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using ADLManager;
 
 namespace ADLManagerPro
 {
@@ -25,35 +21,6 @@ namespace ADLManagerPro
             _adlUserParameters = adlUserParameters;
             _adlUserParametersWithType = adlUserParametersWithType;
 
-        }
-
-        public Dictionary<string, ParameterType> GetParamNameWithTypeAll()
-        {
-            try
-            {
-                var paramDict = new Dictionary<string, ParameterType>();
-
-                foreach (var (paramName, paramType) in _adlUserParametersWithType)
-                {
-                    if (!paramDict.ContainsKey(paramName))
-                        paramDict[paramName] = paramType;
-                }
-
-                foreach (var (paramName, paramType) in _adlOrderProfileParametersWithType)
-                {
-                    if (!paramDict.ContainsKey(paramName))
-                        paramDict[paramName] = paramType;
-                }
-
-                return paramDict;
-
-            }
-            catch
-            {
-                MessageBox.Show("Error occured while getting parameter names. Shutting down.");
-                HelperFunctions.ShutEverythingDown();
-                return null;
-            }
         }
     }
 }

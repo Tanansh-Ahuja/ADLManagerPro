@@ -21,13 +21,13 @@ namespace ADLManagerPro
         {
             try
             {
-
                 List<string> templateNames = templateList.Select(t => t.TemplateName).ToList();
                 return templateNames;
+
             }
             catch
             {
-                MessageBox.Show("Error occured while getting template names. Shutting down.");
+                MessageBox.Show("Error occured while getting template name. Shutting down.");
                 ShutEverythingDown();
                 return null;
             }
@@ -37,12 +37,12 @@ namespace ADLManagerPro
         {
             try
             {
-
                 return MainTab.TabPages.Cast<TabPage>().Any(tab => tab.Text == serial);
+
             }
             catch
             {
-                MessageBox.Show("Error occured while checking if a tab already exists or not. Shutting down.");
+                MessageBox.Show("Error occured whilechecking if tab exists. Shutting down.");
                 ShutEverythingDown();
                 return false;
             }
@@ -57,7 +57,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while populating the template dropdown. Shutting down.");
+                MessageBox.Show("Error occured while populating template. Shutting down.");
                 ShutEverythingDown();
             }
         }
@@ -94,10 +94,6 @@ namespace ADLManagerPro
                                     var old = existingTemplate.ParamNameWithValue[paramName];
                                     existingTemplate.ParamNameWithValue[paramName] = paramValue;
                                 }
-                                else
-                                {
-                                    existingTemplate.ParamNameWithValue.Add(paramName,paramValue);
-                                }
                             }
                         }
 
@@ -125,7 +121,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while updating the template. Shutting down.");
+                MessageBox.Show("Error occured while updating template. Shutting down.");
                 ShutEverythingDown();
             }
         }
@@ -156,10 +152,11 @@ namespace ADLManagerPro
                 
                 }
 
+
             }
             catch
             {
-                MessageBox.Show("Error occured while populating all the template dropdowns. Shutting down.");
+                MessageBox.Show("Error occured while populating every combobox in other tabs. Shutting down.");
                 ShutEverythingDown();
             }
         }
@@ -212,12 +209,14 @@ namespace ADLManagerPro
                     }
                 }
 
+
             }
             catch
             {
-                MessageBox.Show("Error occured while populating the grid. Shutting down.");
+                MessageBox.Show("Error occured while populating paramGrid with order profile parameters. Shutting down.");
                 ShutEverythingDown();
             }
+
         }
 
         public void PopulateParamGridWithUserParameters(DataGridView paramGrid, string adlValue)
@@ -287,16 +286,20 @@ namespace ADLManagerPro
                     };
                     paramGrid.Rows[rowIndex].Cells["Value"] = orderType;
                     paramGrid.Rows[rowIndex].Cells["Value"].Value = Enum.GetNames(typeof(UserDisconnectAction))[0];
+
+
+
+
+
                 }
+
 
             }
             catch
             {
-                MessageBox.Show("Error occured while populating the grid. Shutting down.");
+                MessageBox.Show("Error occured while populating paramGrid with user parameters. Shutting down.");
                 ShutEverythingDown();
             }
-
-
         }
 
         public Template GenerateANewTemplate(string adlName, DataGridView paramGrid, string templateName)
@@ -334,7 +337,7 @@ namespace ADLManagerPro
                     string paramName = row.Cells["ParamName"].Value?.ToString();
                     string paramValue = row.Cells["Value"].Value?.ToString();
 
-                    if (!string.IsNullOrEmpty(paramName))
+                    if (!string.IsNullOrEmpty(paramName) && paramTypes.ContainsKey(paramName))
                     {
                         newTemplate.ParamNameWithValue[paramName] = paramValue ?? "";
                     }
@@ -344,7 +347,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while generating a template. Shutting down.");
+                MessageBox.Show("Error occured while generating a new template. Shutting down.");
                 ShutEverythingDown();
                 return null;
             }
@@ -352,7 +355,6 @@ namespace ADLManagerPro
 
         public void ParamgridCellValueValidate(object sender, DataGridViewCellValidatingEventArgs e, DataGridView paramGrid,string adlValue)
         {
-
             try
             {
                 // Check if editing the "Value" column
@@ -398,7 +400,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while checking the value in cell. Shutting down.");
+                MessageBox.Show("Error occured while validating cell value. Shutting down.");
                 ShutEverythingDown();
             }
         }
@@ -413,12 +415,12 @@ namespace ADLManagerPro
                 }
             
 
-                string currentTabName = Globals.siteOrderKeyWithTabName[orderKey];
-                TabPage currentTab = Globals.tabNameWithTabInfo[currentTabName]._currentTab;
-                if (Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName) && Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName))
+                string currentTabIndex = Globals.siteOrderKeyWithTabName[orderKey];
+                TabPage currentTab = Globals.tabNameWithTabInfo[currentTabIndex]._currentTab;
+                if (Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabIndex) && Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName))
                 {
-                    Globals.tabNameWithSiteOrderKey[currentTabName] = Globals.algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
-                    Globals.tabNameWithSiteOrderKey.Remove(currentTabName);
+                    Globals.tabNameWithSiteOrderKey[currentTabIndex] = Globals.algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
+                    Globals.tabNameWithSiteOrderKey.Remove(currentTabIndex);
 
                     if(Globals.siteOrderKeyWithTabName.ContainsKey(orderKey))
                     {
@@ -460,27 +462,28 @@ namespace ADLManagerPro
                         foundStartAlgoButton[0].Show();
                     }
                     //mainGrid
-                    string currentTabIndex = currentTabName.Split('-')[0];
                     int rowIndex = Convert.ToInt32(currentTabIndex) - 1;
                     Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnZeroName].ReadOnly = false;
                     Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFourName].ReadOnly = false;
                     Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFiveName].Value = "DEACTIVATED";
                 }
 
+
             }
             catch
             {
-                MessageBox.Show("Error occured while deactivating. Shutting down.");
+                MessageBox.Show("Error occured while TT order algo deletion. Shutting down.");
                 ShutEverythingDown();
             }
+
         }
 
         public static void ShutEverythingDown()
         {
             MessageBox.Show("Inside Shut Everything down");
-            
+
         }
 
-        
+
     }
 }

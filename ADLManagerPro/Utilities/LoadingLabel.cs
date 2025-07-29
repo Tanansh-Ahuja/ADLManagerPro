@@ -12,7 +12,7 @@ namespace ADLManagerPro
     {
         public LoadingLabel() 
         {
-            
+ 
         }
 
         
@@ -36,7 +36,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while initialising loading page. Shutting down.");
+                MessageBox.Show("Error occured while creating label. Shutting down.");
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -49,7 +49,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while showing latest update. Shutting down.");
+                MessageBox.Show("Error occured while updating label value. Shutting down.");
                 HelperFunctions.ShutEverythingDown();
             }
         }

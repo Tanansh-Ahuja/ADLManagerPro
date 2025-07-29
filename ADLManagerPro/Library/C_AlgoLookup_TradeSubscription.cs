@@ -17,6 +17,7 @@ namespace ADLManagerPro
         
         private bool m_isDisposed = false;
         private object m_Lock = new object();
+        private object m_PriceUpdateLock = new object();
         private AlgoTradeSubscription m_algoTradeSubscription = null;
         private static bool orderBookDownloadRequested = false;
         private ManualResetEvent mre = new ManualResetEvent(false);
@@ -229,29 +230,25 @@ namespace ADLManagerPro
                 algo_op.OrderType = OrderType.Limit;
                 algo_op.Account = Globals.m_accounts.ElementAt(accountIndex);
                 algo_op.UserParameters = algo_userparams;
+
                 m_algoTradeSubscription.SendOrder(algo_op);
-                orderSent = true;
-            algo_op.OrderType = OrderType.Limit;
-            algo_op.Account = Globals.m_accounts.ElementAt(accountIndex);
-            algo_op.UserParameters = algo_userparams;
+                DateTime now = DateTime.Now;
+                string timeWithMilliseconds = now.ToString("HH:mm:ss.fff");
+                Console.WriteLine("Req Order: " + timeWithMilliseconds);
+                //orderSent = true;
 
-            
-
-            
-            m_algoTradeSubscription.SendOrder(algo_op);
-            //orderSent = true;
-
-            if(Globals.siteOrderKeyWithTabIndex.ContainsKey(algo_op.SiteOrderKey) &&
-                Globals.tabIndexWithTabInfo.ContainsKey(Globals.siteOrderKeyWithTabIndex[algo_op.SiteOrderKey]))
-            {
-                TabInfo tabInfo = Globals.tabIndexWithTabInfo[Globals.siteOrderKeyWithTabIndex[algo_op.SiteOrderKey]];
-                //tabInfo._laggedPrice = Convert.ToDouble(algo_userparams["Pricing_Feed"]);
-                tabInfo._lag = true;
-                tabInfo._laggedPrice = double.NaN;
-            }
+                if (Globals.siteOrderKeyWithTabName.ContainsKey(algo_op.SiteOrderKey) &&
+                    Globals.tabNameWithTabInfo.ContainsKey(Globals.siteOrderKeyWithTabName[algo_op.SiteOrderKey]))
+                {
+                    TabInfo tabInfo = Globals.tabNameWithTabInfo[Globals.siteOrderKeyWithTabName[algo_op.SiteOrderKey]];
+                    //tabInfo._laggedPrice = Convert.ToDouble(algo_userparams["Pricing_Feed"]);
+                    tabInfo._lag = true;
+                    tabInfo._laggedPrice = double.NaN;
+                }
 
 
                 return algo_op.SiteOrderKey;
+            
 
             }
             catch
@@ -266,15 +263,37 @@ namespace ADLManagerPro
 
         public void UpdateAlgoOrderPrice(string siteOrderKey , double price)
         {
-            if (siteOrderKey != null && m_algoTradeSubscription.Orders.ContainsKey(siteOrderKey))
+            
+            try
             {
-                OrderProfile op = m_algoTradeSubscription.Orders[siteOrderKey].GetOrderProfile();
-                Dictionary<string, object> temp = (Dictionary<string, object>)op.UserParameters;
-                temp["Pricing_Feed"] = price;
-                op.UserParameters = temp;
-                op.Action = OrderAction.Change;
-                m_algoTradeSubscription.SendOrder(op);
+                if (siteOrderKey != null && m_algoTradeSubscription.Orders.ContainsKey(siteOrderKey))
+                {
+                    OrderProfile op = m_algoTradeSubscription.Orders[siteOrderKey].GetOrderProfile();
+                    Dictionary<string, object> temp = (Dictionary<string, object>)op.UserParameters;
+                    temp["Pricing_Feed"] = price;
+                    op.UserParameters = (IReadOnlyDictionary<string,object>)temp;
+                    op.Action = OrderAction.Change;
+                    m_algoTradeSubscription.SendOrder(op);
+                    DateTime now = DateTime.Now;
+                    string timeWithMilliseconds = now.ToString("HH:mm:ss.fff");
+                    Console.WriteLine("Req Update: " + price + " :: " + timeWithMilliseconds);
+                    if (Globals.siteOrderKeyWithTabName.ContainsKey(op.SiteOrderKey) &&
+                    Globals.tabNameWithTabInfo.ContainsKey(Globals.siteOrderKeyWithTabName[op.SiteOrderKey]))
+                    {
+                        TabInfo tabInfo = Globals.tabNameWithTabInfo[Globals.siteOrderKeyWithTabName[op.SiteOrderKey]];
+                        //tabInfo._laggedPrice = Convert.ToDouble(algo_userparams["Pricing_Feed"]);
+                        tabInfo._lag = true;
+                        tabInfo._laggedPrice = double.NaN;
+                    }
+                }
+
             }
+            catch
+            {
+                MessageBox.Show("Error occured while updating order. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
+
         }
 
         public string DeleteAlgoOrder(string siteOrderKey)
@@ -286,14 +305,10 @@ namespace ADLManagerPro
                     OrderProfile op = m_algoTradeSubscription.Orders[siteOrderKey].GetOrderProfile();
                     op.Action = OrderAction.Delete;
                     m_algoTradeSubscription.SendOrder(op);
-                    orderSent = false;
+                    //orderSent = false;
 
                 }
                 return string.Empty;
-                OrderProfile op = m_algoTradeSubscription.Orders[siteOrderKey].GetOrderProfile();
-                op.Action = OrderAction.Delete;
-                m_algoTradeSubscription.SendOrder(op);
-                //orderSent = false;
 
             }
             catch
@@ -308,101 +323,183 @@ namespace ADLManagerPro
 
         void m_algoTradeSubscription_OrderBookDownload(object sender, OrderBookDownloadEventArgs e)
         {
-            Console.WriteLine("Orderbook downloaded...");
-            Globals.m_isOrderBookDownloaded = true;
-            Globals.loadingLabel.Text = "Status: Orderbook Downloaded...";
-            Form1.ShowMainGrid();
+            try
+            {
+                Console.WriteLine("Orderbook downloaded...");
+                Globals.m_isOrderBookDownloaded = true;
+                Globals.loadingLabel.Text = "Status: Orderbook Downloaded...";
+                Form1.ShowMainGrid();
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while order book download. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
 
         }
 
         void m_algoTradeSubscription_OrderRejected(object sender, OrderRejectedEventArgs e)
         {
-           //TODO: ye order delete ke time aaya hai ya order added ke time
-            HelperFunctions.OnFromTTAlgoOrderDeletion(_algoName, e.Order.SiteOrderKey);
+            try
+            {
+               //TODO: ye order delete ke time aaya hai ya order added ke time
+                HelperFunctions.OnFromTTAlgoOrderDeletion(_algoName, e.Order.SiteOrderKey);
             
             
-            Console.WriteLine("\nOrderRejected for : [{0}]", e.Order.Message);
+                Console.WriteLine("\nOrderRejected for : [{0}]", e.Order.Message);
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while rejecting order. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
         }
 
         void m_algoTradeSubscription_OrderFilled(object sender, OrderFilledEventArgs e)
         {
-            if (e.FillType == tt_net_sdk.FillType.Full)
+            try
             {
-                Console.WriteLine("\nOrderFullyFilled [{0}]: {1}@{2}", e.Fill.SiteOrderKey, e.Fill.Quantity, e.Fill.MatchPrice);
+                if (e.FillType == tt_net_sdk.FillType.Full)
+                {
+                    Console.WriteLine("\nOrderFullyFilled [{0}]: {1}@{2}", e.Fill.SiteOrderKey, e.Fill.Quantity, e.Fill.MatchPrice);
+                }
+                else
+                {
+                    Console.WriteLine("\nOrderPartiallyFilled [{0}]: {1}@{2}", e.Fill.SiteOrderKey, e.Fill.Quantity, e.Fill.MatchPrice);
+                }
+
             }
-            else
+            catch
             {
-                Console.WriteLine("\nOrderPartiallyFilled [{0}]: {1}@{2}", e.Fill.SiteOrderKey, e.Fill.Quantity, e.Fill.MatchPrice);
+                MessageBox.Show("Error occured while order filled. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
             }
         }
 
         void m_algoTradeSubscription_OrderDeleted(object sender, OrderDeletedEventArgs e)
         {
             
-            HelperFunctions.OnFromTTAlgoOrderDeletion(_algoName, e.OldOrder.SiteOrderKey);
+            try
+            {
+                HelperFunctions.OnFromTTAlgoOrderDeletion(_algoName, e.OldOrder.SiteOrderKey);
 
-            Console.WriteLine("\nOrderDeleted [{0}] , Message : {1}", e.OldOrder.SiteOrderKey, e.Message);
+                Console.WriteLine("\nOrderDeleted [{0}] , Message : {1}", e.OldOrder.SiteOrderKey, e.Message);
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured when order is deleted. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
         }
 
         void m_algoTradeSubscription_OrderAdded(object sender, OrderAddedEventArgs e)
         {
-            string orderKey = e.Order.SiteOrderKey;
-            if (Globals.siteOrderKeyWithTabIndex.ContainsKey(orderKey) &&
-                Globals.tabIndexWithTabInfo.ContainsKey(Globals.siteOrderKeyWithTabIndex[orderKey]))
+            try
             {
-                TabInfo tabInfo = Globals.tabIndexWithTabInfo[Globals.siteOrderKeyWithTabIndex[orderKey]];
-                //tabInfo._laggedPrice = Convert.ToDouble(algo_userparams["Pricing_Feed"]);
-                if(!double.IsNaN(tabInfo._laggedPrice))
+                DateTime now = DateTime.Now;
+                string timeWithMilliseconds = now.ToString("HH:mm:ss.fff");
+                Console.WriteLine("Order Added: " + e.Order.UserParameters["Pricing_Feed"] + timeWithMilliseconds);
+                string orderKey = e.Order.SiteOrderKey;
+                if (Globals.siteOrderKeyWithTabName.ContainsKey(orderKey) &&
+                    Globals.tabNameWithTabInfo.ContainsKey(Globals.siteOrderKeyWithTabName[orderKey]))
                 {
-                    UpdateAlgoOrderPrice(orderKey, tabInfo._laggedPrice);
-                    tabInfo._laggedPrice = double.NaN;
-                }
-                else
-                {
-                    tabInfo._lag = false;
+                    TabInfo tabInfo = Globals.tabNameWithTabInfo[Globals.siteOrderKeyWithTabName[orderKey]];
+                    //tabInfo._laggedPrice = Convert.ToDouble(algo_userparams["Pricing_Feed"]);
+                    if(!double.IsNaN(tabInfo._laggedPrice))
+                    {
+                        tabInfo._lag = true;
+                        UpdateAlgoOrderPrice(orderKey, tabInfo._laggedPrice);
+                        tabInfo._laggedPrice = double.NaN;
+                    }
+                    else
+                    {
+                        tabInfo._lag = false;
+                    }
+
                 }
 
             }
-            if (e.Order.IsSynthetic)
-                Console.WriteLine("\nPARENT Algo OrderAdded [{0}] for Algo : {1} with Synthetic Status : {2} ", e.Order.SiteOrderKey, e.Order.Algo.Alias, e.Order.SyntheticStatus.ToString());
-            else
-                Console.WriteLine("\nCHILD OrderAdded [{0}] {1}: {2}", e.Order.SiteOrderKey, e.Order.BuySell, e.Order.ToString());
+            catch
+            {
+                MessageBox.Show("Error occured when order is added. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
+
         }
 
         void m_algoTradeSubscription_OrderUpdated(object sender, OrderUpdatedEventArgs e)
         {
-            if (e.NewOrder.ExecutionType == ExecType.Restated)
-                Console.WriteLine("\nAlgo Order Restated [{0}] for Algo : {1} with Synthetic Status : {2} ", e.NewOrder.SiteOrderKey, e.NewOrder.Algo.Alias, e.NewOrder.SyntheticStatus.ToString());
-            else
-                Console.WriteLine("\nOrderUpdated [{0}] {1}: {2}", e.NewOrder.SiteOrderKey, e.NewOrder.BuySell, e.NewOrder.ToString());
+            try
+            {
+                DateTime now = DateTime.Now;
+                string timeWithMilliseconds = now.ToString("HH:mm:ss.fff");
+                Console.WriteLine($"Price Updated: {e.NewOrder.UserParameters["Pricing_Feed"]} {timeWithMilliseconds} from server time: {e.NewOrder.ExchTransactionTime.ToString("HH:mm:ss.fff")}");
+
+                string orderKey = e.NewOrder.SiteOrderKey;
+                if (Globals.siteOrderKeyWithTabName.ContainsKey(orderKey) &&
+                    Globals.tabNameWithTabInfo.ContainsKey(Globals.siteOrderKeyWithTabName[orderKey]))
+                {
+                    TabInfo tabInfo = Globals.tabNameWithTabInfo[Globals.siteOrderKeyWithTabName[orderKey]];
+                    //tabInfo._laggedPrice = Convert.ToDouble(algo_userparams["Pricing_Feed"]);
+                    if (!double.IsNaN(tabInfo._laggedPrice))
+                    {
+                        tabInfo._lag = true;
+                        UpdateAlgoOrderPrice(orderKey, tabInfo._laggedPrice);
+                        tabInfo._laggedPrice = double.NaN;
+                    }
+                    else
+                    {
+                        tabInfo._lag = false;
+                    }
+
+                }
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured when order is updated. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
+            }
         }
 
         #endregion
 
         private void Dispose()
         {
-            lock (m_Lock)
+            try
             {
+                lock (m_Lock)
+                {
 
-                if (m_algoLookupSubscription != null)
-                {
-                    m_algoLookupSubscription.OnData -= AlgoLookupSubscription_OnData;
-                    m_algoLookupSubscription.Dispose();
-                    m_algoLookupSubscription = null;
-                }
-                if (m_algoTradeSubscription != null)
-                {
-                    m_algoTradeSubscription.OrderUpdated -= m_algoTradeSubscription_OrderUpdated;
-                    m_algoTradeSubscription.OrderAdded -= m_algoTradeSubscription_OrderAdded;
-                    m_algoTradeSubscription.OrderDeleted -= m_algoTradeSubscription_OrderDeleted;
-                    m_algoTradeSubscription.OrderFilled -= m_algoTradeSubscription_OrderFilled;
-                    m_algoTradeSubscription.OrderRejected -= m_algoTradeSubscription_OrderRejected;
-                    m_algoTradeSubscription.Dispose();
-                    m_algoTradeSubscription = null;
-                }
-                m_isDisposed = true;
+                    if (m_algoLookupSubscription != null)
+                    {
+                        m_algoLookupSubscription.OnData -= AlgoLookupSubscription_OnData;
+                        m_algoLookupSubscription.Dispose();
+                        m_algoLookupSubscription = null;
+                    }
+                    if (m_algoTradeSubscription != null)
+                    {
+                        m_algoTradeSubscription.OrderUpdated -= m_algoTradeSubscription_OrderUpdated;
+                        m_algoTradeSubscription.OrderAdded -= m_algoTradeSubscription_OrderAdded;
+                        m_algoTradeSubscription.OrderDeleted -= m_algoTradeSubscription_OrderDeleted;
+                        m_algoTradeSubscription.OrderFilled -= m_algoTradeSubscription_OrderFilled;
+                        m_algoTradeSubscription.OrderRejected -= m_algoTradeSubscription_OrderRejected;
+                        m_algoTradeSubscription.Dispose();
+                        m_algoTradeSubscription = null;
+                    }
+                    m_isDisposed = true;
                 
 
+                }
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while disposing order. Shutting down.");
+                HelperFunctions.ShutEverythingDown();
             }
         }
     }
