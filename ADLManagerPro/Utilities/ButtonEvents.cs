@@ -118,7 +118,7 @@ namespace ADLManagerPro
                     string old_key = entry.Key;
                     string old_key_num = old_key.Split('-')[0];
                     string old_key_feed = old_key.Split('-')[1];
-                    if (map.ContainsKey(old_key))
+                    if (map.ContainsKey(old_key_num))
                     {
                         string new_key_num = map[old_key_num];
                         string new_tab_name = new_key_num + "-" + old_key_feed;

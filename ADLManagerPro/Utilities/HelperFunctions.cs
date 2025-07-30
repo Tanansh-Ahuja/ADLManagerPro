@@ -1,10 +1,11 @@
-﻿using System;
+﻿using ADLManager;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ADLManager;
 using tt_net_sdk;
 
 namespace ADLManagerPro
@@ -423,16 +424,16 @@ namespace ADLManagerPro
                 {
                     return;
                 }
-            
 
-                string currentTabIndex = Globals.siteOrderKeyWithTabName[orderKey];
-                TabPage currentTab = Globals.tabNameWithTabInfo[currentTabIndex]._currentTab;
-                if (Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabIndex) && Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName))
+
+                string currentTabName = Globals.siteOrderKeyWithTabName[orderKey];
+                TabPage currentTab = Globals.tabNameWithTabInfo[currentTabName]._currentTab;
+                if (Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName) && Globals.algoNameWithTradeSubscription.ContainsKey(AlgoName))
                 {
-                    Globals.tabNameWithSiteOrderKey[currentTabIndex] = Globals.algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
-                    Globals.tabNameWithSiteOrderKey.Remove(currentTabIndex);
+                    Globals.tabNameWithSiteOrderKey[currentTabName] = Globals.algoNameWithTradeSubscription[AlgoName].DeleteAlgoOrder(orderKey);
+                    Globals.tabNameWithSiteOrderKey.Remove(currentTabName);
 
-                    if(Globals.siteOrderKeyWithTabName.ContainsKey(orderKey))
+                    if (Globals.siteOrderKeyWithTabName.ContainsKey(orderKey))
                     {
                         Globals.siteOrderKeyWithTabName.Remove(orderKey);
                     }
@@ -472,13 +473,20 @@ namespace ADLManagerPro
                         foundStartAlgoButton[0].Show();
                     }
                     //mainGrid
+                    string currentTabIndex = currentTabName.Split('-')[0];
                     int rowIndex = Convert.ToInt32(currentTabIndex) - 1;
                     Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnZeroName].ReadOnly = false;
                     Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFourName].ReadOnly = false;
                     Form1.mainGrid.Rows[rowIndex].Cells[Globals.columnFiveName].Value = "DEACTIVATED";
+                    var row = Form1.mainGrid.Rows[rowIndex];
+                    foreach (DataGridViewCell cell in row.Cells)
+                    {
+                        cell.Style.BackColor = Color.Empty;
+                        cell.Style.ForeColor = Color.Empty;
+                    }
+
+
                 }
-
-
             }
             catch
             {
