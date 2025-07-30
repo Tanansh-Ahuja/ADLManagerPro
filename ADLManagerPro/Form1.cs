@@ -225,14 +225,14 @@ namespace ADLManagerPro
         private void NeonFeedButton_Click(object sender, EventArgs e)
         {
             //TODO : Connect Neon Feed
-            PriceSimulator.Start(Globals.feedNames);
+            /*PriceSimulator.Start(Globals.feedNames);
             //TODO : consuming price
             foreach(var feedName in Globals.feedNames)
             {
                 PriceConsumer priceConsumer = new PriceConsumer(feedName);
 
                 //Globals.feedNameWithPriceConsumer.Add(feedName, priceConsumer);
-            }
+            }*/
         }
 
 

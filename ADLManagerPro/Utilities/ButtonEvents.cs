@@ -132,8 +132,8 @@ namespace ADLManagerPro
                                     entry => entry.Value // still shallow copy of value
                                 );
                 temp_tabNameWithSiteOrderKey.Clear();
-            
-            
+
+
                 Globals.siteOrderKeyWithTabName.Clear();
                 Globals.siteOrderKeyWithTabName = Globals.tabNameWithSiteOrderKey.ToDictionary(
                                     entry => entry.Value,

@@ -94,6 +94,10 @@ namespace ADLManagerPro
                                     var old = existingTemplate.ParamNameWithValue[paramName];
                                     existingTemplate.ParamNameWithValue[paramName] = paramValue;
                                 }
+                                else
+                                {
+                                    existingTemplate.ParamNameWithValue.Add(paramName, paramValue);
+                                }
                             }
                         }
 
@@ -138,14 +142,20 @@ namespace ADLManagerPro
                         Control[] foundControl = tabPage.Controls.Find("TemplateComboBox", true);
                         if (foundControl.Length > 0 && foundControl[0] is ComboBox comboBox)
                         {
+                            string templateName = string.Empty;
+                            if (comboBox.SelectedItem != null)
+                            {
+                                templateName = comboBox.SelectedItem.ToString();
+                            }
+                                
                             comboBox.Items.Clear();
                             if(Globals.algoNameWithTemplateList.ContainsKey(adlName))
                                 comboBox.Items.AddRange(GetTemplateNames(Globals.algoNameWithTemplateList[adlName]).ToArray());
 
                             // Select the desired item
-                            if (comboBox.Items.Contains(newTemplateName))
+                            if (templateName != string.Empty && comboBox.Items.Contains(newTemplateName))
                             {
-                                comboBox.SelectedItem = newTemplateName;
+                                comboBox.SelectedItem = templateName;
                             }
                         }
                     }
@@ -337,7 +347,7 @@ namespace ADLManagerPro
                     string paramName = row.Cells["ParamName"].Value?.ToString();
                     string paramValue = row.Cells["Value"].Value?.ToString();
 
-                    if (!string.IsNullOrEmpty(paramName) && paramTypes.ContainsKey(paramName))
+                    if (!string.IsNullOrEmpty(paramName))
                     {
                         newTemplate.ParamNameWithValue[paramName] = paramValue ?? "";
                     }
