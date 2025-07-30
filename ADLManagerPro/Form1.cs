@@ -68,6 +68,8 @@ namespace ADLManagerPro
 
         private void populateFeedNamesList()
         {
+            FeedStatus.Text = "Feed Connected";
+            FeedStatus.BackColor = Color.LightGreen;
             var comboColumn = (DataGridViewComboBoxColumn)mainGrid.Columns[Globals.columnTwoName];
             Globals.feedNames = new List<string> { "GBP/CHF" } ;
             //TODO : UNCOMMENT
