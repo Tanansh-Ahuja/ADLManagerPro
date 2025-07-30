@@ -71,6 +71,17 @@ namespace ADLManagerPro
                         {
                             mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].ReadOnly = true;
                             mainGrid.Rows[row.Index].Cells[Globals.columnThreeName].ReadOnly = true;
+                            if (Globals.feedNameWithRowIndex.ContainsKey(feedName))
+                            {
+                                List<string> temp = Globals.feedNameWithRowIndex[feedName];
+                                temp.Add((row.Index + 1).ToString());
+                                Globals.feedNameWithRowIndex[feedName] = temp;
+
+                            }
+                            else
+                            {
+                                Globals.feedNameWithRowIndex.Add(feedName, new List<string> { (row.Index + 1).ToString() });
+                            }
                             return true;
                         }
                     }
@@ -79,6 +90,13 @@ namespace ADLManagerPro
 
                         string serial = row.Cells[Globals.columnOneName].Value.ToString();
                         string feedName = row.Cells[Globals.columnTwoName].Value.ToString();
+                        if (feedName != null)
+                        {
+                            if (Globals.feedNameWithRowIndex.ContainsKey(feedName) && Globals.feedNameWithRowIndex[feedName].Contains(serial))
+                            {
+                                Globals.feedNameWithRowIndex[feedName].Remove(serial);
+                            }
+                        }
                         string tabName = serial + "-" + feedName;
                         for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
                         {
