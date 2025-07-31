@@ -42,7 +42,6 @@ namespace ADLManagerPro
             catch
             {
                 MessageBox.Show("Error occured while fetching API key. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
                 return String.Empty;
             }
 
@@ -53,6 +52,10 @@ namespace ADLManagerPro
         {
             try
             {
+                if (!File.Exists(jsonPath))
+                {
+                    return null;
+                }
 
                 string jsonContent = File.ReadAllText(jsonPath);
                 var algoTemplateRoots = JsonConvert.DeserializeObject<List<AlgoTemplateRoot>>(jsonContent);
@@ -165,11 +168,15 @@ namespace ADLManagerPro
                 return result;
 
             }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show($"Error: File {instrumentFilePath} not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
             catch
             {
                 MessageBox.Show("Error occured while fetching instruments names from file. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
-                return null;
+                throw;
             }
         }
         public List<InstrumentInfo> GetInstrumentInfoList()
@@ -214,11 +221,16 @@ namespace ADLManagerPro
                 return result;
 
             }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show($"Error: File {instrumentFilePath} not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
             catch
             {
                 MessageBox.Show("Error occured while fetching instruments list from file. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
-                return null;
+                throw;
+                
             }
         }
 
@@ -261,11 +273,15 @@ namespace ADLManagerPro
                 return result;
 
             }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show($"Error: File {ADLsFilePath} not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
             catch
             {
                 MessageBox.Show("Error occured while fetching ADLs names from file. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
-                return null;
+                throw;
             }
         }
 
