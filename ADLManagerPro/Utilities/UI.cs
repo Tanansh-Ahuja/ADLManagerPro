@@ -89,35 +89,36 @@ namespace ADLManagerPro
                     {
 
                         string serial = row.Cells[Globals.columnOneName].Value.ToString();
-                        string feedName = row.Cells[Globals.columnTwoName].Value.ToString();
+                        string feedName = row.Cells[Globals.columnTwoName].Value?.ToString();
                         if (feedName != null)
                         {
                             if (Globals.feedNameWithRowIndex.ContainsKey(feedName) && Globals.feedNameWithRowIndex[feedName].Contains(serial))
                             {
                                 Globals.feedNameWithRowIndex[feedName].Remove(serial);
                             }
-                        }
-                        string tabName = serial + "-" + feedName;
-                        for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
-                        {
-                            if (MainTab.TabPages[i].Text == tabName)
+
+                            string tabName = serial + "-" + feedName;
+                            for (int i = MainTab.TabPages.Count - 1; i > 0; i--)
                             {
-                                Control[] foundStatusLabel = MainTab.TabPages[i].Controls.Find("OrderStatusValueLabel", true);
-                                if (foundStatusLabel.Length > 0 && foundStatusLabel[0].Text == "ACTIVATED")
+                                if (MainTab.TabPages[i].Text == tabName)
                                 {
-                                    //MessageBox.Show($"Please delete algo order before deleting tab {serial}");
-                                    return false;
+                                    Control[] foundStatusLabel = MainTab.TabPages[i].Controls.Find("OrderStatusValueLabel", true);
+                                    if (foundStatusLabel.Length > 0 && foundStatusLabel[0].Text == "ACTIVATED")
+                                    {
+                                        MessageBox.Show($"Please delete order before deleting tab {serial}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        return false;
+                                    }
+                                    MainTab.TabPages.RemoveAt(i);
+                                    if (Globals.tabNameWithTabInfo.ContainsKey(tabName))
+                                    {
+                                        Globals.tabNameWithTabInfo.Remove(tabName);
+                                    }
+                                    break;
                                 }
-                                MainTab.TabPages.RemoveAt(i);
-                                if (Globals.tabNameWithTabInfo.ContainsKey(tabName))
-                                {
-                                    Globals.tabNameWithTabInfo.Remove(tabName);
-                                }
-                                break;
                             }
+                            mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].ReadOnly = false;
+                            mainGrid.Rows[row.Index].Cells[Globals.columnThreeName].ReadOnly = false;
                         }
-                        mainGrid.Rows[row.Index].Cells[Globals.columnTwoName].ReadOnly = false;
-                        mainGrid.Rows[row.Index].Cells[Globals.columnThreeName].ReadOnly = false;
                     }
                 }
                 return false;
@@ -125,7 +126,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while checking the cell value change. Shutting down.");
+                MessageBox.Show("Error occured while checking the cell value change. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
                 return false;
             }
@@ -355,7 +356,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while creating a new Tab. Shutting down.");
+                MessageBox.Show("Error occured while creating a new Tab. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }

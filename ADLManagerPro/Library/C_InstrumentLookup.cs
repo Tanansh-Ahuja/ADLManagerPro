@@ -32,7 +32,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while initialising instrument. Shutting down.");
+                MessageBox.Show("Error occured while initialising instrument. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
 
@@ -80,7 +80,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while data look up of instrument. Shutting down.");
+                MessageBox.Show("Error occured while data look up of instrument. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -111,7 +111,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while updating price subscription fields. Shutting down.");
+                MessageBox.Show("Error occured while updating price subscription fields. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
 
@@ -140,7 +140,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while disposing instrument. Shutting down.");
+                MessageBox.Show("Error occured while disposing instrument. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }

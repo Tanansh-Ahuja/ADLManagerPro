@@ -36,7 +36,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while creating label. Shutting down.");
+                MessageBox.Show("Error occured while creating label. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -49,7 +49,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while updating label value. Shutting down.");
+                MessageBox.Show("Error occured while updating label value. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }

@@ -31,7 +31,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while adding row in main table. Shutting down.");
+                MessageBox.Show("Error occured while adding row in main table. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -153,7 +153,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while deleting row from table. Shutting down.");
+                MessageBox.Show("Error occured while deleting row from table. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -167,7 +167,7 @@ namespace ADLManagerPro
                 string currentTabName = currentTab.Text;
                 if (Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName))
                 {
-                    MessageBox.Show("Order already placed!");
+                    MessageBox.Show("Order already placed!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -199,7 +199,7 @@ namespace ADLManagerPro
                             value = valueCell.Value;
                             if (value == null || (value is string && string.IsNullOrWhiteSpace((string)value)))
                             {
-                                MessageBox.Show("Please enter all the parameters before starting the algo.");
+                                MessageBox.Show("Please enter all the parameters before starting the algo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 return;
                             }
                         }
@@ -232,7 +232,7 @@ namespace ADLManagerPro
                                 if (accountNumber > -1)
                                     algo_userparams[paramName] = accountNumber;
                                 else
-                                    MessageBox.Show("Error fetching account index from account name");
+                                    MessageBox.Show("Error fetching account index from account name", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                             }
                             if (paramName.Contains("Instrument") && !paramName.Contains("Account"))
@@ -267,7 +267,7 @@ namespace ADLManagerPro
                     }
                     else
                     {
-                        MessageBox.Show("Please enter all the parameters before starting the algo.");
+                        MessageBox.Show("Please enter all the parameters before starting the algo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
                 }
@@ -362,14 +362,14 @@ namespace ADLManagerPro
                 }
                 else
                 {
-                    MessageBox.Show("Please check the parameters.");
+                    MessageBox.Show("Please check the parameters.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
             }
             catch
             {
-                MessageBox.Show("Error occured while click on start algo button. Shutting down.");
+                MessageBox.Show("Error occured while click on start algo button. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
 
@@ -384,7 +384,7 @@ namespace ADLManagerPro
                 if (!Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName)
                     || (Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName) && Globals.tabNameWithSiteOrderKey[currentTabName] == string.Empty))
                 {
-                    MessageBox.Show("Order not found.");
+                    MessageBox.Show("Order not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             
@@ -449,7 +449,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while delete button click. Shutting down.");
+                MessageBox.Show("Error occured while delete button click. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -547,7 +547,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while saving template. Shutting down.");
+                MessageBox.Show("Error occured while saving template. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -589,7 +589,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while changing template. Shutting down.");
+                MessageBox.Show("Error occured while changing template. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }

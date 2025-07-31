@@ -41,7 +41,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while fetching API key. Shutting down.");
+                MessageBox.Show("Error occured while fetching API key. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
                 return String.Empty;
             }
@@ -87,7 +87,7 @@ namespace ADLManagerPro
             }
             catch(Exception ex)
             {
-                MessageBox.Show("An Unexpected error occured."+ex.Message);
+                MessageBox.Show("An Unexpected error occured."+ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
 
@@ -127,7 +127,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while saving templates to the file. Shutting down.");
+                MessageBox.Show("Error occured while saving templates to the file. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -167,7 +167,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while fetching instruments names from file. Shutting down.");
+                MessageBox.Show("Error occured while fetching instruments names from file. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
                 return null;
             }
@@ -216,7 +216,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while fetching instruments list from file. Shutting down.");
+                MessageBox.Show("Error occured while fetching instruments list from file. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
                 return null;
             }
@@ -263,7 +263,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while fetching ADLs names from file. Shutting down.");
+                MessageBox.Show("Error occured while fetching ADLs names from file. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
                 return null;
             }

@@ -28,7 +28,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while getting template name. Shutting down.");
+                MessageBox.Show("Error occured while getting template name. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ShutEverythingDown();
                 return null;
             }
@@ -43,7 +43,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured whilechecking if tab exists. Shutting down.");
+                MessageBox.Show("Error occured whilechecking if tab exists. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ShutEverythingDown();
                 return false;
             }
@@ -58,7 +58,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while populating template. Shutting down.");
+                MessageBox.Show("Error occured while populating template. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ShutEverythingDown();
             }
         }
@@ -126,7 +126,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while updating template. Shutting down.");
+                MessageBox.Show("Error occured while updating template. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ShutEverythingDown();
             }
         }
@@ -167,7 +167,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while populating every combobox in other tabs. Shutting down.");
+                MessageBox.Show("Error occured while populating every combobox in other tabs. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ShutEverythingDown();
             }
         }
@@ -224,7 +224,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while populating paramGrid with order profile parameters. Shutting down.");
+                MessageBox.Show("Error occured while populating paramGrid with order profile parameters. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ShutEverythingDown();
             }
 
@@ -308,7 +308,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while populating paramGrid with user parameters. Shutting down.");
+                MessageBox.Show("Error occured while populating paramGrid with user parameters. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ShutEverythingDown();
             }
         }
@@ -358,7 +358,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while generating a new template. Shutting down.");
+                MessageBox.Show("Error occured while generating a new template. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ShutEverythingDown();
                 return null;
             }
@@ -395,7 +395,7 @@ namespace ADLManagerPro
                 {
                     if (!System.Text.RegularExpressions.Regex.IsMatch(newValue, @"^\d+$"))
                     {
-                        MessageBox.Show("Only whole numbers (0–9) allowed for this parameter.");
+                        MessageBox.Show("Only whole numbers (0–9) allowed for this parameter.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         e.Cancel = true;
                     }
                 }
@@ -403,7 +403,7 @@ namespace ADLManagerPro
                 {
                     if (!System.Text.RegularExpressions.Regex.IsMatch(newValue, @"^\d+(\.\d{1,})?$"))
                     {
-                        MessageBox.Show("Only numeric values with at most one decimal point allowed.");
+                        MessageBox.Show("Only numeric values with at most one decimal point allowed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         e.Cancel = true;
                     }
                 }
@@ -411,7 +411,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while validating cell value. Shutting down.");
+                MessageBox.Show("Error occured while validating cell value. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ShutEverythingDown();
             }
         }
@@ -490,7 +490,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while TT order algo deletion. Shutting down.");
+                MessageBox.Show("Error occured while TT order algo deletion. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ShutEverythingDown();
             }
 
@@ -498,7 +498,7 @@ namespace ADLManagerPro
 
         public static void ShutEverythingDown()
         {
-            MessageBox.Show("Inside Shut Everything down");
+            MessageBox.Show("Inside Shut Everything down", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
         }
 

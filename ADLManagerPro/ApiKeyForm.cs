@@ -33,7 +33,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while initialising key entering form. Shutting down.");
+                MessageBox.Show("Error occured while initialising key entering form. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -50,7 +50,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while API key form load. Shutting down.");
+                MessageBox.Show("Error occured while API key form load. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -73,7 +73,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while fetching key from form. Shutting down.");
+                MessageBox.Show("Error occured while fetching key from form. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }

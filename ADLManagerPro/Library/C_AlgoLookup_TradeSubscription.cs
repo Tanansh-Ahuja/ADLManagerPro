@@ -41,7 +41,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show($"Error occured while initialising algo: {algoName}. Shutting down.");
+                MessageBox.Show($"Error occured while initialising algo: {algoName}. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
 
@@ -177,7 +177,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show($"Error occured while getting data for algo. Shutting down.");
+                MessageBox.Show($"Error occured while getting data for algo. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -253,7 +253,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while sending order. Shutting down.");
+                MessageBox.Show("Error occured while sending order. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
                 return null;
             }
@@ -290,7 +290,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while updating order. Shutting down.");
+                MessageBox.Show("Error occured while updating order. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
 
@@ -313,7 +313,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while deleting order. Shutting down.");
+                MessageBox.Show("Error occured while deleting order. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
                 return null;
             }
@@ -333,7 +333,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while order book download. Shutting down.");
+                MessageBox.Show("Error occured while order book download. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
 
@@ -352,7 +352,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while rejecting order. Shutting down.");
+                MessageBox.Show("Error occured while rejecting order. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -373,7 +373,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while order filled. Shutting down.");
+                MessageBox.Show("Error occured while order filled. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -390,7 +390,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured when order is deleted. Shutting down.");
+                MessageBox.Show("Error occured when order is deleted. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -424,7 +424,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured when order is added. Shutting down.");
+                MessageBox.Show("Error occured when order is added. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
 
@@ -460,7 +460,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured when order is updated. Shutting down.");
+                MessageBox.Show("Error occured when order is updated. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }
@@ -498,7 +498,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while disposing order. Shutting down.");
+                MessageBox.Show("Error occured while disposing order. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 HelperFunctions.ShutEverythingDown();
             }
         }

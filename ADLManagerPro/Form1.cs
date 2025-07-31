@@ -113,13 +113,13 @@ namespace ADLManagerPro
             }
             else if (ex.IsRecoverable)
             {
-                MessageBox.Show("TT.NET SDK Initialization Failed");
+                MessageBox.Show("TT.NET SDK Initialization Failed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 DisposeEverything();
             }
             else
             {
                 Console.WriteLine("TT.NET SDK Initialization Failed: {0}", ex.Message);
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 DisposeEverything();
             }
         }
@@ -279,7 +279,7 @@ namespace ADLManagerPro
         {
             if(Globals.tabNameWithSiteOrderKey.Keys.Count>0)
             {
-                MessageBox.Show("Remove all orders before closing the app.");
+                MessageBox.Show("Remove all orders before closing the app.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 e.Cancel = true;
                 return;
             }
