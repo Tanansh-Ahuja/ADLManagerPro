@@ -454,7 +454,7 @@ namespace ADLManagerPro
             }
         }
 
-        public void OnSaveOrUpdateTemplateBtnClick(object s, EventArgs e, TextBox txtTemplateName, string adlValue,DataGridView paramGrid, ComboBox savedTemplates,TabControl MainTab)
+        public void OnSaveOrUpdateTemplateBtnClick(object s, EventArgs e, TextBox txtTemplateName, string adlValue,DataGridView paramGrid, ComboBox savedTemplates,TabControl MainTab, string tabName)
         {
            
             try
@@ -477,7 +477,7 @@ namespace ADLManagerPro
                 }
                 if(Globals.algoNameWithTemplateList == null)
                 {
-                    // Create new template
+                    // We have nothing in this dictionary, our file was empty, so this is the first value
                     Template newTemplate = _helperFunctions.GenerateANewTemplate(adlName, paramGrid, templateName);
 
                     // Create new list and add to the dictionary
@@ -488,45 +488,49 @@ namespace ADLManagerPro
                     // Save to file
                     _fileHandlers.SaveTemplateDictionaryToFile(Globals.algoNameWithTemplateList);
                     txtTemplateName.Text = newTemplate.TemplateName;
-                    _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, txtTemplateName.Text);
+                    _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, txtTemplateName.Text, tabName);
 
                     MessageBox.Show("Template created and saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
 
                 }
-                if(Globals.algoNameWithTemplateList.ContainsKey(adlName))
+                else if(Globals.algoNameWithTemplateList.ContainsKey(adlName))
                 {
                     List<Template> templates = Globals.algoNameWithTemplateList[adlName];
                     Template existingTemplate = templates.FirstOrDefault(t => t.TemplateName == templateName); //try to find template with same name
                     if (existingTemplate != null)
                     {
-                        //same name template exists
+                        //same name template exists so just update the parameters of this template
                         _helperFunctions.UpdateTemplate(existingTemplate, templateName, paramGrid, adlName, templates);
-                        return;
                     }
-
-                    // Get the parameter definitions for this ADL
-                
-                    Template newTemplate = _helperFunctions.GenerateANewTemplate(adlName, paramGrid, templateName);
-                    // Add or update the template in dictionary
-                    if (Globals.algoNameWithTemplateList.ContainsKey(adlName))
+                    else
                     {
-                        var existingList = Globals.algoNameWithTemplateList[adlName];
-                        existingList.Add(newTemplate);
-                        Globals.algoNameWithTemplateList.Remove(adlName);
-                        Globals.algoNameWithTemplateList.Add(adlName, existingList);
+                        //Here this is a new template name for this adlName
+                        Template newTemplate = _helperFunctions.GenerateANewTemplate(adlName, paramGrid, templateName);
+                        // Add or update the template in dictionary
+                        if (Globals.algoNameWithTemplateList.ContainsKey(adlName))
+                        {
+                            var existingList = Globals.algoNameWithTemplateList[adlName];
+                            existingList.Add(newTemplate);
+                            Globals.algoNameWithTemplateList.Remove(adlName);
+                            Globals.algoNameWithTemplateList.Add(adlName, existingList);
+                        }
+                        _fileHandlers.SaveTemplateDictionaryToFile(Globals.algoNameWithTemplateList);
+                        txtTemplateName.Text = newTemplate.TemplateName;
+
+                        savedTemplates.SelectedItem = newTemplate.TemplateName;
+                        _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, txtTemplateName.Text,tabName);
+                        MessageBox.Show("Template saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
-                    _fileHandlers.SaveTemplateDictionaryToFile(Globals.algoNameWithTemplateList);
-                    txtTemplateName.Text = newTemplate.TemplateName;
-                    _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, txtTemplateName.Text);
-                    MessageBox.Show("Template saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        // Get the parameter definitions for this ADL
+
 
                 
 
                 }
                 else
-                {
-                    // Create new template
+                { 
+                    // we have data in dict but for this adl we dont have any template saved
                     Template newTemplate = _helperFunctions.GenerateANewTemplate(adlName, paramGrid, templateName);
 
                     // Create new list and add to the dictionary
@@ -536,7 +540,7 @@ namespace ADLManagerPro
                     // Save to file
                     _fileHandlers.SaveTemplateDictionaryToFile(Globals.algoNameWithTemplateList);
                     txtTemplateName.Text = newTemplate.TemplateName;
-                    _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, txtTemplateName.Text);
+                    _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, txtTemplateName.Text,tabName);
 
                     MessageBox.Show("Template created and saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;

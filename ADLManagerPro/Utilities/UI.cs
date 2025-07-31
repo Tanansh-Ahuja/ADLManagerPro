@@ -333,7 +333,7 @@ namespace ADLManagerPro
 
                 btnSaveTemplate.Click += (s, e) =>
                 {
-                    _buttonEvents.OnSaveOrUpdateTemplateBtnClick(s, e, txtTemplateName, adlValue, paramGrid, savedTemplates, MainTab);
+                    _buttonEvents.OnSaveOrUpdateTemplateBtnClick(s, e, txtTemplateName, adlValue, paramGrid, savedTemplates, MainTab,newTab.Text);
                 };
 
                 #endregion

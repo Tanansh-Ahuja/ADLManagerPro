@@ -131,33 +131,49 @@ namespace ADLManagerPro
             }
         }
 
-        public void PopulateEveryComboBoxInTabs(TabControl MainTab, string adlName, string newTemplateName)
+        public void PopulateEveryComboBoxInTabs(TabControl MainTab, string adlName, string newTemplateName, string tabName)
         {
             try
             {
                 //Update the combobox of all other tabs where the same Algo is there
                 foreach (TabPage tabPage in MainTab.TabPages)
                 {
+                    //if (tabPage.Text == tabName)
+                    //    continue;
+
                     if(Globals.tabNameWithTabInfo.ContainsKey(tabPage.Text) && Globals.tabNameWithTabInfo[tabPage.Text]._adlName == adlName )
                     {
-                        Control[] foundControl = tabPage.Controls.Find("TemplateComboBox", true);
-                        if (foundControl.Length > 0 && foundControl[0] is ComboBox comboBox)
+                        Control[] foundControlTextBox = tabPage.Controls.Find("TemplateTextBox", true);
+                        Control[] foundControlComboBox = tabPage.Controls.Find("TemplateComboBox", true);
+                        if (foundControlTextBox.Length > 0 && foundControlTextBox[0] is TextBox textBox)
                         {
-                            string templateName = string.Empty;
-                            if (comboBox.SelectedItem != null)
+                            if (foundControlComboBox.Length > 0 && foundControlComboBox[0] is ComboBox comboBox)
                             {
-                                templateName = comboBox.SelectedItem.ToString();
-                            }
-                                
-                            comboBox.Items.Clear();
-                            if(Globals.algoNameWithTemplateList.ContainsKey(adlName))
-                                comboBox.Items.AddRange(GetTemplateNames(Globals.algoNameWithTemplateList[adlName]).ToArray());
+                                string templateName = string.Empty;
+                                if (comboBox.SelectedItem != null)
+                                {
+                                    templateName = comboBox.SelectedItem.ToString();
 
-                            // Select the desired item
-                            if (templateName != string.Empty && comboBox.Items.Contains(newTemplateName))
-                            {
-                                comboBox.SelectedItem = templateName;
-                            }
+                                }
+                                comboBox.Items.Clear();
+                                if (Globals.algoNameWithTemplateList.ContainsKey(adlName))
+                                {
+                                    comboBox.Items.AddRange(GetTemplateNames(Globals.algoNameWithTemplateList[adlName]).ToArray());
+                                }
+                                // Select the desired item
+                                if (templateName != string.Empty && comboBox.Items.Contains(newTemplateName))
+                                {
+                                    if(tabPage.Text == tabName)
+                                    {
+                                        comboBox.SelectedItem = newTemplateName;
+                                    }
+                                    else
+                                    {
+
+                                        comboBox.SelectedItem = templateName;
+                                    }
+                                }
+                            }  
                         }
                     }
                 
