@@ -90,8 +90,6 @@ namespace ADLManagerPro
             {
                 if(e.Error == null)
                 {
-               
-
                     if(!Globals.instrumentsPriceSubscribed.Contains(e.Fields.Instrument.Name))
                     {
                         Console.WriteLine($"Price for {e.Fields.Instrument.InstrumentDetails.Alias}");

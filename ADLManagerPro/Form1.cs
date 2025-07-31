@@ -73,7 +73,6 @@ namespace ADLManagerPro
                 mainGrid.Columns[Globals.columnOneName].ReadOnly = true;
                 mainGrid.DefaultCellStyle.SelectionBackColor = mainGrid.DefaultCellStyle.BackColor;
                 mainGrid.DefaultCellStyle.SelectionForeColor = mainGrid.DefaultCellStyle.ForeColor;
-                populateFeedNamesList();
                 // if this is null then file was empty
                 Globals.algoNameWithTemplateList = _fileHandlers.FetchJsonFromFile();
 
@@ -85,25 +84,6 @@ namespace ADLManagerPro
                 DisposeEverything();
             }
 
-        }
-
-        private void populateFeedNamesList()
-        {
-            try
-            {
-                FeedStatus.Text = "Feed Connected";
-                FeedStatus.BackColor = Color.LightGreen;
-                var comboColumn = (DataGridViewComboBoxColumn)mainGrid.Columns[Globals.columnTwoName];
-                //Globals.feedNames = new List<string> { "GBP/CHF" } ;
-                Globals.feedNames = comboColumn.Items.Cast<string>().ToList();
-                
-            }
-            catch
-            {
-                MessageBox.Show("Error occured while populating feed names. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                DisposeEverything();
-            }
         }
 
         
@@ -222,7 +202,10 @@ namespace ADLManagerPro
                 Globals.m_accounts = m_api.Accounts;
                 foreach(var account in Globals.m_accounts)
                 {
-                    Globals._accounts.Add(account.AccountName);
+                    if (!Globals._accounts.Contains(account.AccountName))
+                    {
+                        Globals._accounts.Add(account.AccountName);
+                    }
                 }
 
             }
@@ -232,9 +215,6 @@ namespace ADLManagerPro
                 
                 DisposeEverything();
             }
-
-
-
         }
 
         void algoLookup(string algoName)
