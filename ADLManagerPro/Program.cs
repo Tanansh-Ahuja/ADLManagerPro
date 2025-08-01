@@ -56,10 +56,9 @@ namespace ADLManagerPro
 
                 }
             }
-            catch
+            catch(Exception ex) 
             {
-                MessageBox.Show("Error occured while starting the application. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while starting the application. \nMessage:{ex.Message}");
             }
         }
     }

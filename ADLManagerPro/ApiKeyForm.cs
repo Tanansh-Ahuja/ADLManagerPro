@@ -31,10 +31,9 @@ namespace ADLManagerPro
                 _fileHandlers = new FileHandlers();
 
             }
-            catch
+            catch(Exception ex) 
             {
-                MessageBox.Show("Error occured while initialising key entering form. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while initialising key entering form. \nMessage: {ex.Message}");
             }
         }
 
@@ -49,10 +48,9 @@ namespace ADLManagerPro
                     txtKey.Text = existingKey;
 
             }
-            catch
+            catch(Exception ex)
             {
-                MessageBox.Show("Error occured while API key form load. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while API key form load. \nMessage: {ex.Message}");
             }
         }
         private void btnSubmit_Click(object sender, EventArgs e)
@@ -72,10 +70,9 @@ namespace ADLManagerPro
                 Close();
 
             }
-            catch
+            catch(Exception ex)
             {
-                MessageBox.Show("Error occured while fetching key from form. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while fetching key from form. \nMessage: {ex.Message}"); 
             }
         }
     }

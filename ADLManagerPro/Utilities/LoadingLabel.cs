@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace ADLManagerPro
 {
-    internal class LoadingLabel
+    public class LoadingLabel
     {
         public LoadingLabel() 
         {
@@ -34,10 +34,9 @@ namespace ADLManagerPro
                 MainTab.Hide();
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while creating label. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while creating label. \nMessage: {exception.Message}");
             }
         }
         public void ChangeLoadingLabelText(string showThis)
@@ -47,10 +46,27 @@ namespace ADLManagerPro
                 Globals.loadingLabel.Text = "Status: " + showThis + " ...";
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while updating label value. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while creating label. \nMessage: {exception.Message}");
+            }
+        }
+        public static void ShowErrorLabel(string showThis)
+        {
+            try
+            {
+                if(Globals.loadingLabel!=null)
+                {
+                    Globals.loadingLabel.Text = "Status: " + showThis ;
+                    Globals.loadingLabel.ForeColor = Color.Red;
+                    Globals.loadingLabel.Show();
+
+                }
+
+            }
+            catch (Exception exception)
+            {
+                HelperFunctions.ShutEverythingDown($"Error occured while creating label. \nMessage: {exception.Message}");
             }
         }
         

@@ -23,7 +23,7 @@ namespace ADLManagerPro
         }
 
         public bool CellValueChanged(object sender, DataGridViewCellEventArgs e, DataGridView mainGrid,TabControl MainTab)
-        {
+        { 
             try
             {
                 if (e.RowIndex >= 0 && mainGrid.Columns[e.ColumnIndex].Name == Globals.columnZeroName)
@@ -124,10 +124,9 @@ namespace ADLManagerPro
                 return false;
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while checking the cell value change. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while checking the cell value change.\nMessage: {exception.Message}");
                 return false;
             }
         }
@@ -354,10 +353,9 @@ namespace ADLManagerPro
                 // Add tab to TabControl
                 MainTab.TabPages.Add(newTab);
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while creating a new Tab. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while creating a new tab. \nMessage: {exception.Message}");
             }
         }
 

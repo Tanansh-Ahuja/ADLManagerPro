@@ -26,10 +26,9 @@ namespace ADLManagerPro
                 return templateNames;
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while getting template name. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ShutEverythingDown();
+                ShutEverythingDown("Error occured while getting template name."+exception.Message);
                 return null;
             }
         }
@@ -41,10 +40,9 @@ namespace ADLManagerPro
                 return MainTab.TabPages.Cast<TabPage>().Any(tab => tab.Text == serial);
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured whilechecking if tab exists. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ShutEverythingDown();
+                ShutEverythingDown("Error occured whilechecking if tab exists. \nMessage: " + exception.Message);
                 return false;
             }
         }
@@ -56,10 +54,9 @@ namespace ADLManagerPro
                 List<string> templateNames = templateList.Select(t => t.TemplateName).ToList();
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while populating template. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ShutEverythingDown();
+                ShutEverythingDown("Error occured while populating template. \nMessage: " + exception.Message);
             }
         }
 
@@ -124,10 +121,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while updating template. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ShutEverythingDown();
+                ShutEverythingDown("Error occured while updating template. \nMessage: " + exception.Message);
             }
         }
 
@@ -181,10 +177,9 @@ namespace ADLManagerPro
 
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while populating every combobox in other tabs. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ShutEverythingDown();
+                ShutEverythingDown("Error occured while populating every combobox in other tabs. \nMessage: " + exception.Message);
             }
         }
 
@@ -238,10 +233,9 @@ namespace ADLManagerPro
 
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while populating paramGrid with order profile parameters. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ShutEverythingDown();
+                ShutEverythingDown("Error occured while populating paramGrid with order profile parameters. \nMessage: " + exception.Message);
             }
 
         }
@@ -322,10 +316,9 @@ namespace ADLManagerPro
 
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while populating paramGrid with user parameters. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ShutEverythingDown();
+                ShutEverythingDown("Error occured while populating paramGrid with user parameters. \nMessage: " + exception.Message);
             }
         }
 
@@ -372,10 +365,9 @@ namespace ADLManagerPro
                 return newTemplate;
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while generating a new template. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ShutEverythingDown();
+                ShutEverythingDown("Error occured while generating a new template. Shutting down. \nMessage: " + exception.Message);
                 return null;
             }
         }
@@ -425,10 +417,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while validating cell value. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ShutEverythingDown();
+                ShutEverythingDown("Error occured while validating cell value. \nMessage: " + exception.Message);
             }
         }
 
@@ -504,10 +495,9 @@ namespace ADLManagerPro
 
                 }
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while TT order algo deletion. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ShutEverythingDown();
+                ShutEverythingDown("Error occured while TT order algo deletion. \nMessage: " + exception.Message);
             }
 
         }
@@ -529,32 +519,36 @@ namespace ADLManagerPro
                 return true;
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while checking param grid values. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ShutEverythingDown();
+                
+                ShutEverythingDown("Error occured while checking param grid values. \nMessage: " + exception.Message);
                 return false;
             }
         }
 
 
-        public static void ShutEverythingDown()
+        public static void ShutEverythingDown(string errorText)
         {
-           
             //MessageBox.Show("Inside Shut Everything down", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             try
             {
-                Form1.MainTab.Hide();
-                foreach (var item in Globals.siteOrderKeyWithTabName)
+                if(Form1.MainTab !=null)
                 {
-                    string key = item.Key;
-                    string tabName = item.Value;
-                    if (Globals.tabNameWithTabInfo.ContainsKey(tabName))
+
+                    Form1.MainTab.Hide();
+                    LoadingLabel.ShowErrorLabel(errorText);
+                    foreach (var item in Globals.siteOrderKeyWithTabName)
                     {
-                        string adlName = Globals.tabNameWithTabInfo[tabName]._adlName;
-                        if (Globals.algoNameWithTradeSubscription.ContainsKey(adlName))
+                        string key = item.Key;
+                        string tabName = item.Value;
+                        if (Globals.tabNameWithTabInfo.ContainsKey(tabName))
                         {
-                            Globals.algoNameWithTradeSubscription[adlName].DeleteAlgoOrder(key);
+                            string adlName = Globals.tabNameWithTabInfo[tabName]._adlName;
+                            if (Globals.algoNameWithTradeSubscription.ContainsKey(adlName))
+                            {
+                                Globals.algoNameWithTradeSubscription[adlName].DeleteAlgoOrder(key);
+                            }
                         }
                     }
                 }

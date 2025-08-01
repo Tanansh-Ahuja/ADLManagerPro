@@ -30,10 +30,9 @@ namespace ADLManagerPro
                 m_instrLookupRequest.GetAsync();
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while initialising instrument. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while initialising instrument. \nMessage: {exception.Message}");
             }
 
         }
@@ -78,10 +77,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while data look up of instrument. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while data look up of instrument. \nMessage: {exception.Message}");
             }
         }
         void m_priceSubscription_FieldsUpdated(object sender, FieldsUpdatedEventArgs e)
@@ -107,10 +105,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while updating price subscription fields. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while updating price subscription fields. \nMessage: {exception.Message}");
             }
 
         }
@@ -136,10 +133,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while disposing instrument. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while disposing instrument. \nMessage: {exception.Message}");
             }
         }
     }

@@ -56,9 +56,7 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while loading Form. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                DisposeEverything();
+                Dispose();
             }
 
 
@@ -68,6 +66,7 @@ namespace ADLManagerPro
         {
             try
             {
+                
                 this.Icon = new Icon("Logo/FinalLogo.ico");
                 string imagePath = @"Logo/myLogo.png";
                 if (File.Exists(imagePath))
@@ -79,8 +78,6 @@ namespace ADLManagerPro
                 {
                     MessageBox.Show("Image not found at path: " + imagePath);
                 }
-                mainGrid.DefaultCellStyle.SelectionBackColor = Color.White;
-                mainGrid.DefaultCellStyle.SelectionForeColor = Color.Black;
                 
                 _loadingLabel.InitialiseLoadingLabel("Initialising TT", this, MainTab);
                 Globals.userAlgos = _fileHandlers.GetADLNameList();
@@ -96,9 +93,8 @@ namespace ADLManagerPro
             }
             catch
             {
-                MessageBox.Show("Error occured while loading Form. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                DisposeEverything();
+                Dispose();
+                //HelperFunctions.ShutEverythingDown($"Error occured while loading Form./n Message: {exception.Message}");
             }
 
         }
@@ -120,11 +116,9 @@ namespace ADLManagerPro
                 m_disp.Run();
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while starting TT. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                DisposeEverything();
+                HelperFunctions.ShutEverythingDown($"Error occured while starting TT. \nMessage: {exception.Message}");
             }
         }
 
@@ -138,11 +132,9 @@ namespace ADLManagerPro
                 TTAPI.CreateTTAPI(tt_net_sdk.Dispatcher.Current, apiConfig, apiInitializeHandler);
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while starting TT. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                DisposeEverything();
+                HelperFunctions.ShutEverythingDown($"Error occured while starting TT. \nMessage: {exception.Message}");
             }
         }
 
@@ -152,7 +144,6 @@ namespace ADLManagerPro
             {
                 if (ex == null)
                 {
-                    Console.WriteLine("TT.NET SDK INITIALIZED");
                     _loadingLabel.ChangeLoadingLabelText("TT.NET SDK INITIALIZED");
                     _fileHandlers.SaveApiKey("Key.txt", _appSecretKey);
 
@@ -163,22 +154,17 @@ namespace ADLManagerPro
                 }
                 else if (ex.IsRecoverable)
                 {
-                    MessageBox.Show("TT.NET SDK Initialization Failed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    DisposeEverything();
+                    HelperFunctions.ShutEverythingDown("TT.NET SDK Initialization Failed");
                 }
                 else
                 {
-                    Console.WriteLine("TT.NET SDK Initialization Failed: {0}", ex.Message);
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    DisposeEverything();
+                    HelperFunctions.ShutEverythingDown($"TT.NET SDK Initialization Failed: {ex.Message}");
                 }
 
             }
-            catch
-            {
-                MessageBox.Show("Error occured while starting API handler. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                DisposeEverything();
+            catch(Exception exception)
+            { 
+                HelperFunctions.ShutEverythingDown($"TT.NET SDK Initialization Failed: {exception.Message}");
             }
         }
 
@@ -186,7 +172,6 @@ namespace ADLManagerPro
         {
             try
             {
-                Console.WriteLine("TTAPIStatusUpdate: {0}", e);
                 _loadingLabel.ChangeLoadingLabelText("TTAPIStatusUpdate: " + e.ToString());
                 if (e.IsReady == false)
                 {
@@ -226,11 +211,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while status update of API handler. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                DisposeEverything();
+                HelperFunctions.ShutEverythingDown($"Error occured while status update of API handler. \nMessage: {exception.Message}");
             }
         }
 
@@ -247,11 +230,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while looking up algo. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                DisposeEverything();
+                HelperFunctions.ShutEverythingDown($"Error occured while looking up algo. \nMessage: {exception.Message}");
             }
 
         }
@@ -271,10 +252,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while showing main grid. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
+                HelperFunctions.ShutEverythingDown($"Error occured while showing main grid. \nMessage: {exception.Message}");
             }
 
         }
@@ -306,10 +286,9 @@ namespace ADLManagerPro
                 mainGrid.Columns[Globals.columnThreeName].ReadOnly = false;
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while updating ADL dropdown source. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
+                HelperFunctions.ShutEverythingDown($"Error occured while updating ADL dropdown.\nMessage: {exception.Message}");
             }
         }
 
@@ -334,11 +313,9 @@ namespace ADLManagerPro
                 _buttonEvents.DeleteRowsInMainGrid(sender, e,mainGrid,MainTab);
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while delete button click. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                DisposeEverything();
+                HelperFunctions.ShutEverythingDown($"Error occured while delete button click. \nMessage: {exception.Message}");
             }
 
         }
@@ -350,11 +327,9 @@ namespace ADLManagerPro
                 _buttonEvents.AddRowInMainGrid(mainGrid);
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while add button click. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                DisposeEverything();
+                HelperFunctions.ShutEverythingDown($"Error occured while add button click. \nMessage: {exception.Message}");
             }
         }
 
@@ -374,11 +349,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while changing cell value. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                DisposeEverything();
+                HelperFunctions.ShutEverythingDown($"Error occured while changing cell value. \nMessage: {exception.Message}");
             }
         }
 
@@ -397,11 +370,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while dirty state change. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                DisposeEverything();
+                HelperFunctions.ShutEverythingDown($"Error occured while checking state of the cell. \nMessage: {exception.Message}");
             }
         }
 
@@ -418,11 +389,9 @@ namespace ADLManagerPro
                 TTAPI.Shutdown();
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while closing Form. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                DisposeEverything();
+                HelperFunctions.ShutEverythingDown($"Error occured while closing form. \nMessage: {exception.Message}");
             }
         }
 
@@ -449,11 +418,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while disposing Form. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-                DisposeEverything();
+                HelperFunctions.ShutEverythingDown($"Error occured while disposing form. \nMessage: {exception.Message}");
             }
         }
 
@@ -468,48 +435,56 @@ namespace ADLManagerPro
 
         private void DataGridView_Paint(object sender, PaintEventArgs e)
         {
-            if (gridBackgroundImage == null) return;
-
-            DataGridView dgv = sender as DataGridView;
-
-            int maxWidth = dgv.ClientSize.Width;
-            int maxHeight = dgv.ClientSize.Height;
-
-            int imgOriginalWidth = gridBackgroundImage.Width;
-            int imgOriginalHeight = gridBackgroundImage.Height;
-
-            float ratioX = (float)maxWidth / imgOriginalWidth;
-            float ratioY = (float)maxHeight / imgOriginalHeight;
-            float ratio = Math.Min(ratioX, ratioY);
-
-            int scaledWidth = (int)(imgOriginalWidth * ratio);
-            int scaledHeight = (int)(imgOriginalHeight * ratio);
-
-            int x = (maxWidth - scaledWidth) / 2;
-            int y = (maxHeight - scaledHeight) / 2;
-
-            // 🔥 Apply transparency via ColorMatrix
-            float alpha = 0.2f; // 0 = fully transparent, 1 = fully opaque
-
-            ColorMatrix matrix = new ColorMatrix
+            try
             {
-                Matrix33 = alpha // This sets the transparency
-            };
+                if (gridBackgroundImage == null) return;
 
-            ImageAttributes attributes = new ImageAttributes();
-            attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+                DataGridView dgv = sender as DataGridView;
 
-            Rectangle drawRect = new Rectangle(x, y, scaledWidth, scaledHeight);
+                int maxWidth = dgv.ClientSize.Width;
+                int maxHeight = dgv.ClientSize.Height;
 
-            e.Graphics.DrawImage(
-                gridBackgroundImage,
-                drawRect,
-                0, 0, imgOriginalWidth, imgOriginalHeight,
-                GraphicsUnit.Pixel,
-                attributes
-            );
+                int imgOriginalWidth = gridBackgroundImage.Width;
+                int imgOriginalHeight = gridBackgroundImage.Height;
+
+                float ratioX = (float)maxWidth / imgOriginalWidth;
+                float ratioY = (float)maxHeight / imgOriginalHeight;
+                float ratio = Math.Min(ratioX, ratioY);
+
+                int scaledWidth = (int)(imgOriginalWidth * ratio);
+                int scaledHeight = (int)(imgOriginalHeight * ratio);
+
+                int x = (maxWidth - scaledWidth) / 2;
+                int y = (maxHeight - scaledHeight) / 2;
+
+                // 🔥 Apply transparency via ColorMatrix
+                float alpha = 0.2f; // 0 = fully transparent, 1 = fully opaque
+
+                ColorMatrix matrix = new ColorMatrix
+                {
+                    Matrix33 = alpha // This sets the transparency
+                };
+
+                ImageAttributes attributes = new ImageAttributes();
+                attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+                Rectangle drawRect = new Rectangle(x, y, scaledWidth, scaledHeight);
+
+                e.Graphics.DrawImage(
+                    gridBackgroundImage,
+                    drawRect,
+                    0, 0, imgOriginalWidth, imgOriginalHeight,
+                    GraphicsUnit.Pixel,
+                    attributes
+                );
+
+            }
+            catch(Exception exception)
+            {
+                HelperFunctions.ShutEverythingDown($"Error occured while showing image. \nMessage: {exception.Message}");
+            }
         }
-
+        
 
     }
 }

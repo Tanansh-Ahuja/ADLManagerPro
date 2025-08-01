@@ -259,3 +259,4 @@ C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\
 C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\obj\x64\Debug\ADLManag.550943BA.Up2Date
 C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\obj\x64\Debug\ADLManagerPro.exe
 C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\obj\x64\Debug\ADLManagerPro.pdb
+C:\Users\tanan\OneDrive\Desktop\akash formal work\june-project-v2\ADLManagerPro\ADLManagerPro\obj\x64\Debug\ADLManagerPro.exe.config

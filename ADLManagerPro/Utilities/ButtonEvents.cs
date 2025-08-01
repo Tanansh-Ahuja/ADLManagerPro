@@ -29,10 +29,9 @@ namespace ADLManagerPro
                 mainGrid.Rows[serialNumber - 1].Cells[Globals.columnFiveName].Value = "DEACTIVATED";
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while adding row in main table. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while adding row in main table. \nMessage: {exception.Message}");
             }
         }
 
@@ -151,10 +150,9 @@ namespace ADLManagerPro
 
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while deleting row from table. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while deleting row from table. \nMessage: {exception.Message}");
             }
         }
 
@@ -367,10 +365,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while click on start algo button. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while click on start algo button. \nMessage: {exception.Message}");
             }
 
         }
@@ -447,10 +444,9 @@ namespace ADLManagerPro
             
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while delete button click. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while delete button click. \nMessage: {exception.Message}");
             }
         }
 
@@ -558,10 +554,9 @@ namespace ADLManagerPro
 
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while saving template. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while saving template. \nMessage: {exception.Message}");
             }
         }
 
@@ -600,10 +595,9 @@ namespace ADLManagerPro
 
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while changing template. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while changing template. \nMessage: {exception.Message}");
             }
         }
     

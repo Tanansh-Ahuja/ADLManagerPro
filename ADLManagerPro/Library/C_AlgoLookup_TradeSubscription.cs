@@ -39,10 +39,9 @@ namespace ADLManagerPro
                 m_algoLookupSubscription.GetAsync();
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show($"Error occured while initialising algo: {algoName}. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while initialising algo: {algoName}. \nMessage: {exception.Message}");
             }
 
 
@@ -164,21 +163,21 @@ namespace ADLManagerPro
                 }
                 else if (e.Event == ProductDataEvent.NotAllowed)
                 {
-                    Console.WriteLine("Not Allowed : Please check your Token access");
+                    HelperFunctions.ShutEverythingDown("Not Allowed. Please check your token access");
                 }
                 else
                 {
                     // Algo Instrument was not found and TT API has given up looking for it
                     Console.WriteLine("Cannot find Algo instrument: {0}", e.Message);
+                    HelperFunctions.ShutEverythingDown($"Cannot find Algo instrument: {e.Message}");
                     Dispose();
                 }
                 Form1.ShowMainGrid();
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show($"Error occured while getting data for algo. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while getting data for algo. \nMessage: {exception.Message}");
             }
         }
 
@@ -220,13 +219,9 @@ namespace ADLManagerPro
                     algo_userparams[userParameter] = result;
                 }
                 OrderProfile algo_op = m_algo.GetOrderProfile();
-                /*   algo_op.LimitPrice = m_price;
-                   algo_op.OrderQuantity = Quantity.FromDecimal(m_instrument, 5);*/
                 algo_op.Side = OrderSide.Buy;
-                //TODO : put below two parameters as user input for every algo
                 algo_op.UserDisconnectAction = userDisconnectAction;
                 algo_op.CoLocation = marketId;
-            
                 algo_op.OrderType = OrderType.Limit;
                 algo_op.Account = Globals.m_accounts.ElementAt(accountIndex);
                 algo_op.UserParameters = algo_userparams;
@@ -235,26 +230,19 @@ namespace ADLManagerPro
                 DateTime now = DateTime.Now;
                 string timeWithMilliseconds = now.ToString("HH:mm:ss.fff");
                 Console.WriteLine("Req Order: " + timeWithMilliseconds);
-                //orderSent = true;
 
                 if (Globals.siteOrderKeyWithTabName.ContainsKey(algo_op.SiteOrderKey) &&
                     Globals.tabNameWithTabInfo.ContainsKey(Globals.siteOrderKeyWithTabName[algo_op.SiteOrderKey]))
                 {
                     TabInfo tabInfo = Globals.tabNameWithTabInfo[Globals.siteOrderKeyWithTabName[algo_op.SiteOrderKey]];
-                    //tabInfo._laggedPrice = Convert.ToDouble(algo_userparams["Pricing_Feed"]);
                     tabInfo._lag = true;
                     tabInfo._laggedPrice = double.NaN;
                 }
-
-
                 return algo_op.SiteOrderKey;
-            
-
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while sending order. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while sending order. \nMessage: {exception.Message}");
                 return null;
             }
 
@@ -288,10 +276,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while updating order. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while updating order. \nMessage: {exception.Message}");
             }
 
         }
@@ -311,10 +298,9 @@ namespace ADLManagerPro
                 return string.Empty;
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while deleting order. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while deleting order. \nMessage: {exception.Message}");
                 return null;
             }
         }
@@ -331,10 +317,9 @@ namespace ADLManagerPro
                 Form1.ShowMainGrid();
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while order book download. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while order book download. \nMessage: {exception.Message}");
             }
 
         }
@@ -350,10 +335,9 @@ namespace ADLManagerPro
                 Console.WriteLine("\nOrderRejected for : [{0}]", e.Order.Message);
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while rejecting order. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while rejecting order. \nMessage: {exception.Message}");
             }
         }
 
@@ -371,10 +355,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while order filled. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while order filled. \nMessage: {exception.Message}");
             }
         }
 
@@ -388,10 +371,9 @@ namespace ADLManagerPro
                 Console.WriteLine("\nOrderDeleted [{0}] , Message : {1}", e.OldOrder.SiteOrderKey, e.Message);
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured when order is deleted. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured when order is deleted. \nMessage: {exception.Message}");
             }
         }
 
@@ -422,10 +404,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured when order is added. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured when order is added. \nMessage: {exception.Message}");
             }
 
         }
@@ -458,10 +439,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured when order is updated. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured when order is updated. \nMessage: {exception.Message}");
             }
         }
 
@@ -496,10 +476,9 @@ namespace ADLManagerPro
                 }
 
             }
-            catch
+            catch(Exception exception)
             {
-                MessageBox.Show("Error occured while disposing order. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                HelperFunctions.ShutEverythingDown();
+                HelperFunctions.ShutEverythingDown($"Error occured while disposing order. \nMessage: {exception.Message}");
             }
         }
     }
