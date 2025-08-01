@@ -42,6 +42,7 @@ namespace ADLManagerPro
         {
             try
             {
+                this.Icon = new Icon("Logo/FinalLogo.ico");
                 EnvComboBox.SelectedItem = "UatCert";
                 string existingKey = _fileHandlers.FetchApiKey(keyFilePath);
                 if (existingKey != null)

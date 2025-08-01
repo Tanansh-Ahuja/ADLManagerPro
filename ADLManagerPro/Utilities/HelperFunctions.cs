@@ -71,7 +71,7 @@ namespace ADLManagerPro
                 {
                     // Template exists, confirm update
                     DialogResult result = MessageBox.Show(
-                        $"Do you want to update the template '{templateName}'?",
+                        $"Do you want to override the template '{templateName}'?",
                         "Confirm Update",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question
@@ -117,7 +117,7 @@ namespace ADLManagerPro
                         // Save to file
                         _fileHandlers.SaveTemplateDictionaryToFile(Globals.algoNameWithTemplateList);
 
-                        MessageBox.Show("Template updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Template updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
 
                     return;
@@ -161,7 +161,7 @@ namespace ADLManagerPro
                                     comboBox.Items.AddRange(GetTemplateNames(Globals.algoNameWithTemplateList[adlName]).ToArray());
                                 }
                                 // Select the desired item
-                                if (templateName != string.Empty && comboBox.Items.Contains(newTemplateName))
+                                if (comboBox.Items.Contains(newTemplateName))
                                 {
                                     if(tabPage.Text == tabName)
                                     {
@@ -345,7 +345,7 @@ namespace ADLManagerPro
                 }
                 else
                 {
-                    MessageBox.Show("ADL Parameters type not able to fetch", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Unable to fetch ADL parameter\'s type.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return null;
                 }
 
@@ -411,7 +411,7 @@ namespace ADLManagerPro
                 {
                     if (!System.Text.RegularExpressions.Regex.IsMatch(newValue, @"^\d+$"))
                     {
-                        MessageBox.Show("Only whole numbers (0–9) allowed for this parameter.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Only whole numbers (0–9) allowed for parameter: {paramName}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         e.Cancel = true;
                     }
                 }
@@ -419,7 +419,7 @@ namespace ADLManagerPro
                 {
                     if (!System.Text.RegularExpressions.Regex.IsMatch(newValue, @"^\d+(\.\d{1,})?$"))
                     {
-                        MessageBox.Show("Only numeric values with at most one decimal point allowed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Only numeric values with at most one decimal point allowed for parameter: {paramName}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         e.Cancel = true;
                     }
                 }
@@ -512,9 +512,58 @@ namespace ADLManagerPro
 
         }
 
+        public bool CheckParamgridValueIsEmpty(DataGridView paramGrid)
+        {
+            try
+            {
+                foreach (DataGridViewRow row in paramGrid.Rows)
+                {
+                    if (row.IsNewRow) continue;
+                    string paramValue = row.Cells["Value"].Value?.ToString();
+
+                    if (!string.IsNullOrEmpty(paramValue))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+
+            }
+            catch
+            {
+                MessageBox.Show("Error occured while checking param grid values. Shutting down.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShutEverythingDown();
+                return false;
+            }
+        }
+
+
         public static void ShutEverythingDown()
         {
-            MessageBox.Show("Inside Shut Everything down", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+           
+            //MessageBox.Show("Inside Shut Everything down", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            try
+            {
+                Form1.MainTab.Hide();
+                foreach (var item in Globals.siteOrderKeyWithTabName)
+                {
+                    string key = item.Key;
+                    string tabName = item.Value;
+                    if (Globals.tabNameWithTabInfo.ContainsKey(tabName))
+                    {
+                        string adlName = Globals.tabNameWithTabInfo[tabName]._adlName;
+                        if (Globals.algoNameWithTradeSubscription.ContainsKey(adlName))
+                        {
+                            Globals.algoNameWithTradeSubscription[adlName].DeleteAlgoOrder(key);
+                        }
+                    }
+                }
+
+            }
+            catch
+            {
+
+            }
 
         }
 

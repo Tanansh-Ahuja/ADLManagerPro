@@ -30,6 +30,8 @@ namespace ADLManagerPro
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             mainGrid = new System.Windows.Forms.DataGridView();
             this.Select = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Sno = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -53,6 +55,14 @@ namespace ADLManagerPro
             mainGrid.AllowUserToResizeColumns = false;
             mainGrid.AllowUserToResizeRows = false;
             mainGrid.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            mainGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             mainGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             mainGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Select,
@@ -61,14 +71,22 @@ namespace ADLManagerPro
             this.adl,
             this.createTab,
             this.OrderStatus});
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            mainGrid.DefaultCellStyle = dataGridViewCellStyle2;
             mainGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            mainGrid.Location = new System.Drawing.Point(2, 2);
-            mainGrid.Margin = new System.Windows.Forms.Padding(2);
+            mainGrid.Location = new System.Drawing.Point(3, 2);
+            mainGrid.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             mainGrid.Name = "mainGrid";
             mainGrid.RowHeadersVisible = false;
             mainGrid.RowHeadersWidth = 51;
             mainGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            mainGrid.Size = new System.Drawing.Size(770, 618);
+            mainGrid.Size = new System.Drawing.Size(1029, 765);
             mainGrid.TabIndex = 0;
             mainGrid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.mainGrid_CellValueChanged);
             mainGrid.CurrentCellDirtyStateChanged += new System.EventHandler(this.mainGrid_CurrentCellDirtyStateChanged);
@@ -139,10 +157,10 @@ namespace ADLManagerPro
             MainTab.Controls.Add(this.tabPage1);
             MainTab.Dock = System.Windows.Forms.DockStyle.Fill;
             MainTab.Location = new System.Drawing.Point(0, 0);
-            MainTab.Margin = new System.Windows.Forms.Padding(2);
+            MainTab.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             MainTab.Name = "MainTab";
             MainTab.SelectedIndex = 0;
-            MainTab.Size = new System.Drawing.Size(782, 648);
+            MainTab.Size = new System.Drawing.Size(1043, 798);
             MainTab.TabIndex = 1;
             // 
             // tabPage1
@@ -151,11 +169,11 @@ namespace ADLManagerPro
             this.tabPage1.Controls.Add(this.del_btn);
             this.tabPage1.Controls.Add(this.add_btn);
             this.tabPage1.Controls.Add(mainGrid);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPage1.Size = new System.Drawing.Size(774, 622);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabPage1.Size = new System.Drawing.Size(1035, 769);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Main";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -166,22 +184,21 @@ namespace ADLManagerPro
             this.FeedStatus.BackColor = System.Drawing.Color.DarkRed;
             this.FeedStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FeedStatus.ForeColor = System.Drawing.SystemColors.Control;
-            this.FeedStatus.Location = new System.Drawing.Point(666, 18);
-            this.FeedStatus.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.FeedStatus.MaximumSize = new System.Drawing.Size(150, 162);
-            this.FeedStatus.MinimumSize = new System.Drawing.Size(94, 24);
+            this.FeedStatus.Location = new System.Drawing.Point(888, 22);
+            this.FeedStatus.MaximumSize = new System.Drawing.Size(200, 199);
+            this.FeedStatus.MinimumSize = new System.Drawing.Size(125, 30);
             this.FeedStatus.Name = "FeedStatus";
-            this.FeedStatus.Size = new System.Drawing.Size(102, 24);
+            this.FeedStatus.Size = new System.Drawing.Size(130, 30);
             this.FeedStatus.TabIndex = 4;
             this.FeedStatus.Text = "Feed Disconnected";
             this.FeedStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // del_btn
             // 
-            this.del_btn.Location = new System.Drawing.Point(667, 75);
-            this.del_btn.Margin = new System.Windows.Forms.Padding(2);
+            this.del_btn.Location = new System.Drawing.Point(889, 92);
+            this.del_btn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.del_btn.Name = "del_btn";
-            this.del_btn.Size = new System.Drawing.Size(93, 28);
+            this.del_btn.Size = new System.Drawing.Size(124, 34);
             this.del_btn.TabIndex = 2;
             this.del_btn.Text = "Delete Row";
             this.del_btn.UseVisualStyleBackColor = true;
@@ -189,10 +206,10 @@ namespace ADLManagerPro
             // 
             // add_btn
             // 
-            this.add_btn.Location = new System.Drawing.Point(667, 46);
-            this.add_btn.Margin = new System.Windows.Forms.Padding(2);
+            this.add_btn.Location = new System.Drawing.Point(889, 57);
+            this.add_btn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.add_btn.Name = "add_btn";
-            this.add_btn.Size = new System.Drawing.Size(93, 25);
+            this.add_btn.Size = new System.Drawing.Size(124, 31);
             this.add_btn.TabIndex = 1;
             this.add_btn.Text = "Add Row";
             this.add_btn.UseVisualStyleBackColor = true;
@@ -200,14 +217,14 @@ namespace ADLManagerPro
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(782, 648);
+            this.ClientSize = new System.Drawing.Size(1043, 798);
             this.Controls.Add(MainTab);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(566, 388);
+            this.MinimumSize = new System.Drawing.Size(749, 467);
             this.Name = "Form1";
             this.Text = "ADL Manager";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
@@ -233,7 +250,7 @@ namespace ADLManagerPro
         private DataGridViewTextBoxColumn OrderStatus;
         private Label FeedStatus;
         public static DataGridView mainGrid;
-        private static TabControl MainTab;
+        public static TabControl MainTab;
     }
 }
 

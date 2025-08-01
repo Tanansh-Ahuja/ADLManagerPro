@@ -167,7 +167,7 @@ namespace ADLManagerPro
                 string currentTabName = currentTab.Text;
                 if (Globals.tabNameWithSiteOrderKey.ContainsKey(currentTabName))
                 {
-                    MessageBox.Show("Order already placed!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Order already placed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -475,6 +475,15 @@ namespace ADLManagerPro
                     MessageBox.Show("Invalid ADL selection.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
+
+                
+
+                if(_helperFunctions.CheckParamgridValueIsEmpty(paramGrid))
+                {
+                    MessageBox.Show("Template can not be saved empty.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
                 if(Globals.algoNameWithTemplateList == null)
                 {
                     // We have nothing in this dictionary, our file was empty, so this is the first value
@@ -490,7 +499,7 @@ namespace ADLManagerPro
                     txtTemplateName.Text = newTemplate.TemplateName;
                     _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, txtTemplateName.Text, tabName);
 
-                    MessageBox.Show("Template created and saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Template created and saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
 
                 }
@@ -520,7 +529,7 @@ namespace ADLManagerPro
 
                         savedTemplates.SelectedItem = newTemplate.TemplateName;
                         _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, txtTemplateName.Text,tabName);
-                        MessageBox.Show("Template saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Template saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                         // Get the parameter definitions for this ADL
 
@@ -542,7 +551,7 @@ namespace ADLManagerPro
                     txtTemplateName.Text = newTemplate.TemplateName;
                     _helperFunctions.PopulateEveryComboBoxInTabs(MainTab, adlName, txtTemplateName.Text,tabName);
 
-                    MessageBox.Show("Template created and saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Template created and saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
 
                 }

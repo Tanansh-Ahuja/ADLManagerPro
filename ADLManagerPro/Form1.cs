@@ -1,17 +1,18 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 using tt_net_sdk;
-using System.IO;
-using System.Text.Json;
 
 
 namespace ADLManagerPro
@@ -23,6 +24,7 @@ namespace ADLManagerPro
 
         private string _appSecretKey;
         //private string currentTab = null;
+        private Image gridBackgroundImage;
 
 
         private FileHandlers _fileHandlers = null;
@@ -66,6 +68,20 @@ namespace ADLManagerPro
         {
             try
             {
+                this.Icon = new Icon("Logo/FinalLogo.ico");
+                string imagePath = @"Logo/myLogo.png";
+                if (File.Exists(imagePath))
+                {
+                    gridBackgroundImage = Image.FromFile(imagePath);
+                    mainGrid.Invalidate(); // force paint
+                }
+                else
+                {
+                    MessageBox.Show("Image not found at path: " + imagePath);
+                }
+                mainGrid.DefaultCellStyle.SelectionBackColor = Color.White;
+                mainGrid.DefaultCellStyle.SelectionForeColor = Color.Black;
+                
                 _loadingLabel.InitialiseLoadingLabel("Initialising TT", this, MainTab);
                 Globals.userAlgos = _fileHandlers.GetADLNameList();
                 Globals.instrumentInfoList = _fileHandlers.GetInstrumentInfoList();
@@ -75,6 +91,7 @@ namespace ADLManagerPro
                 mainGrid.DefaultCellStyle.SelectionForeColor = mainGrid.DefaultCellStyle.ForeColor;
                 // if this is null then file was empty
                 Globals.algoNameWithTemplateList = _fileHandlers.FetchJsonFromFile();
+                mainGrid.Paint += DataGridView_Paint;
 
             }
             catch
@@ -184,7 +201,7 @@ namespace ADLManagerPro
                 }
                 if(Globals.userAlgos.Count == 0)
                 {
-                    Globals.loadingLabel.Text = "Status: No Algos in \"ADLsToBeFetched.txt\" found.";
+                    Globals.loadingLabel.Text = "Status: No Algos in \"ADLsToBeFetched.csv\" found.";
                     return;
                 }
                 foreach(var instrumentInfo in Globals.instrumentInfoList)
@@ -446,8 +463,53 @@ namespace ADLManagerPro
             Console.WriteLine("TTAPI shutdown completed");
         }
 
+
         #endregion
 
-        
+        private void DataGridView_Paint(object sender, PaintEventArgs e)
+        {
+            if (gridBackgroundImage == null) return;
+
+            DataGridView dgv = sender as DataGridView;
+
+            int maxWidth = dgv.ClientSize.Width;
+            int maxHeight = dgv.ClientSize.Height;
+
+            int imgOriginalWidth = gridBackgroundImage.Width;
+            int imgOriginalHeight = gridBackgroundImage.Height;
+
+            float ratioX = (float)maxWidth / imgOriginalWidth;
+            float ratioY = (float)maxHeight / imgOriginalHeight;
+            float ratio = Math.Min(ratioX, ratioY);
+
+            int scaledWidth = (int)(imgOriginalWidth * ratio);
+            int scaledHeight = (int)(imgOriginalHeight * ratio);
+
+            int x = (maxWidth - scaledWidth) / 2;
+            int y = (maxHeight - scaledHeight) / 2;
+
+            // 🔥 Apply transparency via ColorMatrix
+            float alpha = 0.2f; // 0 = fully transparent, 1 = fully opaque
+
+            ColorMatrix matrix = new ColorMatrix
+            {
+                Matrix33 = alpha // This sets the transparency
+            };
+
+            ImageAttributes attributes = new ImageAttributes();
+            attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+            Rectangle drawRect = new Rectangle(x, y, scaledWidth, scaledHeight);
+
+            e.Graphics.DrawImage(
+                gridBackgroundImage,
+                drawRect,
+                0, 0, imgOriginalWidth, imgOriginalHeight,
+                GraphicsUnit.Pixel,
+                attributes
+            );
+        }
+
+
     }
 }
